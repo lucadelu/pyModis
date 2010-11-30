@@ -1,0 +1,15 @@
+Thank you for downlaoding pyModis
+
+pyModis is a python library to download Modis data from NASA ftp
+
+(c) Copyright Luca Delucchi - 2010
+
+pyModis is licensed under the terms of GNU GPL 2
+    Read COPYING for more info
+
+How to compile pyModis:
+    See INSTALL file.
+
+The Logo of pyModis is pyModis.png; it is released under CC-BY-SA and it's distributed with the pyModis library
+
+With the library is distributed an executable for download Modis data

@@ -1,0 +1,67 @@
+
+PREREQUISITIES
+==============
+
+pyModis requires Python, which comes preinstalled on most Unix machines. 
+
+You can check to see if you have it installed on a Unix machine by typing Python at a command prompt.
+A result like this and you have Python istalled
+
+    Python 2.6.6 (r266:84292, Oct  9 2010, 11:40:09) 
+    [GCC 4.4.5] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+﻿
+This however means that there is any problem
+
+    bash: python: command not found
+
+You can download Python from http://www.python.org/download/releases/
+
+INSTALL
+========
+
+Download the last stable version
+
+    wget ................
+
+
+Now decompress the archivie
+
+    tar -xzf pyModis.tar.gz
+
+
+Enter inside the new directory
+
+    cd pyModis
+
+
+Install the library with root permission
+
+    su
+    python setup.py install
+
+
+on Ubuntu
+
+    sudo python setup.py install
+
+
+Now we can try to load the library so
+
+    python
+
+    Python 2.6.6 (r266:84292, Oct  9 2010, 11:40:09) 
+    [GCC 4.4.5] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import modis
+
+with this response it is all ok
+
+    >>>
+
+instead with this one, you must check the installation
+
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    ImportError: No module named modis
