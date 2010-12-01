@@ -1,4 +1,3 @@
-
 PREREQUISITIES
 ==============
 
@@ -21,9 +20,7 @@ You can download Python from http://www.python.org/download/releases/
 INSTALL
 ========
 
-Download the last stable version
-
-    wget ................
+Download the last stable version from Github
 
 
 Now decompress the archivie
