@@ -22,7 +22,7 @@
 #  History
 ##################################################################
 #
-#  0.2.0 Add logging and change something in debug methods (2010-11-05)
+#  0.2.0 Add logging and change something in debug methods (2010-12-01)
 #  0.1.3 Correct a little problem with "Connection timed out"	 
 #  0.1.2 Add two debug methods (2010-13-08) 
 #  0.1.1 Add moveFile method (2010-07-02)
