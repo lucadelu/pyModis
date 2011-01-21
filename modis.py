@@ -22,6 +22,7 @@
 #  History
 ##################################################################
 #
+#  0.2.1 Little change in the logging option (2011-01-21)
 #  0.2.0 Add logging and change something in debug methods (2010-12-01)
 #  0.1.3 Correct a little problem with "Connection timed out"	 
 #  0.1.2 Add two debug methods (2010-13-08) 
@@ -122,22 +123,24 @@ class modisClass:
       self.dirData.reverse()
       # check if dirData contain only directory, delete all files                                            
       self.dirData = [elem.split()[-1] for elem in self.dirData if elem.startswith("d")]
-      logging.debug("Open connection %s" % self.url)
+      if self.debug==True:
+	logging.debug("Open connection %s" % self.url)
     except EOFError:
-      logging.debug('Error in connection')
+      logging.error('Error in connection')
       self.connectFTP()
 
   def closeFTP(self):
     """ Close ftp connection """
     self.ftp.quit()
-    logging.debug("Close connection %s" % self.url)
+    if self.debug==True:
+      logging.debug("Close connection %s" % self.url)
 
   def setDirectoryIn(self,day):
     """ Enter in the directory of the day """
     try:
       self.ftp.cwd(day)
     except (FTP.error_reply,socket.error), e:
-      logging.debug("Error %s entering in directory %s" % e, day)
+      logging.error("Error %s entering in directory %s" % e, day)
       self.setDirectoryIn(day)
 
   def setDirectoryOver(self):
@@ -145,7 +148,7 @@ class modisClass:
     try:
       self.ftp.cwd('..')
     except (FTP.error_reply,socket.error), e:
-      logging.debug("Error %s when try to come back" % e)
+      logging.error("Error %s when try to come back" % e)
       self.setDirectoryOver()
 
   def getLostDays(self):
@@ -240,7 +243,7 @@ class modisClass:
 	    finalList.append(i)
       return finalList
     except (FTP.error_reply,socket.error), e:
-      logging.debug("Error %s when try to receive list of files" % e)
+      logging.error("Error %s when try to receive list of files" % e)
       self.getFilesList()
 
   def checkDataExist(self,listNewFile, move = 0):
@@ -327,7 +330,8 @@ class modisClass:
       self.dayDownload(listFilesDown)
       self.setDirectoryOver()
     self.closeFTP()
-    logging.debug("Download terminated")
+    if self.debug==True:
+      logging.debug("Download terminated")
     return 0
 
   def debugLog(self):
