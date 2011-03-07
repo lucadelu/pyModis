@@ -43,6 +43,7 @@ import os
 import glob
 import logging
 import socket
+import ftplib
 
 class modisClass:
   """A class to download modis data from nasa ftp repositor"""
@@ -139,7 +140,7 @@ class modisClass:
     """ Enter in the directory of the day """
     try:
       self.ftp.cwd(day)
-    except (FTP.error_reply,socket.error), e:
+    except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s entering in directory %s" % e, day)
       self.setDirectoryIn(day)
 
@@ -147,7 +148,7 @@ class modisClass:
     """ Come back to old path """
     try:
       self.ftp.cwd('..')
-    except (FTP.error_reply,socket.error), e:
+    except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s when try to come back" % e)
       self.setDirectoryOver()
 
@@ -242,7 +243,7 @@ class modisClass:
 	  #    (self.tiles != None and self.tiles.count(File[2])) == 1:
 	    finalList.append(i)
       return finalList
-    except (FTP.error_reply,socket.error), e:
+    except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s when try to receive list of files" % e)
       self.getFilesList()
 
@@ -279,7 +280,7 @@ class modisClass:
       if self.debug==True:
 	logging.debug("File %s downloaded" % filDown)
     #if it have an error it try to download again the file
-    except (FTP.error_reply,socket.error), e:
+    except (ftplib.error_reply,socket.error), e:
       logging.error("Cannot download %s, retry.." % filDown)
       self.connectFTP()
       self.downloadFile(filDown,filSave)
