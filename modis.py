@@ -169,11 +169,7 @@ class modisClass:
       
       
   def getListDays(self):
-      days = set()
       self.getToday()
-      self.today   #data di partenza
-      self.delta   # giorni indietro
-      self.dirData # giorni disponibili
       
       today_s = self.today.strftime("%Y.%m.%d")
       # dirData is reverse sorted
