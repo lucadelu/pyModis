@@ -85,7 +85,7 @@ if __name__ == "__main__":
 	options.delta = 1;
 
     #set modis object
-    modisOgg = modis.modisClass(url = options.url, user = options.user, 
+    modisOgg = modis.downModis(url = options.url, user = options.user, 
 	password = options.password, destinationFolder = args[0], 
 	tiles = options.tiles, path = options.path, today = options.today, 
 	delta = int(options.delta), jpg = options.jpg, debug = options.debug)
@@ -93,14 +93,3 @@ if __name__ == "__main__":
     modisOgg.connectFTP()
     #download data
     modisOgg.downloadsAllDay()
-
-    #print options.user, type(options.user)
-    #print options.password, type(options.password)
-    #print options.delta,type(options.delta)
-    #print options.url,type(options.url)
-    #print args[0],type(args[0])
-    #print options.tiles,type(options.tiles)
-    #print options.path,type(options.path)
-    #print options.today,type(options.today)
-    #print options.jpg,type(options.jpg)
-    #print options.debug, type(options.debug)

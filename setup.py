@@ -23,7 +23,7 @@ from distutils.core import setup
 
 setup(
   name = 'pyModis',
-  version = '0.2',
+  version = '0.3',
   py_modules = ['modis'],
   scripts = ['downloadmodis.py'],
   author = 'Luca Delucchi',

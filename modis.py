@@ -22,7 +22,8 @@
 #  History
 ##################################################################
 #
-#  0.3.0 Fix the choosing of days (2011-05-22)
+#  0.3.0 Fix the choosing of days, change name modisClass to downModis 
+#        and add parseModis (2011-05-24)
 #  0.2.1 Little change in the logging option (2011-01-21)
 #  0.2.0 Add logging and change something in debug methods (2010-12-01)
 #  0.1.3 Correct a little problem with "Connection timed out"         
@@ -46,7 +47,7 @@ import logging
 import socket
 import ftplib
 
-class modisClass:
+class downModis:
   """A class to download modis data from nasa ftp repository"""
   def __init__(self, 
                 user,
@@ -90,7 +91,7 @@ class modisClass:
     if os.access(destinationFolder,os.W_OK):
       self.writeFilePath = destinationFolder
     else:
-      raise IOError("Folder to write downloaded files doesn't exist or is not"
+      raise IOError("Folder to write downloaded files doesn't exist or is not" \
     + "writeable")
     # set jpg download
     self.jpeg = jpg
@@ -169,6 +170,7 @@ class modisClass:
       
       
   def getListDays(self):
+      """ Return a list of all days selected """
       self.getToday()
       
       today_s = self.today.strftime("%Y.%m.%d")
@@ -355,37 +357,101 @@ class modisClass:
       string = day + ": " + str(len(listAllFiles)) + "\n"
       logger.debug(string)
       self.setDirectoryOver()   
+
+class parseModis:
+  def __init__(self, filename):
+
+    from xml.etree import ElementTree
+
+    self.hdfname = filename
+    self.xmlname = self.hdfname + '.xml'
+    with open(self.xmlname) as f:
+      self.tree = ElementTree.parse(f)
+      
+      
+  def __str__(self):
+    """Print the file without xml tags"""
+    retString = ""
+    try:
+      for node in self.tree.iter():
+        if node.text.strip() != '':
+          retString = "%s = %s\n" % (node.tag,node.text) 
+    except:
+      for node in self.tree.getiterator():
+        if node.text.strip() != '':
+          retString = "%s = %s\n" % (node.tag,node.text) 
+    return retString
     
-  #def moveFile(self,newDirectory):
-    #""" Move files from a directory to another. First read the data from old 
-    #directory, after control different version and remove old version, at the 
-    #finish it move files into the new directory"""
-    #fileInPath = []
-    ## check if directory is writable
-    #if os.access(newDirectory,os.W_OK):
-      #newDirectory = newDirectory
-    #else:
-      #raise IOError("Folder to move downloaded files doesn't exist or is not"
-    #+ "writeable")
-    ## add all files found in the directory where we want move the new files
-    #for f in os.listdir(newDirectory):
-      #if os.path.isfile(os.path.join(newDirectory, f)):
-        #fileInPath.append(f)
-    ## check wich data already exist
-    #listFilesMove = self.checkDataExist(fileInPath,move = 1)
-    ## for all files
-    #for i in listFilesMove:
-      #fileSplit = i.split('.')
-      #filePrefix = fileSplit[0] + '.' + fileSplit[1] + '.' + fileSplit[2] \
-      #+ '.' + fileSplit[3]
-      #if len(glob.glob1(newDirectory, filePrefix + "*" \
-      #+ fileSplit[-1])) == 0:
-        #file_hdf = self.writeFilePath + i
-        #os.system ("mv"+ " " + file_hdf + " " + newDirectory)
-      #elif len(glob.glob1(newDirectory, filePrefix + "*" \
-      #+ fileSplit[-1])) == 1:
-        #files = glob.glob(newDirectory + "*" + filePrefix + "*" \
-        #+ fileSplit[-1])
-        #fileDown = self.getNewerVersion(files[0],i).split('/')
-        #if fileDown[-1] != files[0].split('/')[-1]:        
-          #print ""
+  def getRoot(self):
+    """Return the root element"""
+    self.rootree = self.tree.getroot()
+    
+  def getGranule(self):
+    """Return the GranuleURMetaData element"""
+    self.getRoot()
+    self.granule = self.rootree.find('GranuleURMetaData')
+    
+  def getDataGranule(self):
+    """Return the ECSDataGranule element"""
+    self.getGranule()
+    self.DataGranule = self.granule.find('ECSDataGranule')
+    
+  def getDayNight(self):
+    """Return the DayNightFlag element"""
+    self.getDataGranule()
+    return self.DataGranule.find('DayNightFlag').text
+    
+  def getRangeTime(self):
+    """Return the RangeDateTime elements inside a dictionary with the element
+       name like dictionary key
+    """
+    self.getGranule()
+    rangeTime = {}
+    for i in self.granule.find('RangeDateTime').getiterator():
+      if i.text.strip() != '':
+        rangeTime[i.tag] = i.text      
+    return rangeTime
+
+  def getPGEVersion(self):
+    """Return the PGEVersion element"""
+    self.getGranule()
+    return self.granule.find('PGEVersionClass').find('PGEVersion').text
+
+  def getBoundary(self):
+    """Return the maximum extend of the MODIS file inside a dictionary"""
+    self.getGranule()
+    self.boundary = []
+    lat = []
+    lon = []
+    spatialContainer = self.granule.find('SpatialDomainContainer')
+    horizontal = spatialContainer.find('HorizontalSpatialDomainContainer')
+    boundary = horizontal.find('GPolygon').find('Boundary')
+    for i in boundary.findall('Point'):
+      la = float(i.find('PointLongitude').text)
+      lo = float(i.find('PointLatitude').text)
+      lon.append(la)
+      lat.append(lo)
+      self.boundary.append({'lat': la, 'lon':lo})
+    extent = {'min_lat':min(lat),'max_lat':max(lat),'min_lon':min(lon),
+                'max_lon':max(lon)}
+    return extent
+    
+  def getPSA(self):
+    """Return the PSA values inside a dictionary, the PSAName is he key and
+       and PSAValue is the value
+    """
+    psaValue = {}
+    self.getGranule()
+    psas = self.granule.find('PSAs')
+    for i in psas.findall('PSA'):
+      psaValue[i.find('PSAName').text] = i.find('PSAValue').text
+    return psaValue
+    
+  def getMeasure(self):
+    """Return statistics inside a dictionary"""
+    mesValue = {}
+    self.getGranule()
+    mes = self.granule.find('MeasuredParameter')
+    meStat = mes.find('MeasuredParameterContainer').find('QAStats')
+    for i in meStat.getiterator():
+      mesValue[i.tag] = i.text
