@@ -217,6 +217,8 @@ class downModis:
           #if self.tiles == None or \
           #    (self.tiles != None and self.tiles.count(File[2])) == 1:
             finalList.append(i)
+      if self.debug==True:
+        logging.debug("The number of file to download is: %i" % len(finalList))     
       return finalList
     except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s when try to receive list of files" % e)
@@ -273,15 +275,17 @@ class downModis:
           numFiles = len(glob.glob1(self.writeFilePath, filePrefix + "*" \
           + fileSplit[-1]))
           if numFiles == 0:
-            file_hdf = open(self.writeFilePath + i, "wb")
+            file_hdf = open(os.path.join(self.writeFilePath,i), "wb")
           elif numFiles == 1:
             files = glob.glob(self.writeFilePath + "*" + filePrefix + "*" \
             + fileSplit[-1])
             # check the version of file
             fileDown = self.getNewerVersion(files[0],i).split('/')
+            import pdb; pdb.set_trace()
+
             if fileDown[-1] != files[0].split('/')[-1]:
               os.remove(files[0])
-              file_hdf = open(self.writeFilePath + fileDown[-1], "wb")
+              file_hdf = open(os.path.join(self.writeFilePath,fileDown[-1]), "wb")
           elif len(glob.glob1(self.writeFilePath, "*" + filePrefix + "*" \
           + fileSplit[-1])) > 1:
             logging.error("There are to much files for %s" % i)
@@ -294,6 +298,8 @@ class downModis:
     """ Downloads all the tiles considered """
     #return the days to download
     days = self.getListDays()
+    if self.debug==True:
+      logging.debug("The number of days to download is: %i" % len(days))
     #for each day
     for day in days:
       #enter in the directory of day
