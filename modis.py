@@ -272,26 +272,21 @@ class downModis:
         #for debug, download only xml
         if (self.debug and fileSplit[-1] == 'xml') or not self.debug:
           # check data exist in the return directory, if it doesn't exist
-          numFiles = len(glob.glob1(self.writeFilePath, filePrefix + "*" \
-          + fileSplit[-1]))
+          oldFile = glob.glob1(self.writeFilePath, filePrefix + "*" \
+          + fileSplit[-1])
+          numFiles = len(oldFile)
           if numFiles == 0:
             file_hdf = open(os.path.join(self.writeFilePath,i), "wb")
           elif numFiles == 1:
-            files = glob.glob(self.writeFilePath + "*" + filePrefix + "*" \
-            + fileSplit[-1])
-            # check the version of file
-            fileDown = self.getNewerVersion(files[0],i).split('/')
-            import pdb; pdb.set_trace()
-
-            if fileDown[-1] != files[0].split('/')[-1]:
-              os.remove(files[0])
-              file_hdf = open(os.path.join(self.writeFilePath,fileDown[-1]), "wb")
-          elif len(glob.glob1(self.writeFilePath, "*" + filePrefix + "*" \
-          + fileSplit[-1])) > 1:
+            # check the version of file  
+            fileDown = self.getNewerVersion(oldFile[0],i)
+            if fileDown != oldFile[0]:
+              os.remove(os.path.join(self.writeFilePath,oldFile[0]))
+              file_hdf = open(os.path.join(self.writeFilePath,fileDown), "wb")
+          elif numFiles > 1:
             logging.error("There are to much files for %s" % i)
             #raise EOFError("There are to much file with the same prefix")
-          if numFiles == 0 or \
-              (numFiles == 1 and fileDown[-1] != files[0].split('/')[-1]):
+          if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
             self.downloadFile(i,file_hdf)
 
   def downloadsAllDay(self):
