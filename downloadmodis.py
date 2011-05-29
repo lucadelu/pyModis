@@ -28,7 +28,7 @@ class OptionParser(optparse.OptionParser):
             if hasattr(option, strREQUIRED) and option.required:
                 if not getattr(values, option.dest):
                     self.error("option %s is required" % (str(option)))
-        return optparse.OptionParser.check_values(self, values, args)               
+        return optparse.OptionParser.check_values(self, values, args)
 
 #add options
 if __name__ == "__main__":
@@ -62,6 +62,11 @@ if __name__ == "__main__":
 		      help="the day to start download, " \
 		      + "[default=%default is for today]; if you want change" \
 		      " data you must use this format YYYY-MM-DD")
+    #first day
+    parser.add_option("-e", "--endday", dest="enday", default=None,
+                      help="the day to start download, " \
+                      + "[default=%default]; if you want change" \
+                      " data you must use this format YYYY-MM-DD")
     #debug
     parser.add_option("-x", action="store_true", dest="debug", default=True,
 		      help="this is useful for debug the download")
@@ -88,7 +93,8 @@ if __name__ == "__main__":
     modisOgg = modis.downModis(url = options.url, user = options.user, 
 	password = options.password, destinationFolder = args[0], 
 	tiles = options.tiles, path = options.path, today = options.today, 
-	delta = int(options.delta), jpg = options.jpg, debug = options.debug)
+	enddate = options.enday, delta = int(options.delta), jpg = options.jpg,
+	debug = options.debug)
     #connect to ftp
     modisOgg.connectFTP()
     #download data

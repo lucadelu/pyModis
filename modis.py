@@ -8,15 +8,15 @@
 #
 ##################################################################
 #
-#  Modis class is licensed under the terms of GNU GPL 2                
-#  This program is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU General Public License as 
-#  published by the Free Software Foundation; either version 2 of 
-#  the License,or (at your option) any later version.                
-#  This program is distributed in the hope that it will be useful,        
-#  but WITHOUT ANY WARRANTY; without even implied warranty of        
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                
-#  See the GNU General Public License for more details.        
+#  Modis class is licensed under the terms of GNU GPL 2
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of
+#  the License,or (at your option) any later version.
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#  See the GNU General Public License for more details.
 #
 ##################################################################
 #  History
@@ -26,7 +26,7 @@
 #        and add parseModis (2011-05-24)
 #  0.2.1 Little change in the logging option (2011-01-21)
 #  0.2.0 Add logging and change something in debug methods (2010-12-01)
-#  0.1.3 Correct a little problem with "Connection timed out"         
+#  0.1.3 Correct a little problem with "Connection timed out"
 #  0.1.2 Add two debug methods (2010-13-08) 
 #  0.1.1 Add moveFile method (2010-07-02)
 #  0.1.0 First Version of Modis Class (2010-06-19)
@@ -105,9 +105,8 @@ class downModis:
     self.jpeg = jpg
     # today
     self.today = today
-    # today
+    # force the last day
     self.enday = enddate
-    
     # delta of days
     self.delta = delta
     # status of tile download
@@ -169,7 +168,7 @@ class downModis:
   def str2date(self,strin):
       """Return a date object from a string"""
       todaySplit = strin.split('-')
-      return date(int(todaySplit[0]), int(todaySplit[1]),int(todaySplit[2]))    
+      return date(int(todaySplit[0]), int(todaySplit[1]),int(todaySplit[2]))
 
   def getToday(self):
     """Return the first day for start to download"""
@@ -199,14 +198,19 @@ class downModis:
         import sys
         sys.exit()
       days = self.dirData[today_index:][:self.delta]
+      # this is useful for 8/16 days data, delta could download more images
+      # that you want
       if self.enday != None:
         enday_s = self.enday.strftime("%Y.%m.%d")
         delta = 0
+        # it make a for cicle from the last value and find the internal delta
+        #to remove file outside temporaly range
         for i in range(-(len(days)),0):
           if days[i] < enday_s:
             break
           else:
             delta = delta + 1
+        # remove days outside new delta
         days = days[:delta]
       return days
       
@@ -241,7 +245,7 @@ class downModis:
           #    (self.tiles != None and self.tiles.count(File[2])) == 1:
             finalList.append(i)
       if self.debug==True:
-        logging.debug("The number of file to download is: %i" % len(finalList))     
+        logging.debug("The number of file to download is: %i" % len(finalList))
       return finalList
     except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s when try to receive list of files" % e)
@@ -262,7 +266,7 @@ class downModis:
     elif move == 1:
       listOfDifferent = list(set(fileInPath) - set(listNewFile))
     return listOfDifferent
-  
+
   def getNewerVersion(self,oldFile,newFile):
     """ Return newer version of a file"""
     oldFileSplit = oldFile.split('.')
@@ -270,8 +274,8 @@ class downModis:
     if oldFileSplit[4] > newFileSplit[4]:
       return oldFile
     else:
-      return newFile      
-      
+      return newFile
+
   def downloadFile(self,filDown,filSave):
     """Download the single file"""
     #try to download file
