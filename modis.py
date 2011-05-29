@@ -561,3 +561,24 @@ class parseModis:
     """Return the PGEVersion element"""
     self.getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
+
+  def confResample(self,filePath,output,
+                  resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',
+                  projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
+                  datum = 'WGS84'
+                  ):
+    """Write a configuration file for resample mrt software (TO TEST)"""
+    conFile = open('mrt_resample.conf', 'w')
+    conFile.write("INPUT_FILENAME = %s" % self.hdfname)
+    conFile.write("SPECTRAL_SUBSET = ( 1 1 )")
+    conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG")
+    bound = self.retBoundary()
+    # Order:  UL: N W  - LR: S E
+    conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )" % (bound['max_lat'],bound['min_lon']))
+    conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )" % (bound['min_lat'],bound['max_lon']))
+    conFile.write("OUTPUT_FILENAME = %s" % output)
+    conFile.write("RESAMPLING_TYPE = %s" % resampl)
+    conFile.write("OUTPUT_PROJECTION_TYPE = %s" % projtype)
+    conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s" % projpar)
+    conFile.write("DATUM = %s" % datum)
+    conFile.close()
