@@ -57,6 +57,7 @@ class downModis:
                 tiles = None,
                 path = "MOLT/MOD11A1.005",
                 today = None,
+                enddate = None,
                 delta = 10,
                 jpg = False,
                 debug = False
@@ -93,10 +94,20 @@ class downModis:
     else:
       raise IOError("Folder to write downloaded files doesn't exist or is not" \
     + "writeable")
+    # write a file with the name of file downloaded
+    if len(self.path.split('/')) == 2:
+      self.product = self.path.split('/')[1]
+    elif len(self.path.split('/')) == 3:
+      self.product = self.path.split('/')[2]
+    self.fileslist = open(os.path.join(self.writeFilePath, 'listfile' \
+    + self.product + '.txt'),'w')
     # set jpg download
     self.jpeg = jpg
     # today
     self.today = today
+    # today
+    self.enday = enddate
+    
     # delta of days
     self.delta = delta
     # status of tile download
@@ -105,7 +116,7 @@ class downModis:
     self.debug = debug
     # for logging
     LOG_FILENAME = os.path.join(self.writeFilePath, 'modis' \
-    + self.path.split('/')[1] + '.log')
+    + self.product + '.log')
     LOGGING_FORMAT='%(asctime)s - %(levelname)s - %(message)s'
     logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, \
     format=LOGGING_FORMAT)
@@ -135,6 +146,7 @@ class downModis:
   def closeFTP(self):
     """ Close ftp connection """
     self.ftp.quit()
+    self.fileslist.close()
     if self.debug==True:
       logging.debug("Close connection %s" % self.url)
 
@@ -154,20 +166,22 @@ class downModis:
       logging.error("Error %s when try to come back" % e)
       self.setDirectoryOver()
 
+  def str2date(self,strin):
+      """Return a date object from a string"""
+      todaySplit = strin.split('-')
+      return date(int(todaySplit[0]), int(todaySplit[1]),int(todaySplit[2]))    
+
   def getToday(self):
     """Return the first day for start to download"""
     if self.today == None:
       # set today variable to today
       self.today = date.today()
-      # variable to determinate where start the cicle 
-      self.numDay = 0
     else:
       # set today variable to data pass from user
-      todaySplit = self.today.split('-')
-      self.today = date(int(todaySplit[0]), int(todaySplit[1]),
-      int(todaySplit[2]))
-      #self.getNumberToday()
-      
+      self.today = self.str2date(self.today)
+      # set enday variable to data
+    if self.enday != None:
+      self.enday = self.str2date(self.enday)
       
   def getListDays(self):
       """ Return a list of all days selected """
@@ -176,15 +190,24 @@ class downModis:
       today_s = self.today.strftime("%Y.%m.%d")
       # dirData is reverse sorted
       for i, d in enumerate(self.dirData):
-          if d <= today_s:
-              today_avail = d
-              today_index = i
-              break
+        if d <= today_s:
+          today_avail = d
+          today_index = i
+          break
       else:
-          print "no data available for requested days"
-          import sys
-          sys.exit()
+        logging.error("No data available for requested days")
+        import sys
+        sys.exit()
       days = self.dirData[today_index:][:self.delta]
+      if self.enday != None:
+        enday_s = self.enday.strftime("%Y.%m.%d")
+        delta = 0
+        for i in range(-(len(days)),0):
+          if days[i] < enday_s:
+            break
+          else:
+            delta = delta + 1
+        days = days[:delta]
       return days
       
 
