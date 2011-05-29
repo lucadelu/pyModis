@@ -99,7 +99,7 @@ class downModis:
       self.product = self.path.split('/')[1]
     elif len(self.path.split('/')) == 3:
       self.product = self.path.split('/')[2]
-    self.fileslist = open(os.path.join(self.writeFilePath, 'listfile' \
+    self.filelist = open(os.path.join(self.writeFilePath, 'listfile' \
     + self.product + '.txt'),'w')
     # set jpg download
     self.jpeg = jpg
@@ -145,7 +145,7 @@ class downModis:
   def closeFTP(self):
     """ Close ftp connection """
     self.ftp.quit()
-    self.fileslist.close()
+    self.filelist.close()
     if self.debug==True:
       logging.debug("Close connection %s" % self.url)
 
@@ -185,7 +185,7 @@ class downModis:
   def getListDays(self):
       """ Return a list of all days selected """
       self.getToday()
-      
+
       today_s = self.today.strftime("%Y.%m.%d")
       # dirData is reverse sorted
       for i, d in enumerate(self.dirData):
@@ -213,7 +213,6 @@ class downModis:
         # remove days outside new delta
         days = days[:delta]
       return days
-      
 
   def getFilesList(self):
     """ Create a list of files to download, is possible choose if download 
@@ -281,6 +280,7 @@ class downModis:
     #try to download file
     try:
       self.ftp.retrbinary("RETR " + filDown, filSave.write)
+      self.filelist.write("%s\n" % filDown)
       if self.debug==True:
         logging.debug("File %s downloaded" % filDown)
     #if it have an error it try to download again the file
@@ -378,7 +378,6 @@ class downModis:
     each day"""
     logger = debugLog()
     days = self.getListDays()
-    fil = open('listfile.txt', 'w')
     for day in days:
       self.setDirectoryIn(day)
       listAllFiles = self.getFilesList()
@@ -395,8 +394,7 @@ class parseModis:
     self.xmlname = self.hdfname + '.xml'
     with open(self.xmlname) as f:
       self.tree = ElementTree.parse(f)
-      
-      
+
   def __str__(self):
     """Print the file without xml tags"""
     retString = ""
@@ -409,27 +407,80 @@ class parseModis:
         if node.text.strip() != '':
           retString = "%s = %s\n" % (node.tag,node.text) 
     return retString
-    
+
   def getRoot(self):
-    """Return the root element"""
+    """Set the root element"""
     self.rootree = self.tree.getroot()
-    
+
+  def retDTD(self):
+    """Return the DTDVersion element"""
+    self.getRoot()
+    return self.rootree.find('DTDVersion').text
+
+  def retDataCenter(self):
+    """Return the DataCenterId element"""
+    self.getRoot()
+    return self.rootree.find('DataCenterId').text
+
   def getGranule(self):
-    """Return the GranuleURMetaData element"""
+    """Set the GranuleURMetaData element"""
     self.getRoot()
     self.granule = self.rootree.find('GranuleURMetaData')
-    
-  def getDataGranule(self):
-    """Return the ECSDataGranule element"""
+
+  def retGranuleUR(self):
+    """Return the GranuleUR element"""
     self.getGranule()
-    self.DataGranule = self.granule.find('ECSDataGranule')
-    
-  def getDayNight(self):
-    """Return the DayNightFlag element"""
-    self.getDataGranule()
-    return self.DataGranule.find('DayNightFlag').text
-    
-  def getRangeTime(self):
+    return self.granule.find('GranuleUR')
+
+  def retDbID(self):
+    """Return the DbID element"""
+    self.getGranule()
+    return self.granule.find('DbID')
+
+  def retInsertTime(self):
+    """Return the DbID element"""
+    self.getGranule()
+    return self.granule.find('InsertTime')
+
+  def retLastUpdate(self):
+    """Return the DbID element"""
+    self.getGranule()
+    return self.granule.find('LastUpdate')
+
+  def retCollectionMetaData(self):
+    """Return the CollectionMetaData element"""
+    self.getGranule()
+    collect = {}
+    for i in self.granule.find('CollectionMetaData').getiterator():
+      if i.text.strip() != '':
+        collect[i.tag] = i.text
+    return collect
+
+  def retDataFiles(self):
+    """Return the DataFiles element"""
+    self.getGranule()
+    collect = {}
+    datafiles = self.granule.find('DataFiles')
+    for i in datafiles.find('DataFileContainer').getiterator():
+      if i.text.strip() != '':
+        collect[i.tag] = i.text
+    return collect
+
+  def retDataGranule(self):
+    """Return the ECSDataGranule elements"""
+    self.getGranule()
+    datagran = {}
+    for i in self.granule.find('ECSDataGranule').getiterator():
+      if i.text.strip() != '':
+        datagran[i.tag] = i.text
+    return datagran
+
+  def retPGEVersion(self):
+    """Return the PGEVersion element"""
+    self.getGranule()
+    return self.granule.find('PGEVersionClass').find('PGEVersion').text
+
+  def retRangeTime(self):
     """Return the RangeDateTime elements inside a dictionary with the element
        name like dictionary key
     """
@@ -437,15 +488,10 @@ class parseModis:
     rangeTime = {}
     for i in self.granule.find('RangeDateTime').getiterator():
       if i.text.strip() != '':
-        rangeTime[i.tag] = i.text      
+        rangeTime[i.tag] = i.text
     return rangeTime
 
-  def getPGEVersion(self):
-    """Return the PGEVersion element"""
-    self.getGranule()
-    return self.granule.find('PGEVersionClass').find('PGEVersion').text
-
-  def getBoundary(self):
+  def retBoundary(self):
     """Return the maximum extend of the MODIS file inside a dictionary"""
     self.getGranule()
     self.boundary = []
@@ -463,23 +509,55 @@ class parseModis:
     extent = {'min_lat':min(lat),'max_lat':max(lat),'min_lon':min(lon),
                 'max_lon':max(lon)}
     return extent
-    
-  def getPSA(self):
+
+  def retMeasure(self):
+    """Return statistics inside a dictionary"""
+    value = {}
+    self.getGranule()
+    mes = self.granule.find('MeasuredParameter')
+    value['ParameterName'] = mes.find('ParameterName').text
+    meStat = mes.find('MeasuredParameterContainer').find('QAStats')
+    qastat = {}
+    for i in meStat.getiterator():
+      qastat[i.tag] = i.text
+    value['QAStats'] = qastat
+    meFlag = mes.find('MeasuredParameterContainer').find('QAFlags')
+    flagstat = {}
+    for i in meStat.getiterator():
+      flagstat[i.tag] = i.text
+    value['QAFlags'] = flagstat
+    return value
+
+  def retPlatform(self):
+    """Return the platform values inside a dictionary."""
+    value = {}
+    self.getGranule()
+    value['PlatformShortName'] = self.granule.find('PlatformShortName').text
+    instr = self.granule.find('Instrument')
+    value['InstrumentShortName'] = instr.find('InstrumentShortName').text
+    sensor = instr.find('Sensor')
+    value['SensorShortName'] = sensor.find('SensorShortName').text
+    return value
+
+  def retPSA(self):
     """Return the PSA values inside a dictionary, the PSAName is he key and
        and PSAValue is the value
     """
-    psaValue = {}
+    value = {}
     self.getGranule()
     psas = self.granule.find('PSAs')
     for i in psas.findall('PSA'):
-      psaValue[i.find('PSAName').text] = i.find('PSAValue').text
-    return psaValue
-    
-  def getMeasure(self):
-    """Return statistics inside a dictionary"""
-    mesValue = {}
+      value[i.find('PSAName').text] = i.find('PSAValue').text
+    return value
+
+  def retInputGranule(self):
+    value = []
     self.getGranule()
-    mes = self.granule.find('MeasuredParameter')
-    meStat = mes.find('MeasuredParameterContainer').find('QAStats')
-    for i in meStat.getiterator():
-      mesValue[i.tag] = i.text
+    for i in self.granule.find('InputGranule').getiterator():
+      value.append(i.text)
+    return value
+
+  def retBrowseProduct(self):
+    """Return the PGEVersion element"""
+    self.getGranule()
+    return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
