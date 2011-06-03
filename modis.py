@@ -39,13 +39,12 @@
 __version__ = '0.3.0'
 
 from datetime import *
-from ftplib import FTP
 import string
 import os
+import sys
 import glob
 import logging
 import socket
-import ftplib
 
 class downModis:
   """A class to download modis data from nasa ftp repository"""
@@ -78,6 +77,9 @@ class downModis:
         Create ftp istance, connect user to ftp server and go to the 
         directory where data are storage
     """
+    from ftplib import FTP
+    import ftplib
+
     # url modis
     self.url = url
     # user for download
@@ -392,6 +394,7 @@ class parseModis:
 
     self.hdfname = filename
     self.xmlname = self.hdfname + '.xml'
+    self.tifname = self.hdfname.replace('.hdf','.tif')
     with open(self.xmlname) as f:
       self.tree = ElementTree.parse(f)
 
@@ -562,13 +565,13 @@ class parseModis:
     self.getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
 
-  def confResample(self,filePath,output,
+  def confResample(self, filePath, output = self.tifname,
                   resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
                   datum = 'WGS84'
                   ):
     """Write a configuration file for resample mrt software (TO TEST)"""
-    conFile = open('mrt_resample.conf', 'w')
+    conFile = open(os.path.join(filePath,'mrt_resample.conf'), 'w')
     conFile.write("INPUT_FILENAME = %s" % self.hdfname)
     conFile.write("SPECTRAL_SUBSET = ( 1 1 )")
     conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG")
@@ -582,3 +585,22 @@ class parseModis:
     conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s" % projpar)
     conFile.write("DATUM = %s" % datum)
     conFile.close()
+
+def convertModis:
+  """A class to convert modis data from hdf to tif using resample (mrt tools)"""
+  def __init__(self,
+              filename, 
+              confile, 
+              mrtpath):
+    self.name = filename
+    self.conf = confile
+    self.mrtpath = mrtpath
+    
+  def executable(self):
+    """return the executable
+       if windows an exe file
+    """
+    if sys.platform.count('linux') != -1:
+      return 'resample'
+    elif sys.platform.count('win32') != -1:
+      return 'resample.exe'
