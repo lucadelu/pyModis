@@ -45,6 +45,8 @@ import sys
 import glob
 import logging
 import socket
+from ftplib import FTP
+import ftplib
 
 class downModis:
   """A class to download modis data from nasa ftp repository"""
@@ -77,8 +79,6 @@ class downModis:
         Create ftp istance, connect user to ftp server and go to the 
         directory where data are storage
     """
-    from ftplib import FTP
-    import ftplib
 
     # url modis
     self.url = url
@@ -89,18 +89,22 @@ class downModis:
     # directory where data are collected
     self.path = path
     # tiles to downloads
-    self.tiles = tiles
+    if tiles:
+        self.tiles = tiles.split(',')
+    else:
+        self.tiles = tiles
     # set destination folder
     if os.access(destinationFolder,os.W_OK):
       self.writeFilePath = destinationFolder
     else:
       raise IOError("Folder to write downloaded files doesn't exist or is not" \
     + "writeable")
-    # write a file with the name of file downloaded
+    # return the name of product
     if len(self.path.split('/')) == 2:
       self.product = self.path.split('/')[1]
     elif len(self.path.split('/')) == 3:
       self.product = self.path.split('/')[2]
+    # write a file with the name of file downloaded
     self.filelist = open(os.path.join(self.writeFilePath, 'listfile' \
     + self.product + '.txt'),'w')
     # set jpg download
@@ -219,32 +223,37 @@ class downModis:
   def getFilesList(self):
     """ Create a list of files to download, is possible choose if download 
     also jpeg files or only hdf"""
-    finalList = []
+    def cicle_file(jpeg=False,tile=True):
+      finalList = []
+      for i in self.listfiles:
+        File = i.split('.')
+        # distinguish jpeg files from hdf files by the number of index 
+        # where find the tile index
+        if not tile and not (File.count('jpg') or File.count('BROWSE')):
+          finalList.append(i)
+        if tile and self.tiles.count(File[3]) == 1 and jpeg: #is a jpeg of tiles number
+          finalList.append(i)
+        if tile and self.tiles.count(File[2]) == 1: #is a hdf of tiles number
+          finalList.append(i)
+      return finalList
+
     # return the file's list inside the directory of each day
     try:
       self.listfiles = self.ftp.nlst() 
-      # finallist is ugual to all file with jpeg file
-      if self.jpeg and not self.tiles:
-        finalList = self.listfiles
-      # finallist is ugual to files of tiles passed at initialization of modis 
-      # class, jpeg and hdf file are considered
-      elif self.jpeg and self.tiles != None:
-        for i in self.listfiles:
-          File = i.split('.')
-          # distinguish jpeg files from hdf files by the number of index 
-          # where find the tile index
-          if self.tiles.count(File[3]) == 1: #is a jpeg of tiles number
-            finalList.append(i)
-          elif self.tiles.count(File[2]) == 1: #is a hdf of tiles number
-            finalList.append(i)  
-      # finallist is only hdf are considered
-      elif self.jpeg == False:
-        for i in self.listfiles:
-          File = i.split('.')
-          if not self.tiles or self.tiles.count(File[2]) == 1:
-          #if self.tiles == None or \
-          #    (self.tiles != None and self.tiles.count(File[2])) == 1:
-            finalList.append(i)
+      # download also jpeg
+      if self.jpeg:
+        # finallist is ugual to all file with jpeg file
+        if not self.tiles:
+          finalList = self.listfiles
+        # finallist is ugual to tiles file with jpeg file
+        else:
+          finalList = cicle_file(jpeg=True)
+      # not download jpeg
+      else:
+        if not self.tiles:
+          finalList = cicle_file(tile=False)          
+        else:
+          finalList = cicle_file()
       if self.debug==True:
         logging.debug("The number of file to download is: %i" % len(finalList))
       return finalList
@@ -397,6 +406,11 @@ class parseModis:
     self.tifname = self.hdfname.replace('.hdf','.tif')
     with open(self.xmlname) as f:
       self.tree = ElementTree.parse(f)
+    # return the name of product
+    if len(self.path.split('/')) == 2:
+      self.product = self.path.split('/')[1]
+    elif len(self.path.split('/')) == 3:
+      self.product = self.path.split('/')[2]
 
   def __str__(self):
     """Print the file without xml tags"""
@@ -565,13 +579,18 @@ class parseModis:
     self.getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
 
-  def confResample(self, filePath, output = self.tifname,
+  def confResample(self, filePath, output = None,
                   resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
                   datum = 'WGS84'
                   ):
+    if not output:
+      fileout = self.tifname
+    else:
+      fileout = output
     """Write a configuration file for resample mrt software (TO TEST)"""
-    conFile = open(os.path.join(filePath,'mrt_resample.conf'), 'w')
+    filename = os.join.path(filePath,'%s_mrt_resample.conf' % self.product)
+    conFile = open(filename, 'w')
     conFile.write("INPUT_FILENAME = %s" % self.hdfname)
     conFile.write("SPECTRAL_SUBSET = ( 1 1 )")
     conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG")
@@ -585,22 +604,37 @@ class parseModis:
     conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s" % projpar)
     conFile.write("DATUM = %s" % datum)
     conFile.close()
+    return filename
 
-def convertModis:
+class convertModis:
   """A class to convert modis data from hdf to tif using resample (mrt tools)"""
   def __init__(self,
-              filename, 
+              hdfname, 
               confile, 
               mrtpath):
-    self.name = filename
-    self.conf = confile
-    self.mrtpath = mrtpath
-    
+    if os.path.exists(hdfname):
+        self.name = hdfname
+    else:
+        raise IOError('%s not exist' % hdfname)
+    if os.path.exists(confile):
+        self.conf = confile
+    else:
+        raise IOError('%s not exist' % confile)
+    if os.path.exists(mrtpath):
+        self.mrtpath = mrtpath
+    else:
+        raise IOError('The path %s not exist' % mrtpath)
+
   def executable(self):
     """return the executable
-       if windows an exe file
+       on windows an exe file
     """
     if sys.platform.count('linux') != -1:
       return 'resample'
     elif sys.platform.count('win32') != -1:
       return 'resample.exe'
+
+#class createMosaic:
+  #def __init__(self
+              #listfile,
+              #mrtpath)
