@@ -591,7 +591,7 @@ class parseModis:
       fileout = output
     """Write a configuration file for resample mrt software (TO TEST)"""
     filename = os.path.join(self.path,'%s_mrt_resample.conf' % self.code)
-    if os.path.exist(filename):
+    if os.path.exists(filename):
       shutil.rmtree(filename)
     conFile = open(filename, 'w')
     conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
@@ -639,7 +639,7 @@ class convertModis:
     else:
         raise IOError('%s not exists' % confile)
     if os.path.exists(mrtpath):
-        sys.path.
+        sys.path.append(mrtpath)
         self.mrtpath = mrtpath
     else:
         raise IOError('The path %s not exists' % mrtpath)
