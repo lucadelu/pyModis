@@ -47,6 +47,7 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
+import shutil
 
 class downModis:
   """A class to download modis data from nasa ftp repository"""
@@ -406,12 +407,9 @@ class parseModis:
     self.tifname = self.hdfname.replace('.hdf','.tif')
     with open(self.xmlname) as f:
       self.tree = ElementTree.parse(f)
-    # return the name of product
-    if len(self.path.split('/')) == 2:
-      self.product = self.path.split('/')[1]
-    elif len(self.path.split('/')) == 3:
-      self.product = self.path.split('/')[2]
-
+    # return the code of tile for conf file
+    self.code = os.path.split(self.hdfname)[1].split('.')[-2]
+    self.path = os.path.split(self.hdfname)[0]
   def __str__(self):
     """Print the file without xml tags"""
     retString = ""
@@ -579,30 +577,50 @@ class parseModis:
     self.getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
 
-  def confResample(self, filePath, output = None,
+  def confResample(self, spectral, res, output = None,
                   resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
-                  datum = 'WGS84'
+                  datum = 'WGS84', utm = None
                   ):
+    proj_list = ('GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 'SIN', 'TM', 'UTM')
+    resam_list = ('NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE')
+    datum_list = ('NONE', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
     if not output:
       fileout = self.tifname
     else:
       fileout = output
     """Write a configuration file for resample mrt software (TO TEST)"""
-    filename = os.join.path(filePath,'%s_mrt_resample.conf' % self.product)
+    filename = os.path.join(self.path,'%s_mrt_resample.conf' % self.code)
+    if os.path.exist(filename):
+      shutil.rmtree(filename)
     conFile = open(filename, 'w')
-    conFile.write("INPUT_FILENAME = %s" % self.hdfname)
-    conFile.write("SPECTRAL_SUBSET = ( 1 1 )")
-    conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG")
+    conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
+    conFile.write("SPECTRAL_SUBSET = %s\n" % spectral)
+    conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG\n")
     bound = self.retBoundary()
     # Order:  UL: N W  - LR: S E
-    conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )" % (bound['max_lat'],bound['min_lon']))
-    conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )" % (bound['min_lat'],bound['max_lon']))
-    conFile.write("OUTPUT_FILENAME = %s" % output)
-    conFile.write("RESAMPLING_TYPE = %s" % resampl)
-    conFile.write("OUTPUT_PROJECTION_TYPE = %s" % projtype)
-    conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s" % projpar)
-    conFile.write("DATUM = %s" % datum)
+    conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )\n" % (bound['max_lat'],bound['min_lon']))
+    conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )\n" % (bound['min_lat'],bound['max_lon']))
+    conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
+    if resampl in resam_list:
+      conFile.write("RESAMPLING_TYPE = %s\n" % resampl)
+    else:
+      raise IOError('The resampling type %s is not supportet.\n' \
+                   'The resampling type supported are %s' % (resampl,resam_list))
+    if projtype in proj_list:
+      conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
+    else:
+      raise IOError('The projection type %s is not supportet.\n' \
+                   'The projections supported are %s' % (projtype,proj_list))
+    conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s\n" % projpar)
+    if datum in datum_list:
+      conFile.write("DATUM = %s\n" % datum)
+    else:
+      raise IOError('The datum %s is not supportet.\n' \
+                   'The datum supported are %s' % (datum,datum_list))
+    if utm:
+      conFile.write("UTM_ZONE = %s\n" % utm)
+    conFile.write("OUTPUT_PIXEL_SIZE = %i\n" % res)
     conFile.close()
     return filename
 
@@ -615,25 +633,35 @@ class convertModis:
     if os.path.exists(hdfname):
         self.name = hdfname
     else:
-        raise IOError('%s not exist' % hdfname)
+        raise IOError('%s not exists' % hdfname)
     if os.path.exists(confile):
         self.conf = confile
     else:
-        raise IOError('%s not exist' % confile)
+        raise IOError('%s not exists' % confile)
     if os.path.exists(mrtpath):
+        sys.path.
         self.mrtpath = mrtpath
     else:
-        raise IOError('The path %s not exist' % mrtpath)
+        raise IOError('The path %s not exists' % mrtpath)
 
   def executable(self):
     """return the executable
        on windows an exe file
     """
     if sys.platform.count('linux') != -1:
-      return 'resample'
+      return os.path.join(self.mrtpath,'resample')
     elif sys.platform.count('win32') != -1:
-      return 'resample.exe'
+      return os.path.join(self.mrtpath,'resample.exe')
 
+  def run(self):
+    """exect the process"""
+    import subprocess
+    execut = self.executable()
+    if not os.path.exists(execut):
+      raise IOError('The path %s not exists, could be an erroneus path or software')
+    else:
+      subprocess.Popen([execut,'-p',self.conf])
+      
 #class createMosaic:
   #def __init__(self
               #listfile,
