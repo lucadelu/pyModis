@@ -22,6 +22,8 @@
 #  History
 ##################################################################
 #
+#  0.4.0 Fix a lot of bugs, add convertModis class to convert hdf to other
+#        format and projection system (To release)
 #  0.3.0 Fix the choosing of days, change name modisClass to downModis 
 #        and add parseModis (2011-05-24)
 #  0.2.1 Little change in the logging option (2011-01-21)
@@ -36,7 +38,7 @@
 # tilesUsed="h17v04,h17v05,h18v02,h18v03,h18v05,h19v04,h19v05"
 # writePath="/home/luca/test_modis"
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 
 from datetime import *
 import string
@@ -47,14 +49,13 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
-import shutil
 
 class downModis:
   """A class to download modis data from nasa ftp repository"""
   def __init__(self, 
-                user,
                 password,
                 destinationFolder,
+                user = "anonymous",
                 url = "e4ftl01u.ecs.nasa.gov",
                 tiles = None,
                 path = "MOLT/MOD11A1.005",
@@ -65,17 +66,17 @@ class downModis:
                 debug = False
               ):
     """Initialization function :
-        user=is your username
-        password=is your password
-        destinationFolder=where your file are storage
-        url=the url where download data
-        path=the directory where the data that you want download are 
-             storaged in the ftp server
-        tiles=a list of tiles that you want downloads, None == all tiles
-        today=the day to start download, to pass a date different to 
-              today use this format year-month-day
-        delta=timelag i.e. the number of days starting from today 
-              (backward)
+        password = is your password, usually your email
+        destinationFolder = where your file are storage
+        user = is your username, by default anonymous
+        url = the url where download data
+        path = the directory where the data that you want download are 
+               storaged in the ftp server
+        tiles = a list of tiles that you want downloads, None == all tiles
+        today = the day to start download, to pass a date different to 
+                today use this format year-month-day
+        delta = timelag i.e. the number of days starting from today 
+                (backward)
 
         Create ftp istance, connect user to ftp server and go to the 
         directory where data are storage
@@ -128,7 +129,7 @@ class downModis:
     format=LOGGING_FORMAT)
     
   def connectFTP(self):
-    """ set connection to ftp server, move to path where data are storaged
+    """ Set connection to ftp server, move to path where data are storaged
     and create a list of directory for all days"""
     try:
       # connect to ftp server
@@ -263,7 +264,7 @@ class downModis:
       self.getFilesList()
 
   def checkDataExist(self,listNewFile, move = 0):
-    """ Check if a data already exist in the directory of download 
+    """ Check if a data already exists in the directory of download 
     Move serve to know if function is called from download or move function"""
     fileInPath = []
     # add all files in the directory where we will save new modis data
@@ -310,7 +311,7 @@ class downModis:
         + '.' + fileSplit[3]
         #for debug, download only xml
         if (self.debug and fileSplit[-1] == 'xml') or not self.debug:
-          # check data exist in the return directory, if it doesn't exist
+          # check data exists in the return directory, if it doesn't exists
           oldFile = glob.glob1(self.writeFilePath, filePrefix + "*" \
           + fileSplit[-1])
           numFiles = len(oldFile)
@@ -398,18 +399,26 @@ class downModis:
       self.setDirectoryOver()   
 
 class parseModis:
+  """Class to parse MODIS xml files, it also can create the parameter 
+    configuration file for resample MRT software
+  """
   def __init__(self, filename):
-
+    """Initialization function :
+       filename = the name of MODIS hdf file
+    """
     from xml.etree import ElementTree
-
+    # hdf name
     self.hdfname = filename
+    # xml hdf name
     self.xmlname = self.hdfname + '.xml'
+    # tif name for the output file for resample MRT software
     self.tifname = self.hdfname.replace('.hdf','.tif')
     with open(self.xmlname) as f:
       self.tree = ElementTree.parse(f)
     # return the code of tile for conf file
     self.code = os.path.split(self.hdfname)[1].split('.')[-2]
     self.path = os.path.split(self.hdfname)[0]
+    
   def __str__(self):
     """Print the file without xml tags"""
     retString = ""
@@ -566,6 +575,7 @@ class parseModis:
     return value
 
   def retInputGranule(self):
+    """Return the input files used to process the considered file"""
     value = []
     self.getGranule()
     for i in self.granule.find('InputGranule').getiterator():
@@ -577,90 +587,153 @@ class parseModis:
     self.getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
 
-  def confResample(self, spectral, res, output = None,
-                  resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',
+  def confResample(self, spectral, res = None, output = None, datum = 'WGS84',
+                  resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',  utm = None,
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
-                  datum = 'WGS84', utm = None
                   ):
-    proj_list = ('GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 'SIN', 'TM', 'UTM')
+    """Create the parameter file to use with resample MRT software to create
+       tif file
+        spectral = the spectral subset to use, look the product table to 
+                   understand the layer that you want use. 
+                   For example: 
+                    - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI 
+                      and QA VI the other layers are not used
+                    - LST ( 1 1 0 0 1 1 0 0 0 0 0 0 ) copy only layer daily and
+                      nightly temperature and QA
+        res = the resolution for the output file, it must be set in the map 
+              unit of output projection system. The software will use the original
+              resolution of input file if res it isn't set
+        output = the output name, if it doesn't set will use the prefix name of 
+                 input hdf file
+        utm = the UTM zone if projection system is UTM
+        resampl = the type of resampling, the valid values are: NN (nearest 
+                  neighbor), BI (bilinear), CC (cubic convolution)
+        projtype = the output projection system, the valid values are: AEA 
+                   (Albers Equal Area), ER (Equirectangular), GEO (Geographic 
+                   Latitude/Longitude), HAM (Hammer), ISIN (Integerized Sinusoidal), 
+                   IGH (Interrupted Goode Homolosine), LA (Lambert Azimuthal), 
+                   LCC (LambertConformal Conic), MERCAT (Mercator), MOL (Mollweide), 
+                   PS (Polar Stereographic), SIN ()Sinusoidal), UTM (Universal 
+                   TransverseMercator)
+        datum = the datum to use, the valid values are: NAD27, NAD83, WGS66,
+                WGS76, WGS84, NONE
+        projpar = a list of projection parameters
+        """
+    ## lists of parameters accepted by resample MRT software
+    # projections
+    proj_list = ('GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 'SIN', 
+                'TM', 'UTM')
+    # resampling
     resam_list = ('NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE')
+    # datum
     datum_list = ('NONE', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
+    # output name
     if not output:
       fileout = self.tifname
     else:
       fileout = output
-    """Write a configuration file for resample mrt software (TO TEST)"""
+    # the name of the output parameters files for resample MRT software
     filename = os.path.join(self.path,'%s_mrt_resample.conf' % self.code)
+    # if the file already exists it remove it 
     if os.path.exists(filename):
-      shutil.rmtree(filename)
+      os.remove(filename)
+    # open the file
     conFile = open(filename, 'w')
     conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
     conFile.write("SPECTRAL_SUBSET = %s\n" % spectral)
     conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG\n")
+    # return the boundary from the input xml file
     bound = self.retBoundary()
     # Order:  UL: N W  - LR: S E
-    conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )\n" % (bound['max_lat'],bound['min_lon']))
-    conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )\n" % (bound['min_lat'],bound['max_lon']))
+    conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )\n" % (bound['max_lat'],
+                                                              bound['min_lon']))
+    conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )\n" % (bound['min_lat'],
+                                                              bound['max_lon']))
     conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
+    # if resampl is in resam_list set the parameter otherwise return an error
     if resampl in resam_list:
       conFile.write("RESAMPLING_TYPE = %s\n" % resampl)
     else:
       raise IOError('The resampling type %s is not supportet.\n' \
                    'The resampling type supported are %s' % (resampl,resam_list))
+    # if projtype is in proj_list set the parameter otherwise return an error
     if projtype in proj_list:
       conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
     else:
       raise IOError('The projection type %s is not supportet.\n' \
                    'The projections supported are %s' % (projtype,proj_list))
     conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s\n" % projpar)
+    # if datum is in datum_list set the parameter otherwise return an error
     if datum in datum_list:
       conFile.write("DATUM = %s\n" % datum)
     else:
       raise IOError('The datum %s is not supportet.\n' \
                    'The datum supported are %s' % (datum,datum_list))
+    # if utm is not None write the UTM_ZONE parameter in the file
     if utm:
       conFile.write("UTM_ZONE = %s\n" % utm)
-    conFile.write("OUTPUT_PIXEL_SIZE = %i\n" % res)
+    # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
+    if res:
+      conFile.write("OUTPUT_PIXEL_SIZE = %i\n" % res)
     conFile.close()
     return filename
 
 class convertModis:
-  """A class to convert modis data from hdf to tif using resample (mrt tools)"""
-  def __init__(self,
-              hdfname, 
-              confile, 
-              mrtpath):
+  """A class to convert modis data from hdf to tif using resample (mrt tools)
+  """
+  def __init__(self, hdfname, confile, mrtpath):
+    """Initialization function :
+       hdfname = the full path to the hdf file
+       confile = the full path to the paramater file
+       mrtpath = the full path to mrt directory where inside you have bin and 
+                 data directories
+    """
+    # check if the hdf file exists
     if os.path.exists(hdfname):
-        self.name = hdfname
+      self.name = hdfname
     else:
-        raise IOError('%s not exists' % hdfname)
+      raise IOError('%s not exists' % hdfname)
+    # check if confile exists
     if os.path.exists(confile):
-        self.conf = confile
+      self.conf = confile
     else:
-        raise IOError('%s not exists' % confile)
+      raise IOError('%s not exists' % confile)
+    # check if mrtpath and subdirectories exists and set environment variables
     if os.path.exists(mrtpath):
-        sys.path.append(mrtpath)
-        self.mrtpath = mrtpath
+      if os.path.exists(os.path.join(mrtpath,'bin')):
+        self.mrtpathbin = os.path.join(mrtpath,'bin')
+        os.environ['PATH'] = "%s:%s" % (os.environ['PATH'],os.path.join(mrtpath,
+                                                                        'data'))
+      else:
+        raise IOError('The path %s not exists' % os.path.join(mrtpath,'bin'))
+      if os.path.exists(os.path.join(mrtpath,'data')):
+        self.mrtpathdata = os.path.join(mrtpath,'data')
+        os.environ['MRTDATADIR'] = os.path.join(mrtpath,'data')
+      else:
+        raise IOError('The path %s not exists' % os.path.join(mrtpath,'data'))
     else:
-        raise IOError('The path %s not exists' % mrtpath)
+      raise IOError('The path %s not exists' % mrtpath)
 
   def executable(self):
-    """return the executable
-       on windows an exe file
+    """Return the executable of resample MRT software
     """
     if sys.platform.count('linux') != -1:
-      return os.path.join(self.mrtpath,'resample')
+      if os.path.exists(os.path.join(self.mrtpathbin,'resample')):
+        return os.path.join(self.mrtpathbin,'resample')
     elif sys.platform.count('win32') != -1:
-      return os.path.join(self.mrtpath,'resample.exe')
+      if os.path.exists(os.path.join(self.mrtpathbin,'resample.exe')):
+        return os.path.join(self.mrtpath,'resample.exe')
 
   def run(self):
-    """exect the process"""
+    """Exect the process"""
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):
-      raise IOError('The path %s not exists, could be an erroneus path or software')
+      raise IOError('The path %s not exists, could be an erroneus path or '\
+                    + 'software') % execut
     else:
-      subprocess.Popen([execut,'-p',self.conf])
+      subprocess.call([execut,'-p',self.conf])
+    return "The hdf file %s it is converted" % self.name
       
 #class createMosaic:
   #def __init__(self
