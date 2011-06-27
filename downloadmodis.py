@@ -36,12 +36,12 @@ if __name__ == "__main__":
     #usage
     usage = "usage: %prog [options] destination_folder"
     parser = OptionParser(usage=usage)
-    #username
-    parser.add_option("-U", "--username", dest="user",
-		      help="username for connect to ftp server", required=True)
     #password
     parser.add_option("-P", "--password", dest="password",
 		      help="password for connect to ftp server", required=True)
+    #username
+    parser.add_option("-U", "--username", dest="user", default = "anonymous",
+                      help="username for connect to ftp server", required=False)
     #url
     parser.add_option("-u", "--url", default = "e4ftl01u.ecs.nasa.gov",
 		      help="ftp server url [default=%default]", dest="url")
