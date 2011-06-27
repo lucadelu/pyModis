@@ -407,10 +407,18 @@ class parseModis:
        filename = the name of MODIS hdf file
     """
     from xml.etree import ElementTree
-    # hdf name
-    self.hdfname = filename
-    # xml hdf name
-    self.xmlname = self.hdfname + '.xml'
+    if os.path.exists(filename):
+      # hdf name
+      self.hdfname = filename
+    else:
+      raise IOError('%s not exists' % self.hdfname)
+
+    if os.path.exists(self.hdfname + '.xml'):
+      # xml hdf name
+      self.xmlname = self.hdfname + '.xml'
+    else:
+      raise IOError('%s not exists' % self.hdfname + '.xml')
+
     # tif name for the output file for resample MRT software
     self.tifname = self.hdfname.replace('.hdf','.tif')
     with open(self.xmlname) as f:
@@ -454,22 +462,22 @@ class parseModis:
   def retGranuleUR(self):
     """Return the GranuleUR element"""
     self.getGranule()
-    return self.granule.find('GranuleUR')
+    return self.granule.find('GranuleUR').text
 
   def retDbID(self):
     """Return the DbID element"""
     self.getGranule()
-    return self.granule.find('DbID')
+    return self.granule.find('DbID').text
 
   def retInsertTime(self):
     """Return the DbID element"""
     self.getGranule()
-    return self.granule.find('InsertTime')
+    return self.granule.find('InsertTime').text
 
   def retLastUpdate(self):
     """Return the DbID element"""
     self.getGranule()
-    return self.granule.find('LastUpdate')
+    return self.granule.find('LastUpdate').text
 
   def retCollectionMetaData(self):
     """Return the CollectionMetaData element"""
@@ -539,13 +547,14 @@ class parseModis:
     value = {}
     self.getGranule()
     mes = self.granule.find('MeasuredParameter')
-    value['ParameterName'] = mes.find('ParameterName').text
-    meStat = mes.find('MeasuredParameterContainer').find('QAStats')
+    mespc = mes.find('MeasuredParameterContainer')
+    value['ParameterName'] = mespc.find('ParameterName').text
+    meStat = mespc.find('QAStats')
     qastat = {}
     for i in meStat.getiterator():
       qastat[i.tag] = i.text
     value['QAStats'] = qastat
-    meFlag = mes.find('MeasuredParameterContainer').find('QAFlags')
+    meFlag = mespc.find('QAFlags')
     flagstat = {}
     for i in meStat.getiterator():
       flagstat[i.tag] = i.text
@@ -556,8 +565,9 @@ class parseModis:
     """Return the platform values inside a dictionary."""
     value = {}
     self.getGranule()
-    value['PlatformShortName'] = self.granule.find('PlatformShortName').text
-    instr = self.granule.find('Instrument')
+    plat = self.granule.find('Platform')
+    value['PlatformShortName'] = plat.find('PlatformShortName').text
+    instr = plat.find('Instrument')
     value['InstrumentShortName'] = instr.find('InstrumentShortName').text
     sensor = instr.find('Sensor')
     value['SensorShortName'] = sensor.find('SensorShortName').text
@@ -734,8 +744,178 @@ class convertModis:
     else:
       subprocess.call([execut,'-p',self.conf])
     return "The hdf file %s it is converted" % self.name
-      
-#class createMosaic:
-  #def __init__(self
-              #listfile,
-              #mrtpath)
+
+class createMosaic:
+  """A class to convert a mosaic of different modis tiles"""
+  def __init__(self,
+              listfile,
+              mrtpath,
+              outprefix):
+    # check if the hdf file exists
+    if os.path.exists(listfile):
+      self.basepath = os.path.split(listfile)[0]
+      self.listfiles = listfile
+      self.HDFfiles = open(listfile).readlines()
+    else:
+      raise IOError('%s not exists' % hdfname)
+    # check if mrtpath and subdirectories exists and set environment variables
+    if os.path.exists(mrtpath):
+      if os.path.exists(os.path.join(mrtpath,'bin')):
+        self.mrtpathbin = os.path.join(mrtpath,'bin')
+        os.environ['PATH'] = "%s:%s" % (os.environ['PATH'],os.path.join(mrtpath,
+                                                                        'data'))
+      else:
+        raise IOError('The path %s not exists' % os.path.join(mrtpath,'bin'))
+      if os.path.exists(os.path.join(mrtpath,'data')):
+        self.mrtpathdata = os.path.join(mrtpath,'data')
+        os.environ['MRTDATADIR'] = os.path.join(mrtpath,'data')
+      else:
+        raise IOError('The path %s not exists' % os.path.join(mrtpath,'data'))
+    else:
+      raise IOError('The path %s not exists' % mrtpath)
+    self.out = os.path.join(self.basepath, outprefix + '.hdf')
+    self.outxml = os.path.join(self.basepath, self.out + '.xml')
+
+  def boundaries(self):
+    """Return the max extend for the mosaic"""
+    pm = parseModis(os.path.join(self.basepath,self.HDFfiles[0].strip()))
+    boundary = pm.retBoundary()
+    for i in range(1,len(self.HDFfiles)):
+      pm = parseModis(os.path.join(self.basepath,self.HDFfiles[i].strip()))
+      bound = pm.retBoundary()
+      if bound['min_lat'] < boundary['min_lat']:
+        boundary['min_lat'] = bound['min_lat']
+      if bound['min_lon'] < boundary['min_lon']:
+        boundary['min_lon'] = bound['min_lon']
+      if bound['max_lat'] > boundary['max_lat']:
+        boundary['max_lat'] = bound['max_lat']
+      if bound['max_lon'] > boundary['max_lon']:
+        boundary['max_lon'] = bound['max_lon']
+    return boundary
+
+  def write_mosaic_xml(self):
+    """Return a xml file for a mosaic"""
+    from xml.etree import ElementTree
+
+    def cicle_values(ele,values):
+      """Function to add values from a dictionary"""
+      for k,v in values.iteritems():
+        elem = ElementTree.SubElement(ele,k)
+        elem.text = v
+
+    # take the data similar for different files from the first
+    pm = parseModis(os.path.join(self.basepath,self.HDFfiles[0].strip()))
+    # the root element
+    granule = ElementTree.Element('GranuleMetaDataFile')
+    # add DTDVersion
+    dtd = ElementTree.SubElement(granule,'DTDVersion')
+    dtd.text = pm.retDTD()    
+    # add DataCenterId
+    dci = ElementTree.SubElement(granule,'DataCenterId')
+    dci.text = pm.retDataCenter()
+    # add GranuleURMetaData
+    gurmd = ElementTree.SubElement(granule,'GranuleURMetaData')
+
+    #gur = ElementTree.SubElement(gurmd,'GranuleUR')
+    #gur.text = pm.retGranuleUR()
+    # TODO ADD GranuleUR DbID InsertTime LastUpdate
+
+    # add CollectionMetaData
+    coll = pm.retCollectionMetaData()
+    cmd = ElementTree.SubElement(gurmd,'CollectionMetaData')
+    cicle_values(cmd,coll)
+
+    ## DA RIVEDERE DataFileContainer
+    #dataf = pm.retDataFiles()
+    #df = ElementTree.SubElement(gurmd,'CollectionMetaData')
+    #dfc = ElementTree.SubElement(df,'DataFileContainer')
+    #cicle_values(dfc,dataf)
+
+    # add PGEVersionClass
+    pgevc = ElementTree.SubElement(gurmd,'PGEVersionClass')
+    pgevc.text = pm.retPGEVersion()
+    # add RangeDateTime
+    datime = pm.retRangeTime()
+    rdt = ElementTree.SubElement(gurmd,'RangeDateTime')
+    cicle_values(rdt,datime)
+    # SpatialDomainContainer
+    maxbound = self.boundaries()
+    sdc = ElementTree.SubElement(gurmd,'SpatialDomainContainer')
+    hsdc = ElementTree.SubElement(sdc,'HorizontalSpatialDomainContainer')
+    gp = ElementTree.SubElement(hsdc,'GPolygon')
+    bound = ElementTree.SubElement(gp,'Boundary')
+    pt1 = ElementTree.SubElement(bound, 'Point')
+    pt1lon = ElementTree.SubElement(pt1, 'PointLongitude')
+    pt1lon.text = str(maxbound['min_lon'])
+    pt1lat = ElementTree.SubElement(pt1, 'PointLatitude')
+    pt1lat.text = str(maxbound['max_lat'])
+    pt2 = ElementTree.SubElement(bound, 'Point')
+    pt2lon = ElementTree.SubElement(pt2, 'PointLongitude')
+    pt2lon.text = str(maxbound['max_lon'])
+    pt2lat = ElementTree.SubElement(pt2, 'PointLatitude')
+    pt2lat.text = str(maxbound['max_lat'])
+    pt3 = ElementTree.SubElement(bound, 'Point')
+    pt3lon = ElementTree.SubElement(pt3, 'PointLongitude')
+    pt3lon.text = str(maxbound['min_lon'])
+    pt3lat = ElementTree.SubElement(pt3, 'PointLatitude')
+    pt3lat.text = str(maxbound['min_lat'])
+    pt4 = ElementTree.SubElement(bound, 'Point')
+    pt4lon = ElementTree.SubElement(pt4, 'PointLongitude')
+    pt4lon.text = str(maxbound['max_lon'])
+    pt4lat = ElementTree.SubElement(pt4, 'PointLatitude')
+    pt4lat.text = str(maxbound['min_lat'])
+    # add MeasuredParameter
+    mp = ElementTree.SubElement(gurmd,'MeasuredParameter')
+    mpc = ElementTree.SubElement(mp,'MeasuredParameterContainer')
+    pn = ElementTree.SubElement(mpc,'ParameterName')
+    measure = pm.retMeasure()
+    pn.text = measure['ParameterName']
+
+    # TODO ADD qstats qflags
+    # add Platform
+    platvalues = pm.retPlatform()
+    plat = ElementTree.SubElement(gurmd,'Platform')
+    psn = ElementTree.SubElement(plat,'PlatformShortName')
+    psn.text = platvalues['PlatformShortName']
+    ins = ElementTree.SubElement(plat,'Instrument')
+    isn = ElementTree.SubElement(ins,'InstrumentShortName')
+    isn.text = platvalues['InstrumentShortName']
+    sens = ElementTree.SubElement(ins,'Sensor')
+    ssn = ElementTree.SubElement(sens,'SensorShortName')
+    ssn.text = platvalues['SensorShortName']
+    # add PSAs
+    psas = ElementTree.SubElement(gurmd,'PSAs')
+    # TODO ADD all PSA
+    ig = ElementTree.SubElement(gurmd,'InputGranule')
+    for i in self.HDFfiles:
+      ip = ElementTree.SubElement(ig,'InputPointer')
+      ip.text = i
+    # TODO ADD BrowseProduct
+    output = open(self.outxml, 'w')
+    output.write('<?xml version="1.0" encoding="UTF-8"?>')
+    output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.gsfc.nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/ScienceGranuleMetadata.dtd">')
+    output.write(ElementTree.tostring(granule))
+    output.close()
+
+  def executable(self):
+    """Return the executable of mrtmosaic MRT software
+    """
+    if sys.platform.count('linux') != -1:
+      if os.path.exists(os.path.join(self.mrtpathbin,'mrtmosaic')):
+        return os.path.join(self.mrtpathbin,'mrtmosaic')
+    elif sys.platform.count('win32') != -1:
+      if os.path.exists(os.path.join(self.mrtpathbin,'mrtmosaic.exe')):
+        return os.path.join(self.mrtpath,'mrtmosaic.exe')
+
+  def run(self):
+    """Exect the mosaic process"""
+    import subprocess
+    execut = self.executable()
+    if not os.path.exists(execut):
+      raise IOError('The path %s not exists, could be an erroneus path or '\
+                    + 'software') % execut
+    else:
+      self.write_mosaic_xml()
+      subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
+                      subprocess.STDOUT)
+    return "The mosaic file %s is created" % self.out
