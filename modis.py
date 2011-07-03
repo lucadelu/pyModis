@@ -8,11 +8,11 @@
 #
 ##################################################################
 #
-#  Modis class is licensed under the terms of GNU GPL 2
+#  This MODIS Python class is licensed under the terms of GNU GPL 2.
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of
-#  the License,or (at your option) any later version.
+#  the License, or (at your option) any later version.
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -24,14 +24,14 @@
 #
 #  0.4.0 Fix a lot of bugs, add convertModis class to convert hdf to other
 #        format and projection system (To release)
-#  0.3.0 Fix the choosing of days, change name modisClass to downModis 
+#  0.3.0 Fixed the choosing of days, change name modisClass to downModis 
 #        and add parseModis (2011-05-24)
 #  0.2.1 Little change in the logging option (2011-01-21)
-#  0.2.0 Add logging and change something in debug methods (2010-12-01)
+#  0.2.0 Added logging and change something in debug methods (2010-12-01)
 #  0.1.3 Correct a little problem with "Connection timed out"
-#  0.1.2 Add two debug methods (2010-13-08) 
-#  0.1.1 Add moveFile method (2010-07-02)
-#  0.1.0 First Version of Modis Class (2010-06-19)
+#  0.1.2 Added two debug methods (2010-13-08) 
+#  0.1.1 Added moveFile method (2010-07-02)
+#  0.1.0 First Version of MODIS Python Class (2010-06-19)
 #
 ##################################################################
 
@@ -51,7 +51,7 @@ from ftplib import FTP
 import ftplib
 
 class downModis:
-  """A class to download modis data from nasa ftp repository"""
+  """A class to download MODIS data from NASA FTP repository"""
   def __init__(self, 
                 password,
                 destinationFolder,
@@ -66,20 +66,20 @@ class downModis:
                 debug = False
               ):
     """Initialization function :
-        password = is your password, usually your email
-        destinationFolder = where your file are storage
-        user = is your username, by default anonymous
-        url = the url where download data
-        path = the directory where the data that you want download are 
-               storaged in the ftp server
-        tiles = a list of tiles that you want downloads, None == all tiles
-        today = the day to start download, to pass a date different to 
-                today use this format year-month-day
+        password = is your password, usually your email address
+        destinationFolder = where the files will be stored
+        user = your username, by default anonymous
+        url = the url where to download the MODIS data
+        path = the directory where the data that you want to download are 
+               stored on the ftp server
+        tiles = a list of tiles that you want to download, None == all tiles
+        today = the day to start downloading; in order to pass a date different from
+                today use the format YYYY-MM-DD
         delta = timelag i.e. the number of days starting from today 
-                (backward)
+                (backwards
 
-        Create ftp istance, connect user to ftp server and go to the 
-        directory where data are storage
+        Creates a ftp instance, connects user to ftp server and goes into the 
+        directory where the MODIS data are stored
     """
 
     # url modis
@@ -99,7 +99,7 @@ class downModis:
     if os.access(destinationFolder,os.W_OK):
       self.writeFilePath = destinationFolder
     else:
-      raise IOError("Folder to write downloaded files doesn't exist or is not" \
+      raise IOError("Folder to store downloaded files does not exist or is not" \
     + "writeable")
     # return the name of product
     if len(self.path.split('/')) == 2:
@@ -129,7 +129,7 @@ class downModis:
     format=LOGGING_FORMAT)
     
   def connectFTP(self):
-    """ Set connection to ftp server, move to path where data are storaged
+    """ Set connection to ftp server, move to path where data are stored
     and create a list of directory for all days"""
     try:
       # connect to ftp server
@@ -191,7 +191,7 @@ class downModis:
       self.enday = self.str2date(self.enday)
       
   def getListDays(self):
-      """ Return a list of all days selected """
+      """ Return a list of all selected days """
       self.getToday()
 
       today_s = self.today.strftime("%Y.%m.%d")
@@ -223,8 +223,8 @@ class downModis:
       return days
 
   def getFilesList(self):
-    """ Create a list of files to download, is possible choose if download 
-    also jpeg files or only hdf"""
+    """ Create a list of files to download, it is possible choose to download 
+    also the jpeg files or only the hdf files"""
     def cicle_file(jpeg=False,tile=True):
       finalList = []
       for i in self.listfiles:
@@ -400,7 +400,7 @@ class downModis:
 
 class parseModis:
   """Class to parse MODIS xml files, it also can create the parameter 
-    configuration file for resample MRT software
+    configuration file for resampling with the MRT software
   """
   def __init__(self, filename):
     """Initialization function :
@@ -670,14 +670,14 @@ class parseModis:
     if projtype in proj_list:
       conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
     else:
-      raise IOError('The projection type %s is not supportet.\n' \
+      raise IOError('The projection type %s is not supported.\n' \
                    'The projections supported are %s' % (projtype,proj_list))
     conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s\n" % projpar)
     # if datum is in datum_list set the parameter otherwise return an error
     if datum in datum_list:
       conFile.write("DATUM = %s\n" % datum)
     else:
-      raise IOError('The datum %s is not supportet.\n' \
+      raise IOError('The datum %s is not supported.\n' \
                    'The datum supported are %s' % (datum,datum_list))
     # if utm is not None write the UTM_ZONE parameter in the file
     if utm:
@@ -689,7 +689,7 @@ class parseModis:
     return filename
 
 class convertModis:
-  """A class to convert modis data from hdf to tif using resample (mrt tools)
+  """A class to convert modis data from hdf to tif using resample (from MRT tools)
   """
   def __init__(self, hdfname, confile, mrtpath):
     """Initialization function :
@@ -735,7 +735,7 @@ class convertModis:
         return os.path.join(self.mrtpath,'resample.exe')
 
   def run(self):
-    """Exect the process"""
+    """Exec the process"""
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):
@@ -743,14 +743,15 @@ class convertModis:
                     + 'software') % execut
     else:
       subprocess.call([execut,'-p',self.conf])
-    return "The hdf file %s it is converted" % self.name
+    return "The hdf file %s was converted" % self.name
 
 class createMosaic:
   """A class to convert a mosaic of different modis tiles"""
   def __init__(self,
               listfile,
+              outprefix,
               mrtpath,
-              outprefix):
+              subset = False):
     # check if the hdf file exists
     if os.path.exists(listfile):
       self.basepath = os.path.split(listfile)[0]
@@ -775,6 +776,7 @@ class createMosaic:
       raise IOError('The path %s not exists' % mrtpath)
     self.out = os.path.join(self.basepath, outprefix + '.hdf')
     self.outxml = os.path.join(self.basepath, self.out + '.xml')
+    self.subset = subset
 
   def boundaries(self):
     """Return the max extend for the mosaic"""
@@ -916,6 +918,10 @@ class createMosaic:
                     + 'software') % execut
     else:
       self.write_mosaic_xml()
-      subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
-                      subprocess.STDOUT)
+      if self.subset:
+        subprocess.call([execut,'-i',self.listfiles,'-o',self.out,'-s',self.subset], 
+                        stderr = subprocess.STDOUT)
+      else:
+        subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
+                        subprocess.STDOUT)
     return "The mosaic file %s is created" % self.out
