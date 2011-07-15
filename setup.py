@@ -23,13 +23,13 @@ from distutils.core import setup
 
 setup(
   name = 'pyModis',
-  version = '0.3',
+  version = '0.4',
   py_modules = ['modis'],
   scripts = ['downloadmodis.py'],
   author = 'Luca Delucchi',
   author_email = 'luca.delucchi@iasma.it',
   url = 'http://gis.fem-environment.eu/gis-development/pyModis',
   description = 'Python library for MODIS data',
-  long_description = 'Python library to download MODIS data',
+  long_description = 'Python library to download, convert and process MODIS data',
   license = 'GNU GPL 2 or later'
 )
