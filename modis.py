@@ -426,7 +426,18 @@ class parseModis:
     # return the code of tile for conf file
     self.code = os.path.split(self.hdfname)[1].split('.')[-2]
     self.path = os.path.split(self.hdfname)[0]
+    ## lists of parameters accepted by resample MRT software
+    # projections
+    self.proj_list = ('GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 
+                      'SIN','TM', 'UTM', 'MERCAT')
+    # resampling
+    self.resam_list = ('NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE')
+    self.resam_list_swath = ('NN', 'BI', 'CC')
     
+    # datum
+    self.datum_list = ('NONE', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
+    self.sphere_list = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
+
   def __str__(self):
     """Print the file without xml tags"""
     retString = ""
@@ -629,14 +640,6 @@ class parseModis:
                 WGS76, WGS84, NONE
         projpar = a list of projection parameters
         """
-    ## lists of parameters accepted by resample MRT software
-    # projections
-    proj_list = ('GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 'SIN', 
-                'TM', 'UTM')
-    # resampling
-    resam_list = ('NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE')
-    # datum
-    datum_list = ('NONE', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
     # output name
     if not output:
       fileout = self.tifname
@@ -661,20 +664,20 @@ class parseModis:
                                                               bound['max_lon']))
     conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
     # if resampl is in resam_list set the parameter otherwise return an error
-    if resampl in resam_list:
-      conFile.write("RESAMPLING_TYPE = %s\n" % resampl)
+    if resampl in self.resam_list:
+      conFile.write("KERNEL_TYPE = %s\n" % resampl)
     else:
       raise IOError('The resampling type %s is not supportet.\n' \
                    'The resampling type supported are %s' % (resampl,resam_list))
     # if projtype is in proj_list set the parameter otherwise return an error
-    if projtype in proj_list:
+    if projtype in self.proj_list:
       conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
     else:
       raise IOError('The projection type %s is not supported.\n' \
                    'The projections supported are %s' % (projtype,proj_list))
     conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s\n" % projpar)
     # if datum is in datum_list set the parameter otherwise return an error
-    if datum in datum_list:
+    if datum in self.datum_list:
       conFile.write("DATUM = %s\n" % datum)
     else:
       raise IOError('The datum %s is not supported.\n' \
@@ -685,6 +688,91 @@ class parseModis:
     # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
     if res:
       conFile.write("OUTPUT_PIXEL_SIZE = %i\n" % res)
+    conFile.close()
+    return filename
+
+  def confResample_swath(self, sds, geoloc, res, output = None, sphere = '8',
+                  resampl = 'NN', projtype = 'GEO',  utm = None,
+                  projpar = '0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0',
+                  ):
+    """Create the parameter file to use with resample MRT software to create
+       tif file
+        sds = Name of band/s (Science Data Set) to resample
+        geoloc = Name geolocation file (example MOD3, MYD3)
+        res = the resolution for the output file, it must be set in the map 
+              unit of output projection system. The software will use the original
+              resolution of input file if res it isn't set
+        output = the output name, if it doesn't set will use the prefix name of 
+                 input hdf file
+        sphere = Output sphere number. Valid options are: 
+                 0=Clarke 1866, 1=Clarke 1880, 2=Bessel, 3=International 1967, 
+                 4=International 1909, 5=WGS 72, 6=Everest, 7=WGS 66, 
+                 8=GRS1980/WGS 84, 9=Airy, 10=Modified Everest, 11=Modified Airy, 
+                 12=Walbeck, 13=Southeast Asia, 14=Australian National, 
+                 15=Krassovsky, 16=Hough, 17=Mercury1960, 18=Modified Mercury1968, 
+                 19=Sphere 19 (Radius 6370997), 20=MODIS Sphere (Radius 6371007.181)
+        resampl = the type of resampling, the valid values are: NN (nearest 
+                  neighbor), BI (bilinear), CC (cubic convolution)
+        projtype = the output projection system, the valid values are: 
+                   AEA (Albers Equal Area), ER (Equirectangular), 
+                   GEO (Geographic Latitude/Longitude), HAM (Hammer), 
+                   ISIN (Integerized Sinusoidal),IGH (Interrupted Goode Homolosine), 
+                   LA (Lambert Azimuthal), LCC (LambertConformal Conic),
+                   MERCAT (Mercator), MOL (Mollweide), PS (Polar Stereographic),
+                   SIN ()Sinusoidal), UTM (Universal TransverseMercator)
+        utm = the UTM zone if projection system is UTM
+        projpar = a list of projection parameters
+        """
+    # output name
+    if not output:
+      fileout = self.tifname
+    else:
+      fileout = output
+    # the name of the output parameters files for resample MRT software
+    filename = os.path.join(self.path,'%s_mrt_resample.conf' % self.code)
+    # if the file already exists it remove it 
+    if os.path.exists(filename):
+      os.remove(filename)
+    # open the file
+    conFile = open(filename, 'w')
+    conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
+    conFile.write("GEOLOCATION_FILENAME = %s\n" % geoloc)
+    conFile.write("INPUT_SDS_NAME = %s\n" % sds)
+    conFile.write("OUTPUT_SPATIAL_SUBSET_TYPE = LAT_LONG\n")
+    # return the boundary from the input xml file
+    bound = self.retBoundary()
+    # Order:  UL: N W  - LR: S E
+    conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = %f %f\n" % (bound['max_lat'],
+                                                              bound['min_lon']))
+    conFile.write("OUTPUT_SPACE_LOWER_RIGHT_CORNER (LONG LAT) = %f %f\n" % (bound['min_lat'],
+                                                              bound['max_lon']))
+    conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
+    conFile.write("OUTPUT_FILE_FORMAT = GEOTIFF_FMT\n")
+    # if resampl is in resam_list set the parameter otherwise return an error
+    if resampl in self.resam_list_swath:
+      conFile.write("KERNEL_TYPE (CC/BI/NN) = %s\n" % resampl)
+    else:
+      raise IOError('The resampling type %s is not supportet.\n' \
+                   'The resampling type supported are %s' % (resampl,self.resam_list_swath))
+    # if projtype is in proj_list set the parameter otherwise return an error
+    if projtype in self.proj_list:
+      conFile.write("OUTPUT_PROJECTION_NUMBER = %s\n" % projtype)
+    else:
+      raise IOError('The projection type %s is not supported.\n' \
+                   'The projections supported are %s' % (projtype,proj_list))
+    conFile.write("OUTPUT_PROJECTION_PARAMETER = %s\n" % projpar)
+    # if sphere is in sphere_list set the parameter otherwise return an error
+    if int(sphere) in self.sphere_list:
+      conFile.write("OUTPUT_PROJECTION_SPHERE = %s\n" % sphere)
+    else:
+      raise IOError('The sphere %s is not supported.\n' \
+                   'The spheres supported are %s' % (sphere,self.sphere_list))
+    # if utm is not None write the UTM_ZONE parameter in the file
+    if utm:
+      conFile.write("OUTPUT_PROJECTION_ZONE = %s\n" % utm)
+    # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
+    if res:
+      conFile.write("OUTPUT_PIXEL_SIZE = %f\n" % res)
     conFile.close()
     return filename
 
@@ -925,3 +1013,60 @@ class createMosaic:
         subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
                         subprocess.STDOUT)
     return "The mosaic file %s is created" % self.out
+
+class processModis:
+  """A class to process raw modis data from hdf to tif using swath2grid (from MRT Swath tools)
+  """
+  def __init__(self, hdfname, confile, mrtpath):
+    """Initialization function :
+       hdfname = the full path to the hdf file
+       confile = the full path to the paramater file
+       mrtpath = the full path to mrt directory where inside you have bin and 
+                 data directories
+    """
+    # check if the hdf file exists
+    if os.path.exists(hdfname):
+      self.name = hdfname
+    else:
+      raise IOError('%s not exists' % hdfname)
+    # check if confile exists
+    if os.path.exists(confile):
+      self.conf = confile
+    else:
+      raise IOError('%s not exists' % confile)
+    # check if mrtpath and subdirectories exists and set environment variables
+    if os.path.exists(mrtpath):
+      if os.path.exists(os.path.join(mrtpath,'bin')):
+        self.mrtpathbin = os.path.join(mrtpath,'bin')
+        os.environ['PATH'] = "%s:%s" % (os.environ['PATH'],os.path.join(mrtpath,
+                                                                        'data'))
+      else:
+        raise IOError('The path %s not exists' % os.path.join(mrtpath,'bin'))
+      if os.path.exists(os.path.join(mrtpath,'data')):
+        self.mrtpathdata = os.path.join(mrtpath,'data')
+        os.environ['MRTDATADIR'] = os.path.join(mrtpath,'data')
+      else:
+        raise IOError('The path %s not exists' % os.path.join(mrtpath,'data'))
+    else:
+      raise IOError('The path %s not exists' % mrtpath)
+
+  def executable(self):
+    """Return the executable of resample MRT software
+    """
+    if sys.platform.count('linux') != -1:
+      if os.path.exists(os.path.join(self.mrtpathbin,'swath2grid')):
+        return os.path.join(self.mrtpathbin,'swath2grid')
+    elif sys.platform.count('win32') != -1:
+      if os.path.exists(os.path.join(self.mrtpathbin,'swath2grid.exe')):
+        return os.path.join(self.mrtpath,'swath2grid.exe')
+
+  def run(self):
+    """Exec the process"""
+    import subprocess
+    execut = self.executable()
+    if not os.path.exists(execut):
+      raise IOError('The path %s not exists, could be an erroneus path or '\
+                    + 'software') % execut
+    else:
+      subprocess.call([execut,'-pf=%s' % self.conf])
+    return "The hdf file %s was converted" % self.name
