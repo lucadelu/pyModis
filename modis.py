@@ -49,6 +49,7 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
+from xml.etree import ElementTree
 
 class downModis:
   """A class to download MODIS data from NASA FTP repository"""
@@ -406,7 +407,6 @@ class parseModis:
     """Initialization function :
        filename = the name of MODIS hdf file
     """
-    from xml.etree import ElementTree
     if os.path.exists(filename):
       # hdf name
       self.hdfname = filename
@@ -530,8 +530,9 @@ class parseModis:
     self.getGranule()
     rangeTime = {}
     for i in self.granule.find('RangeDateTime').getiterator():
-      if i.text.strip() != '':
-        rangeTime[i.tag] = i.text
+      if i.text != None:
+        if i.text.strip() != '':
+          rangeTime[i.tag] = i.text
     return rangeTime
 
   def retBoundary(self):
@@ -610,6 +611,19 @@ class parseModis:
     """Return the PGEVersion element"""
     self.getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
+
+  def metastring(self):
+    date = self.retRangeTime()
+    qa = self.retMeasure()
+    pge = self.retPGEVersion()
+    daynight = self.retDataGranule()
+    stri = "Date:%s;BeginningTime:%s;EndingTime:%s;DayNightFlag:%s;"
+    stri += "QAPercentCloudCover:%s;QAPercentMissingData:%s;PGEVersion:%s"
+    out = stri % ( date['RangeBeginningDate'], date['RangeBeginningTime'], 
+          date['RangeEndingTime'], daynight['DayNightFlag'], 
+          qa['QAStats']['QAPercentCloudCover'], 
+          qa['QAStats']['QAPercentMissingData'], pge)
+    return out
 
   def confResample(self, spectral, res = None, output = None, datum = 'WGS84',
                   resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',  utm = None,
@@ -786,7 +800,6 @@ class parseModisMulti:
   """A class to some variable for the xml file of a mosaic
   """
   def __init__(self,hdflist):
-    from xml.etree import ElementTree
     self.ElementTree = ElementTree
     self.hdflist = hdflist
     self.parModis = []
@@ -839,38 +852,14 @@ class parseModisMulti:
       elem = self.ElementTree.SubElement(ele,k)
       elem.text = v
 
-  def valDTD(self,obj):
+  def moreValues(self, fun, obj, ele):
     values = []
     for i in self.parModis:
-      values.append(i.retDTD())
+      values.append(getattr(i,fun)())
     for i in self._checkval(values):
-      dtd = self.ElementTree.SubElement(obj,'DTDVersion')
+      dtd = self.ElementTree.SubElement(obj,ele)
       dtd.text = i
 
-  def valDataCenter(self,obj):
-    values = []
-    for i in self.parModis:
-      values.append(i.retDataCenter())
-    for i in self._checkval(values):
-      dci = self.ElementTree.SubElement(obj,'DataCenterId')
-      dci.text = i
-      
-  def valGranuleUR(self,obj):
-    values = []
-    for i in self.parModis:
-      values.append(i.retGranuleUR())
-    for i in self._checkval(values):
-      gur = self.ElementTree.SubElement(obj,'GranuleUR')
-      gur.text = i
-
-  def valDbID(self,obj):
-    values = []
-    for i in self.parModis:
-      values.append(i.retDbID())
-    for i in self._checkval(values):
-      dbid = self.ElementTree.SubElement(obj,'DbID')
-      dbid.text = i
-      
   def valInsTime(self,obj):
     values = []
     for i in self.parModis:
@@ -933,7 +922,6 @@ class parseModisMulti:
   
   def valInputPointer(self,obj):
     for i in self.parModis:
-      import pdb; pdb.set_trace()
       for v in i.retInputGranule():
         ip = self.ElementTree.SubElement(obj,'InputPointer')
         ip.text = v
@@ -976,16 +964,17 @@ class parseModisMulti:
     # the root element
     granule = self.ElementTree.Element('GranuleMetaDataFile')
     # add DTDVersion
-    self.valDTD(granule)
+    self.moreValues('retDTD',granule,'DTDVersion')
+    #self.valDTD(granule)
     # add DataCenterId
-    self.valDataCenter(granule)
+    self.moreValues('retDataCenter',granule,'DataCenterId')
     # add GranuleURMetaData
     gurmd = self.ElementTree.SubElement(granule,'GranuleURMetaData')
     # add GranuleUR
-    self.valGranuleUR(gurmd)
+    self.moreValues('retGranuleUR',granule,'GranuleUR')
     # add dbID
-    self.valDbID(gurmd)
-    
+    self.moreValues('retDbID',granule,'DbID')
+
     # TODO ADD InsertTime LastUpdate
 
     # add CollectionMetaData
@@ -1129,16 +1118,19 @@ class createMosaic:
     self.subset = subset
 
   def write_mosaic_xml(self):
+    self.finalfile = open(os.path.join(self.basepath,'mosaic%i' % os.getpid()),'w')
     listHDF = []
     for i in self.HDFfiles:
       if i.find(self.basepath) == -1:
-        print "Attection maybe you have the not full path in the HDF file list"
+        print "Attection maybe you are not using full path in the HDF file list"
         listHDF.append(os.path.join(self.basepath,i.strip()))
+        self.finalfile.write("%s\n" % os.path.join(self.basepath,i.strip()))
       else:
         listHDF.append(i.strip())
+        self.finalfile.write("%s\n" % i.strip())
+    self.finalfile.close()
     pmm = parseModisMulti(listHDF)
     pmm.writexml(self.outxml)
-
 
   def executable(self):
     """Return the executable of mrtmosaic MRT software
@@ -1160,11 +1152,12 @@ class createMosaic:
     else:
       self.write_mosaic_xml()
       if self.subset:
-        subprocess.call([execut,'-i',self.listfiles,'-o',self.out,'-s',self.subset], 
+        subprocess.call([execut,'-i',self.finalfile.name,'-o',self.out,'-s',self.subset], 
                         stderr = subprocess.STDOUT)
       else:
-        subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
+        subprocess.call([execut,'-i',self.finalfile.name,'-o',self.out], stderr = 
                         subprocess.STDOUT)
+      #os.remove(self.finalfile)
     return "The mosaic file %s is created" % self.out
 
 class processModis:
