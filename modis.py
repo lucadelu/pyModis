@@ -158,42 +158,42 @@ class downModis:
     if self.debug==True:
       logging.debug("Close connection %s" % self.url)
 
-  def setDirectoryIn(self,day):
+  def _setDirectoryIn(self,day):
     """ Enter in the directory of the day """
     try:
       self.ftp.cwd(day)
     except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s entering in directory %s" % e, day)
-      self.setDirectoryIn(day)
+      self._setDirectoryIn(day)
 
-  def setDirectoryOver(self):
+  def _setDirectoryOver(self):
     """ Come back to old path """
     try:
       self.ftp.cwd('..')
     except (ftplib.error_reply,socket.error), e:
       logging.error("Error %s when try to come back" % e)
-      self.setDirectoryOver()
+      self._setDirectoryOver()
 
-  def str2date(self,strin):
+  def _str2date(self,strin):
       """Return a date object from a string"""
       todaySplit = strin.split('-')
       return date(int(todaySplit[0]), int(todaySplit[1]),int(todaySplit[2]))
 
-  def getToday(self):
+  def _getToday(self):
     """Return the first day for start to download"""
     if self.today == None:
       # set today variable to today
       self.today = date.today()
     else:
       # set today variable to data pass from user
-      self.today = self.str2date(self.today)
+      self.today = self._str2date(self.today)
       # set enday variable to data
     if self.enday != None:
-      self.enday = self.str2date(self.enday)
+      self.enday = self._str2date(self.enday)
       
   def getListDays(self):
       """ Return a list of all selected days """
-      self.getToday()
+      self._getToday()
 
       today_s = self.today.strftime("%Y.%m.%d")
       # dirData is reverse sorted
@@ -264,7 +264,7 @@ class downModis:
       logging.error("Error %s when try to receive list of files" % e)
       self.getFilesList()
 
-  def checkDataExist(self,listNewFile, move = 0):
+  def _checkDataExist(self,listNewFile, move = 0):
     """ Check if a data already exists in the directory of download 
     Move serve to know if function is called from download or move function"""
     fileInPath = []
@@ -280,7 +280,7 @@ class downModis:
       listOfDifferent = list(set(fileInPath) - set(listNewFile))
     return listOfDifferent
 
-  def getNewerVersion(self,oldFile,newFile):
+  def _getNewerVersion(self,oldFile,newFile):
     """ Return newer version of a file"""
     oldFileSplit = oldFile.split('.')
     newFileSplit = newFile.split('.')
@@ -320,7 +320,7 @@ class downModis:
             file_hdf = open(os.path.join(self.writeFilePath,i), "wb")
           elif numFiles == 1:
             # check the version of file  
-            fileDown = self.getNewerVersion(oldFile[0],i)
+            fileDown = self._getNewerVersion(oldFile[0],i)
             if fileDown != oldFile[0]:
               os.remove(os.path.join(self.writeFilePath,oldFile[0]))
               file_hdf = open(os.path.join(self.writeFilePath,fileDown), "wb")
@@ -339,14 +339,14 @@ class downModis:
     #for each day
     for day in days:
       #enter in the directory of day
-      self.setDirectoryIn(day)
+      self._setDirectoryIn(day)
       #obtain list of all files
       listAllFiles = self.getFilesList()
       #obtain list of files to download
-      listFilesDown = self.checkDataExist(listAllFiles)
+      listFilesDown = self._checkDataExist(listAllFiles)
       #download files for a day
       self.dayDownload(listFilesDown)
-      self.setDirectoryOver()
+      self._setDirectoryOver()
     self.closeFTP()
     if self.debug==True:
       logging.debug("Download terminated")
@@ -393,11 +393,11 @@ class downModis:
     logger = debugLog()
     days = self.getListDays()
     for day in days:
-      self.setDirectoryIn(day)
+      self._setDirectoryIn(day)
       listAllFiles = self.getFilesList()
       string = day + ": " + str(len(listAllFiles)) + "\n"
       logger.debug(string)
-      self.setDirectoryOver()   
+      self._setDirectoryOver()   
 
 class parseModis:
   """Class to parse MODIS xml files, it also can create the parameter 
@@ -451,48 +451,48 @@ class parseModis:
           retString = "%s = %s\n" % (node.tag,node.text) 
     return retString
 
-  def getRoot(self):
+  def _getRoot(self):
     """Set the root element"""
     self.rootree = self.tree.getroot()
 
   def retDTD(self):
     """Return the DTDVersion element"""
-    self.getRoot()
+    self._getRoot()
     return self.rootree.find('DTDVersion').text
 
   def retDataCenter(self):
     """Return the DataCenterId element"""
-    self.getRoot()
+    self._getRoot()
     return self.rootree.find('DataCenterId').text
 
-  def getGranule(self):
+  def _getGranule(self):
     """Set the GranuleURMetaData element"""
-    self.getRoot()
+    self._getRoot()
     self.granule = self.rootree.find('GranuleURMetaData')
 
   def retGranuleUR(self):
     """Return the GranuleUR element"""
-    self.getGranule()
+    self._getGranule()
     return self.granule.find('GranuleUR').text
 
   def retDbID(self):
     """Return the DbID element"""
-    self.getGranule()
+    self._getGranule()
     return self.granule.find('DbID').text
 
   def retInsertTime(self):
     """Return the DbID element"""
-    self.getGranule()
+    self._getGranule()
     return self.granule.find('InsertTime').text
 
   def retLastUpdate(self):
     """Return the DbID element"""
-    self.getGranule()
+    self._getGranule()
     return self.granule.find('LastUpdate').text
 
   def retCollectionMetaData(self):
     """Return the CollectionMetaData element"""
-    self.getGranule()
+    self._getGranule()
     collect = {}
     for i in self.granule.find('CollectionMetaData').getiterator():
       if i.text.strip() != '':
@@ -501,7 +501,7 @@ class parseModis:
 
   def retDataFiles(self):
     """Return the DataFiles element"""
-    self.getGranule()
+    self._getGranule()
     collect = {}
     datafiles = self.granule.find('DataFiles')
     for i in datafiles.find('DataFileContainer').getiterator():
@@ -511,7 +511,7 @@ class parseModis:
 
   def retDataGranule(self):
     """Return the ECSDataGranule elements"""
-    self.getGranule()
+    self._getGranule()
     datagran = {}
     for i in self.granule.find('ECSDataGranule').getiterator():
       if i.text.strip() != '':
@@ -520,14 +520,14 @@ class parseModis:
 
   def retPGEVersion(self):
     """Return the PGEVersion element"""
-    self.getGranule()
+    self._getGranule()
     return self.granule.find('PGEVersionClass').find('PGEVersion').text
 
   def retRangeTime(self):
     """Return the RangeDateTime elements inside a dictionary with the element
        name like dictionary key
     """
-    self.getGranule()
+    self._getGranule()
     rangeTime = {}
     for i in self.granule.find('RangeDateTime').getiterator():
       if i.text != None:
@@ -537,7 +537,7 @@ class parseModis:
 
   def retBoundary(self):
     """Return the maximum extend of the MODIS file inside a dictionary"""
-    self.getGranule()
+    self._getGranule()
     self.boundary = []
     lat = []
     lon = []
@@ -557,7 +557,7 @@ class parseModis:
   def retMeasure(self):
     """Return statistics inside a dictionary"""
     value = {}
-    self.getGranule()
+    self._getGranule()
     mes = self.granule.find('MeasuredParameter')
     mespc = mes.find('MeasuredParameterContainer')
     value['ParameterName'] = mespc.find('ParameterName').text
@@ -578,7 +578,7 @@ class parseModis:
   def retPlatform(self):
     """Return the platform values inside a dictionary."""
     value = {}
-    self.getGranule()
+    self._getGranule()
     plat = self.granule.find('Platform')
     value['PlatformShortName'] = plat.find('PlatformShortName').text
     instr = plat.find('Instrument')
@@ -592,7 +592,7 @@ class parseModis:
        and PSAValue is the value
     """
     value = {}
-    self.getGranule()
+    self._getGranule()
     psas = self.granule.find('PSAs')
     for i in psas.findall('PSA'):
       value[i.find('PSAName').text] = i.find('PSAValue').text
@@ -601,7 +601,7 @@ class parseModis:
   def retInputGranule(self):
     """Return the input files used to process the considered file"""
     value = []
-    self.getGranule()
+    self._getGranule()
     for i in self.granule.find('InputGranule').getiterator():
       if i.tag != 'InputGranule':
         value.append(i.text)
@@ -609,7 +609,7 @@ class parseModis:
 
   def retBrowseProduct(self):
     """Return the PGEVersion element"""
-    self.getGranule()
+    self._getGranule()
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
 
   def metastring(self):
@@ -865,7 +865,7 @@ class parseModisMulti:
       elem = self.ElementTree.SubElement(ele,k)
       elem.text = v
 
-  def moreValues(self, obj, fun, ele):
+  def _moreValues(self, obj, fun, ele):
     """Funtion to add elemets to the xml from a list"""
     values = []
     for i in self.parModis:
@@ -874,14 +874,14 @@ class parseModisMulti:
       dtd = self.ElementTree.SubElement(obj,ele)
       dtd.text = i
 
-  def moreValuesCicle(self, obj, fun):
+  def _moreValuesCicle(self, obj, fun):
     """Funtion to add elemets to the xml from a dict"""
     values = []
     for i in self.parModis:
       values.append(getattr(i,fun)())
     self._cicle_values(obj,self._checkvaldict(values))
 
-  def valDataFiles(self, obj):
+  def _valDataFiles(self, obj):
     """Function to add DataFileContainer values"""
     values = []
     for i in self.parModis:
@@ -890,7 +890,7 @@ class parseModisMulti:
       dfc = self.ElementTree.SubElement(obj, 'DataFileContainer')
       self._cicle_values(dfc,i)
 
-  def valPGEVersion(self,obj):
+  def _valPGEVersion(self,obj):
     """Function to add PGEVersion values"""
     values = []
     for i in self.parModis:
@@ -899,7 +899,7 @@ class parseModisMulti:
       pge = self.ElementTree.SubElement(obj,'PGEVersion')
       pge.text = i
 
-  def valBound(self):
+  def _valBound(self):
     """Return the maximun extent of mosaic"""
     boundary = self.parModis[0].retBoundary()
     for i in range(1,len(self.parModis)):
@@ -914,7 +914,7 @@ class parseModisMulti:
         boundary['max_lon'] = bound['max_lon']
     self.boundary = boundary
 
-  def addPoint(self,obj,lon,lat):
+  def _addPoint(self,obj,lon,lat):
     """Function to add a single point of maximum extent"""
     pt = self.ElementTree.SubElement(obj, 'Point')
     ptlon = self.ElementTree.SubElement(pt, 'PointLongitude')
@@ -922,7 +922,7 @@ class parseModisMulti:
     ptlat = self.ElementTree.SubElement(pt, 'PointLatitude')
     ptlat.text = str(self.boundary[lat])
 
-  def valMeasuredParameter(self,obj):
+  def _valMeasuredParameter(self,obj):
     """Function to add MeasuredParameter values"""
     valuesQAStats = {}
     valuesQAFlags = {}
@@ -947,14 +947,14 @@ class parseModisMulti:
       qstat = self.ElementTree.SubElement(qstats,k)
       qstat.text = str(self._meanval(v))
 
-  def valInputPointer(self,obj):
+  def _valInputPointer(self,obj):
     """Function to add InputPointer values"""
     for i in self.parModis:
       for v in i.retInputGranule():
         ip = self.ElementTree.SubElement(obj,'InputPointer')
         ip.text = v
 
-  def valPlatform(self, obj):
+  def _valPlatform(self, obj):
     """Function to add Platform values"""
     valuesSName = []
     valuesInstr = []
@@ -979,7 +979,7 @@ class parseModisMulti:
         ps = self.ElementTree.SubElement(sens,'SensorShortName')
         ps.text = valSens[i]
 
-  def valPSA(self, obj):
+  def _valPSA(self, obj):
     """Function to add PSA values"""
     values = {}
     # add all keys
@@ -1024,59 +1024,59 @@ class parseModisMulti:
     # the root element
     granule = self.ElementTree.Element('GranuleMetaDataFile')
     # add DTDVersion
-    self.moreValues(granule, 'retDTD', 'DTDVersion')
+    self._moreValues(granule, 'retDTD', 'DTDVersion')
     # add DataCenterId
-    self.moreValues(granule, 'retDataCenter', 'DataCenterId')
+    self._moreValues(granule, 'retDataCenter', 'DataCenterId')
     # add GranuleURMetaData
     gurmd = self.ElementTree.SubElement(granule,'GranuleURMetaData')
     # add GranuleUR
-    self.moreValues(granule, 'retGranuleUR', 'GranuleUR')
+    self._moreValues(granule, 'retGranuleUR', 'GranuleUR')
     # add dbID
-    self.moreValues(granule, 'retDbID', 'DbID')
+    self._moreValues(granule, 'retDbID', 'DbID')
 
     # TODO ADD InsertTime LastUpdate
 
     # add CollectionMetaData
     cmd = self.ElementTree.SubElement(gurmd,'CollectionMetaData')
-    self.moreValuesCicle(cmd,'retCollectionMetaData')
+    self._moreValuesCicle(cmd,'retCollectionMetaData')
     # add DataFiles
     df = self.ElementTree.SubElement(gurmd,'DataFiles')
-    self.valDataFiles(df)
+    self._valDataFiles(df)
     
     # TODO ADD ECSDataGranule
     
     # add PGEVersionClass
     pgevc = self.ElementTree.SubElement(gurmd,'PGEVersionClass')
-    self.valPGEVersion(pgevc)
+    self._valPGEVersion(pgevc)
     # add RangeDateTime
     rdt = self.ElementTree.SubElement(gurmd,'RangeDateTime')
-    self.moreValuesCicle(rdt,'retRangeTime')
+    self._moreValuesCicle(rdt,'retRangeTime')
     # SpatialDomainContainer
     sdc = self.ElementTree.SubElement(gurmd,'SpatialDomainContainer')
     hsdc = self.ElementTree.SubElement(sdc,'HorizontalSpatialDomainContainer')
     gp = self.ElementTree.SubElement(hsdc,'GPolygon')
     bound = self.ElementTree.SubElement(gp,'Boundary')
-    self.valBound()
-    self.addPoint(bound,'min_lon','max_lat')
-    self.addPoint(bound,'max_lon','max_lat')
-    self.addPoint(bound,'min_lon','min_lat')
-    self.addPoint(bound,'max_lon','min_lat')
+    self._valBound()
+    self._addPoint(bound,'min_lon','max_lat')
+    self._addPoint(bound,'max_lon','max_lat')
+    self._addPoint(bound,'min_lon','min_lat')
+    self._addPoint(bound,'max_lon','min_lat')
     # add MeasuredParameter
     mp = self.ElementTree.SubElement(gurmd,'MeasuredParameter')
     mpc = self.ElementTree.SubElement(mp,'MeasuredParameterContainer')
-    self.valMeasuredParameter(mpc)
+    self._valMeasuredParameter(mpc)
     
     # TODO ADD qflags
 
     # Platform
     pl = self.ElementTree.SubElement(gurmd,'Platform')
-    self.valPlatform(pl)
+    self._valPlatform(pl)
     # add PSAs
     psas = self.ElementTree.SubElement(gurmd,'PSAs')
-    self.valPSA(psas)
+    self._valPSA(psas)
     # add InputGranule and InputPointer
     ig = self.ElementTree.SubElement(gurmd,'InputGranule')
-    self.valInputPointer(ig)
+    self._valInputPointer(ig)
     # TODO ADD BrowseProduct
     # write output file
     output = open(outputname, 'w')
@@ -1121,7 +1121,7 @@ class convertModis:
     else:
       raise IOError('The path %s not exists' % mrtpath)
 
-  def executable(self):
+  def _executable(self):
     """Return the executable of resample MRT software
     """
     if sys.platform.count('linux') != -1:
@@ -1134,7 +1134,7 @@ class convertModis:
   def run(self):
     """Exec the process"""
     import subprocess
-    execut = self.executable()
+    execut = self._executable()
     if not os.path.exists(execut):
       raise IOError('The path %s not exists, could be an erroneus path or '\
                     + 'software') % execut
@@ -1176,7 +1176,7 @@ class createMosaic:
     self.outxml = os.path.join(self.basepath, self.out + '.xml')
     self.subset = subset
 
-  def write_mosaic_xml(self):
+  def _write_mosaic_xml(self):
     self.finalfile = open(os.path.join(self.basepath,'mosaic%i' % os.getpid()),'w')
     listHDF = []
     for i in self.HDFfiles:
@@ -1191,7 +1191,7 @@ class createMosaic:
     pmm = parseModisMulti(listHDF)
     pmm.writexml(self.outxml)
 
-  def executable(self):
+  def _executable(self):
     """Return the executable of mrtmosaic MRT software
     """
     if sys.platform.count('linux') != -1:
@@ -1204,12 +1204,12 @@ class createMosaic:
   def run(self):
     """Exect the mosaic process"""
     import subprocess
-    execut = self.executable()
+    execut = self._executable()
     if not os.path.exists(execut):
       raise IOError('The path %s not exists, could be an erroneus path or '\
                     + 'software') % execut
     else:
-      self.write_mosaic_xml()
+      self._write_mosaic_xml()
       if self.subset:
         subprocess.call([execut,'-i',self.finalfile.name,'-o',self.out,'-s',self.subset], 
                         stderr = subprocess.STDOUT)
@@ -1258,7 +1258,7 @@ class processModis:
     else:
       raise IOError('The path %s not exists' % mrtpath)
 
-  def executable(self):
+  def _executable(self):
     """Return the executable of resample MRT software
     """
     if sys.platform.count('linux') != -1:
@@ -1271,7 +1271,7 @@ class processModis:
   def run(self):
     """Exec the process"""
     import subprocess
-    execut = self.executable()
+    execut = self._executable()
     if not os.path.exists(execut):
       raise IOError('The path %s not exists, could be an erroneus path or '\
                     + 'software') % execut
