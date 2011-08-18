@@ -613,6 +613,9 @@ class parseModis:
     return self.granule.find('BrowseProduct').find('BrowseGranuleId').text
 
   def metastring(self):
+    """Return a string with some metadata. The output it's used on GRASS GIS
+       to set the metadata with r.support command
+    """
     date = self.retRangeTime()
     qa = self.retMeasure()
     pge = self.retPGEVersion()
@@ -809,6 +812,7 @@ class parseModisMulti:
       self.nfiles += 1
 
   def _checkval(self,vals):
+    """Internal function to return the different values from a list"""
     if vals.count(vals[0]) == self.nfiles:
       return [vals[0]]
     else:
@@ -819,6 +823,7 @@ class parseModisMulti:
       return outvals
       
   def _checkvaldict(self,vals):
+    """Internal function to return the different values from a dict"""
     keys = vals[0].keys()
     outvals = {}
     for k in keys:
@@ -829,10 +834,10 @@ class parseModisMulti:
         outvals[k] = valtemp[0]
       else:
         raise IOError('Something wrong reading XML files')
-      
     return outvals
 
   def _minval(self, vals):
+    """Internal function to return the minimun value"""
     outval = vals[0]
     for i in range(1,len(vals)):
       if outval > i:
@@ -840,19 +845,28 @@ class parseModisMulti:
     return outval
     
   def _maxval(self, vals):
+    """Internal function to return the maximum value"""
     outval = vals[0]
     for i in range(1,len(vals)):
       if outval < i:
         outval = i
     return outval
-    
+
+  def _meanval(self,vals):
+    """Internal function to return the mean value"""
+    out = 0
+    for v in vals:
+      out += float(v)
+    return out/len(vals)
+
   def _cicle_values(self, ele,values):
     """Function to add values from a dictionary"""
     for k,v in values.iteritems():
       elem = self.ElementTree.SubElement(ele,k)
       elem.text = v
 
-  def moreValues(self, fun, obj, ele):
+  def moreValues(self, obj, fun, ele):
+    """Funtion to add elemets to the xml from a list"""
     values = []
     for i in self.parModis:
       values.append(getattr(i,fun)())
@@ -860,41 +874,33 @@ class parseModisMulti:
       dtd = self.ElementTree.SubElement(obj,ele)
       dtd.text = i
 
-  def valInsTime(self,obj):
+  def moreValuesCicle(self, obj, fun):
+    """Funtion to add elemets to the xml from a dict"""
     values = []
     for i in self.parModis:
-      values.append(i.retInsertTime())
-    obj.text = self._minval(values)
-  
-  def valCollectionMetaData(self,obj):
-    values = []
-    for i in self.parModis:
-      values.append(i.retCollectionMetaData())
+      values.append(getattr(i,fun)())
     self._cicle_values(obj,self._checkvaldict(values))
-  
+
   def valDataFiles(self, obj):
+    """Function to add DataFileContainer values"""
     values = []
     for i in self.parModis:
       values.append(i.retDataFiles())
     for i in values:
       dfc = self.ElementTree.SubElement(obj, 'DataFileContainer')
       self._cicle_values(dfc,i)
-    
+
   def valPGEVersion(self,obj):
+    """Function to add PGEVersion values"""
     values = []
     for i in self.parModis:
       values.append(i.retPGEVersion())
     for i in self._checkval(values):
       pge = self.ElementTree.SubElement(obj,'PGEVersion')
       pge.text = i
-  
-  def valRangeTime(self,obj):
-    values = []
-    for i in self.parModis:
-      values.append(i.retRangeTime())
-    self._cicle_values(obj,self._checkvaldict(values))
-  
+
   def valBound(self):
+    """Return the maximun extent of mosaic"""
     boundary = self.parModis[0].retBoundary()
     for i in range(1,len(self.parModis)):
       bound = self.parModis[i].retBoundary()
@@ -907,47 +913,61 @@ class parseModisMulti:
       if bound['max_lon'] > boundary['max_lon']:
         boundary['max_lon'] = bound['max_lon']
     self.boundary = boundary
-  
-  def valMeasuredParameter(self,obj):
-    valuesQAStats = []
-    valuesQAFlags = []
-    valuesParameter = []
-    for i in self.parModis:
-      valuesQAStats.append(i.retMeasure()['QAStats'])
-      valuesQAFlags.append(i.retMeasure()['QAFlags'])
-      valuesParameter.append(i.retMeasure()['ParameterName'])
-    for i in self._checkval(valuesParameter):
-      pn = self.ElementTree.SubElement(obj,'ParameterName')
-      pn.text = i
-  
-  def valInputPointer(self,obj):
-    for i in self.parModis:
-      for v in i.retInputGranule():
-        ip = self.ElementTree.SubElement(obj,'InputPointer')
-        ip.text = v
-  
+
   def addPoint(self,obj,lon,lat):
+    """Function to add a single point of maximum extent"""
     pt = self.ElementTree.SubElement(obj, 'Point')
     ptlon = self.ElementTree.SubElement(pt, 'PointLongitude')
     ptlon.text = str(self.boundary[lon])
     ptlat = self.ElementTree.SubElement(pt, 'PointLatitude')
     ptlat.text = str(self.boundary[lat])
-  
+
+  def valMeasuredParameter(self,obj):
+    """Function to add MeasuredParameter values"""
+    valuesQAStats = {}
+    valuesQAFlags = {}
+    valuesParameter = []
+    keysQAStats = self.parModis[0].retMeasure()['QAStats'].keys()
+    for i in keysQAStats:
+      valuesQAStats[i] = []
+    keysQAFlags = self.parModis[0].retMeasure()['QAFlags'].keys()
+    for i in keysQAFlags:
+      valuesQAFlags[i] = []
+    for i in self.parModis:
+      for k,v in i.retMeasure()['QAStats'].iteritems():
+        valuesQAStats[k].append(v)
+      for k,v in i.retMeasure()['QAFlags'].iteritems():
+        valuesQAFlags[k].append(v)
+      valuesParameter.append(i.retMeasure()['ParameterName'])
+    for i in self._checkval(valuesParameter):
+      pn = self.ElementTree.SubElement(obj,'ParameterName')
+      pn.text = i
+    qstats = self.ElementTree.SubElement(obj,'QAStats')
+    for k, v in valuesQAStats.iteritems():
+      qstat = self.ElementTree.SubElement(qstats,k)
+      qstat.text = str(self._meanval(v))
+
+  def valInputPointer(self,obj):
+    """Function to add InputPointer values"""
+    for i in self.parModis:
+      for v in i.retInputGranule():
+        ip = self.ElementTree.SubElement(obj,'InputPointer')
+        ip.text = v
+
   def valPlatform(self, obj):
+    """Function to add Platform values"""
     valuesSName = []
     valuesInstr = []
     valuesSensor = []
     for i in self.parModis:
-        valuesSName.append(i.retPlatform()['PlatformShortName'])
-        valuesInstr.append(i.retPlatform()['InstrumentShortName'])
-        valuesSensor.append(i.retPlatform()['SensorShortName'])
+      valuesSName.append(i.retPlatform()['PlatformShortName'])
+      valuesInstr.append(i.retPlatform()['InstrumentShortName'])
+      valuesSensor.append(i.retPlatform()['SensorShortName'])
     for i in self._checkval(valuesSName):
       pn = self.ElementTree.SubElement(obj,'PlatformShortName')
       pn.text = i
-      
     valInstr = self._checkval(valuesInstr)
     valSens = self._checkval(valuesSensor)
-    
     if len(valInstr) != len(valSens):
       raise IOError('Something wrong reading XML files')
     else:
@@ -959,27 +979,66 @@ class parseModisMulti:
         ps = self.ElementTree.SubElement(sens,'SensorShortName')
         ps.text = valSens[i]
 
+  def valPSA(self, obj):
+    """Function to add PSA values"""
+    values = {}
+    # add all keys
+    keys = self.parModis[0].retPSA().keys()
+    for i in keys:
+      values[i] = []
+    # for each key create a list of values
+    for i in self.parModis:
+      for k,v in i.retPSA().iteritems():
+        values[k].append(v)
+    # these values could be different so they must be added all
+    valApp = ['TileID','HORIZONTALTILENUMBER','VERTICALTILENUMBER']
+    for v in valApp:
+      for i in values[v]:
+        psa = self.ElementTree.SubElement(obj,'PSA')
+        psaname = self.ElementTree.SubElement(psa, 'PSAName')
+        psaname.text = v
+        psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
+        psavalue.text = i
+    # add CLOUD_CONTAMINATED_LST_SCREENED, if one of values is NO set NO otherwise YES 
+    psa = self.ElementTree.SubElement(obj,'PSA')
+    psaname = self.ElementTree.SubElement(psa, 'PSAName')
+    psaname.text = 'CLOUD_CONTAMINATED_LST_SCREENED'
+    psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
+    if values['CLOUD_CONTAMINATED_LST_SCREENED'].count('NO') == 0:
+      psavalue.text = 'NO'
+    else:
+      psavalue.text = 'YES'
+    # for these values calculate the mean value
+    valMean = ['QAFRACTIONGOODQUALITY', 'QAPERCENTNOTPRODUCEDOTHER', 'N_GRAN_POINTERS',
+    'QAFRACTIONNOTPRODUCEDCLOUD','QAPERCENTOTHERQUALITY','QAFRACTIONNOTPRODUCEDOTHER',
+    'QAPERCENTNOTPRODUCEDCLOUD','QAFRACTIONOTHERQUALITY','QAPERCENTGOODQUALITY']
+    for v in valMean:
+      psa = self.ElementTree.SubElement(obj,'PSA')
+      psaname = self.ElementTree.SubElement(psa, 'PSAName')
+      psaname.text = v
+      psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
+      psavalue.text = str(self._meanval(values[v]))
+      
   def writexml(self,outputname):
     """Return a xml file for a mosaic"""
     # the root element
     granule = self.ElementTree.Element('GranuleMetaDataFile')
     # add DTDVersion
-    self.moreValues('retDTD',granule,'DTDVersion')
-    #self.valDTD(granule)
+    self.moreValues(granule, 'retDTD', 'DTDVersion')
     # add DataCenterId
-    self.moreValues('retDataCenter',granule,'DataCenterId')
+    self.moreValues(granule, 'retDataCenter', 'DataCenterId')
     # add GranuleURMetaData
     gurmd = self.ElementTree.SubElement(granule,'GranuleURMetaData')
     # add GranuleUR
-    self.moreValues('retGranuleUR',granule,'GranuleUR')
+    self.moreValues(granule, 'retGranuleUR', 'GranuleUR')
     # add dbID
-    self.moreValues('retDbID',granule,'DbID')
+    self.moreValues(granule, 'retDbID', 'DbID')
 
     # TODO ADD InsertTime LastUpdate
 
     # add CollectionMetaData
     cmd = self.ElementTree.SubElement(gurmd,'CollectionMetaData')
-    self.valCollectionMetaData(cmd)
+    self.moreValuesCicle(cmd,'retCollectionMetaData')
     # add DataFiles
     df = self.ElementTree.SubElement(gurmd,'DataFiles')
     self.valDataFiles(df)
@@ -991,7 +1050,7 @@ class parseModisMulti:
     self.valPGEVersion(pgevc)
     # add RangeDateTime
     rdt = self.ElementTree.SubElement(gurmd,'RangeDateTime')
-    self.valRangeTime(rdt)
+    self.moreValuesCicle(rdt,'retRangeTime')
     # SpatialDomainContainer
     sdc = self.ElementTree.SubElement(gurmd,'SpatialDomainContainer')
     hsdc = self.ElementTree.SubElement(sdc,'HorizontalSpatialDomainContainer')
@@ -1007,19 +1066,19 @@ class parseModisMulti:
     mpc = self.ElementTree.SubElement(mp,'MeasuredParameterContainer')
     self.valMeasuredParameter(mpc)
     
-    # TODO ADD qstats qflags
+    # TODO ADD qflags
 
     # Platform
     pl = self.ElementTree.SubElement(gurmd,'Platform')
     self.valPlatform(pl)
-
     # add PSAs
     psas = self.ElementTree.SubElement(gurmd,'PSAs')
-    # TODO ADD all PSA
+    self.valPSA(psas)
     # add InputGranule and InputPointer
     ig = self.ElementTree.SubElement(gurmd,'InputGranule')
     self.valInputPointer(ig)
     # TODO ADD BrowseProduct
+    # write output file
     output = open(outputname, 'w')
     output.write('<?xml version="1.0" encoding="UTF-8"?>')
     output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.gsfc.nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/ScienceGranuleMetadata.dtd">')
