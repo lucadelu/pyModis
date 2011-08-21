@@ -664,7 +664,10 @@ class parseModis:
     if not output:
       fileout = self.tifname
     else:
-      fileout = output
+      if output.find('.tif') == -1:
+        fileout = os.path.join(self.path, output + '.tif')
+      else: 
+        fileout = os.path.join(self.path, output)
     # the name of the output parameters files for resample MRT software
     filename = os.path.join(self.path,'%s_mrt_resample.conf' % self.code)
     # if the file already exists it remove it 
@@ -811,6 +814,12 @@ class parseModisMulti:
       self.parModis.append(parseModis(i))
       self.nfiles += 1
 
+  def _retValues(self, funct):
+    values = []
+    for i in self.parModis:
+      values.append(getattr(i,funct)())
+    return values
+
   def _checkval(self,vals):
     """Internal function to return the different values from a list"""
     if vals.count(vals[0]) == self.nfiles:
@@ -840,16 +849,16 @@ class parseModisMulti:
     """Internal function to return the minimun value"""
     outval = vals[0]
     for i in range(1,len(vals)):
-      if outval > i:
-        outval = i
+      if outval > vals[i]:
+        outval = vals[i]
     return outval
     
   def _maxval(self, vals):
     """Internal function to return the maximum value"""
     outval = vals[0]
     for i in range(1,len(vals)):
-      if outval < i:
-        outval = i
+      if outval < vals[i]:
+        outval = vals[i]
     return outval
 
   def _meanval(self,vals):
@@ -867,34 +876,40 @@ class parseModisMulti:
 
   def _moreValues(self, obj, fun, ele):
     """Funtion to add elemets to the xml from a list"""
-    values = []
-    for i in self.parModis:
-      values.append(getattr(i,fun)())
+    values = self._retValues(fun)
     for i in self._checkval(values):
       dtd = self.ElementTree.SubElement(obj,ele)
       dtd.text = i
 
   def _moreValuesCicle(self, obj, fun):
     """Funtion to add elemets to the xml from a dict"""
-    values = []
-    for i in self.parModis:
-      values.append(getattr(i,fun)())
+    values = self._retValues(fun)
     self._cicle_values(obj,self._checkvaldict(values))
+
+  def _valInsertTime(self, obj):
+    """Function to add InsertTime value"""
+    values = self._retValues('retInsertTime')
+    time = self.ElementTree.SubElement(obj,'InsertTime')
+    minimum = self._minval(values)
+    time.text = minimum
+
+  def _valLastUpdate(self, obj):
+    """Function to add InsertTime value"""
+    values = self._retValues('retLastUpdate')
+    time = self.ElementTree.SubElement(obj,'LastUpdate')
+    minimum = self._maxval(values)
+    time.text = minimum
 
   def _valDataFiles(self, obj):
     """Function to add DataFileContainer values"""
-    values = []
-    for i in self.parModis:
-      values.append(i.retDataFiles())
+    values = self._retValues('retDataFiles')
     for i in values:
       dfc = self.ElementTree.SubElement(obj, 'DataFileContainer')
       self._cicle_values(dfc,i)
 
   def _valPGEVersion(self,obj):
     """Function to add PGEVersion values"""
-    values = []
-    for i in self.parModis:
-      values.append(i.retPGEVersion())
+    values = self._retValues('retPGEVersion')
     for i in self._checkval(values):
       pge = self.ElementTree.SubElement(obj,'PGEVersion')
       pge.text = i
@@ -999,25 +1014,29 @@ class parseModisMulti:
         psaname.text = v
         psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
         psavalue.text = i
-    # add CLOUD_CONTAMINATED_LST_SCREENED, if one of values is NO set NO otherwise YES 
-    psa = self.ElementTree.SubElement(obj,'PSA')
-    psaname = self.ElementTree.SubElement(psa, 'PSAName')
-    psaname.text = 'CLOUD_CONTAMINATED_LST_SCREENED'
-    psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
-    if values['CLOUD_CONTAMINATED_LST_SCREENED'].count('NO') == 0:
-      psavalue.text = 'NO'
-    else:
-      psavalue.text = 'YES'
+    # add CLOUD_CONTAMINATED_LST_SCREENED, if one of values is NO set NO otherwise YES
+    try:
+      psa = self.ElementTree.SubElement(obj,'PSA')
+      psaname = self.ElementTree.SubElement(psa, 'PSAName')
+      psaname.text = 'CLOUD_CONTAMINATED_LST_SCREENED'
+      psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
+      if values['CLOUD_CONTAMINATED_LST_SCREENED'].count('NO') == 0:
+        psavalue.text = 'NO'
+      else:
+        psavalue.text = 'YES'
+    except:
+      pass
     # for these values calculate the mean value
     valMean = ['QAFRACTIONGOODQUALITY', 'QAPERCENTNOTPRODUCEDOTHER', 'N_GRAN_POINTERS',
     'QAFRACTIONNOTPRODUCEDCLOUD','QAPERCENTOTHERQUALITY','QAFRACTIONNOTPRODUCEDOTHER',
     'QAPERCENTNOTPRODUCEDCLOUD','QAFRACTIONOTHERQUALITY','QAPERCENTGOODQUALITY']
     for v in valMean:
-      psa = self.ElementTree.SubElement(obj,'PSA')
-      psaname = self.ElementTree.SubElement(psa, 'PSAName')
-      psaname.text = v
-      psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
-      psavalue.text = str(self._meanval(values[v]))
+      if v in values.keys():
+        psa = self.ElementTree.SubElement(obj,'PSA')
+        psaname = self.ElementTree.SubElement(psa, 'PSAName')
+        psaname.text = v
+        psavalue = self.ElementTree.SubElement(psa, 'PSAValue')
+        psavalue.text = str(self._meanval(values[v]))
       
   def writexml(self,outputname):
     """Return a xml file for a mosaic"""
@@ -1034,7 +1053,9 @@ class parseModisMulti:
     # add dbID
     self._moreValues(granule, 'retDbID', 'DbID')
 
-    # TODO ADD InsertTime LastUpdate
+    self._valInsertTime(granule)
+    self._valLastUpdate(granule)
+    # CHECK InsertTime LastUpdate
 
     # add CollectionMetaData
     cmd = self.ElementTree.SubElement(gurmd,'CollectionMetaData')
