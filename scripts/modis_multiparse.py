@@ -18,7 +18,7 @@ strREQUIRED = 'required'
 
 class OptionWithDefault(optparse.Option):
     ATTRS = optparse.Option.ATTRS + [strREQUIRED]
-    
+
     def __init__(self, *opts, **attrs):
         if attrs.get(strREQUIRED, False):
             attrs['help'] = '(Required) ' + attrs.get('help', "")
@@ -45,8 +45,8 @@ def main():
     parser.add_option("-b", action="store_true", dest="bound", default=False,
                       help="print the values releated to the spatial max extent")
     #write into file
-    parser.add_option("-w", "--write", dest="write",
-                      help="the path where write a file containing the choosen information")
+    parser.add_option("-w", "--write", dest="output",
+                      help="write the MODIS xml metadata file for MODIS mosaic")
 
     (options, args) = parser.parse_args()
     #create modis object
@@ -56,9 +56,11 @@ def main():
 
     if options.bound:
         print readDict(modisOgg.retBoundary())
-    if options.write:
-        modisOgg.writexml(options.write)
-        print "%s write correctly" % options.write
+    elif options.output:
+        modisOgg.writexml(options.output)
+        print "%s write correctly" % options.output
+    else:
+        parser.error("You have to chose at least an option")
 
 #add options
 if __name__ == "__main__":
