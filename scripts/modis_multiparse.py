@@ -55,7 +55,7 @@ def main():
     modisOgg = parsemodis.parseModisMulti(args)
 
     if options.bound:
-        print readDict(modisOgg.retBoundary())
+        print readDict(modisOgg.valBound())
     elif options.output:
         modisOgg.writexml(options.output)
         print "%s write correctly" % options.output
