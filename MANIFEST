@@ -1,8 +1,12 @@
+pymodis/convertmodis.py
+pymodis/downmodis.py
+pymodis/__init__.py
+pymodis/parsemodis.py
+scripts/modis_download.py
+scripts/modis_parse.py
 AUTHORS
 COPYING
 INSTALL
 README
 pyModis.png
-downloadmodis.py
-modis.py
 setup.py

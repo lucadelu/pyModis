@@ -10,7 +10,7 @@ A result like this and you have Python istalled
     [GCC 4.4.5] on linux2
     Type "help", "copyright", "credits" or "license" for more information.
     >>>
-﻿
+
 This however means that there is any problem
 
     bash: python: command not found
@@ -51,7 +51,7 @@ Now we can try to load the library so
     Python 2.6.6 (r266:84292, Oct  9 2010, 11:40:09) 
     [GCC 4.4.5] on linux2
     Type "help", "copyright", "credits" or "license" for more information.
-    >>> import modis
+    >>> import pymodis
 
 with this response it is all ok
 
@@ -61,4 +61,4 @@ instead with this one, you must check the installation
 
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-    ImportError: No module named modis
+    ImportError: No module named pymodis

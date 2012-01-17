@@ -23,9 +23,11 @@ from distutils.core import setup
 
 setup(
   name = 'pyModis',
-  version = '0.4',
-  py_modules = ['modis'],
-  scripts = ['downloadmodis.py'],
+  version = '0.5.0',
+  py_modules = ['pymodis.downmodis','pymodis.convertmodis','pymodis.parsemodis'],
+  #packages = ['pymodis'],
+  scripts = ['scripts/modis_download.py','scripts/modis_multiparse.py',
+            'scripts/modis_parse.py'],
   author = 'Luca Delucchi',
   author_email = 'luca.delucchi@iasma.it',
   url = 'http://gis.fem-environment.eu/gis-development/pyModis',

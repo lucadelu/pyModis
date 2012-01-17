@@ -5,7 +5,7 @@
 import sys
 import optparse
 #import modis library
-import modis
+from pymodis import downmodis
 
 #classes for required options
 strREQUIRED = 'required'
@@ -30,38 +30,37 @@ class OptionParser(optparse.OptionParser):
                     self.error("option %s is required" % (str(option)))
         return optparse.OptionParser.check_values(self, values, args)
 
-#add options
-if __name__ == "__main__":
-
+def main():
+    """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
     parser = OptionParser(usage=usage)
     #password
     parser.add_option("-P", "--password", dest="password",
-		      help="password for connect to ftp server", required=True)
+                      help="password for connect to ftp server", required=True)
     #username
     parser.add_option("-U", "--username", dest="user", default = "anonymous",
-                      help="username for connect to ftp server", required=False)
+                      help="username for connect to ftp server")
     #url
     parser.add_option("-u", "--url", default = "e4ftl01u.ecs.nasa.gov",
-		      help="ftp server url [default=%default]", dest="url")
+                      help="ftp server url [default=%default]", dest="url")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default="None",
-		      help="string of tiles separated from comma, " \
-		      + "[default=%default for all tiles]")
+                      help="string of tiles separated from comma, " \
+                      + "[default=%default for all tiles]")
     #path to add the url
     parser.add_option("-s", "--source", dest="path", default="MOLT/MOD11A1.005"
-		      , help="directory on the ftp like, " \
-		      + "[default=%default]")
+                      , help="directory on the ftp like, " \
+                      + "[default=%default]")
     #delta
     parser.add_option("-D", "--delta", dest="delta", default=10,
-		      help="delta of day from the first day, " \
-		      + "[default=%default]")
+                      help="delta of day from the first day, " \
+                      + "[default=%default]")
     #first day
     parser.add_option("-f", "--firstday", dest="today", default=None,
-		      help="the day to start download, " \
-		      + "[default=%default is for today]; if you want change" \
-		      " data you must use this format YYYY-MM-DD")
+                      help="the day to start download, " \
+                      + "[default=%default is for today]; if you want change" \
+                      " data you must use this format YYYY-MM-DD")
     #first day
     parser.add_option("-e", "--endday", dest="enday", default=None,
                       help="the day to start download, " \
@@ -69,15 +68,15 @@ if __name__ == "__main__":
                       " data you must use this format YYYY-MM-DD")
     #debug
     parser.add_option("-x", action="store_true", dest="debug", default=True,
-		      help="this is useful for debug the download")
+                      help="this is useful for debug the download")
     #jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=True,
-		      help="download also the jpeg files, [default=%default]")
+                      help="download also the jpeg files, [default=%default]")
     #only one day
     parser.add_option("-O", dest="oneday", action="store_true", default=True, 
-		      help="download only one day, it set delta=1")
+                      help="download only one day, it set delta=1")
     #parser.add_option("-A", dest="alldays", action="store_true", default=True,
-		      #help="download all days from the first")
+                      #help="download all days from the first")
 
     #set false several options
     parser.set_defaults(oneday=False)
@@ -86,16 +85,26 @@ if __name__ == "__main__":
 
     #return options and argument
     (options, args) = parser.parse_args()
+    #test if args[0] it is set
+    if len(args) == 0:
+        print "ERROR: you have to pass the destination folder for HDF file"
+        return 0   
+    #check if oneday option it is set
     if options.oneday:
-	options.delta = 1;
+        options.delta = 1;
 
     #set modis object
-    modisOgg = modis.downModis(url = options.url, user = options.user, 
-	password = options.password, destinationFolder = args[0], 
-	tiles = options.tiles, path = options.path, today = options.today, 
-	enddate = options.enday, delta = int(options.delta), jpg = options.jpg,
-	debug = options.debug)
+    modisOgg = downmodis.downModis(url = options.url, user = options.user, 
+        password = options.password, destinationFolder = args[0], 
+        tiles = options.tiles, path = options.path, today = options.today, 
+        enddate = options.enday, delta = int(options.delta), jpg = options.jpg,
+        debug = options.debug)
     #connect to ftp
     modisOgg.connectFTP()
     #download data
     modisOgg.downloadsAllDay()
+    
+
+#add options
+if __name__ == "__main__":
+    main()
