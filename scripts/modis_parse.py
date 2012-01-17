@@ -43,7 +43,7 @@ def main():
     parser = OptionParser(usage=usage)    
     #all data
     parser.add_option("-a", action="store_true", dest="all", default=False,
-                      help="print all possible values of metadata (DEFAULT)")
+                      help="print all possible values of metadata")
     #spatial extent
     parser.add_option("-b", action="store_true", dest="bound", default=False,
                       help="print the values releated to the spatial max extent")
@@ -72,8 +72,8 @@ def main():
     parser.add_option("-t", action="store_true", dest="time", default=False,
                       help="print the values releated to times")
     #write into file
-    parser.add_option("-w", "--write", dest="write",
-                      help="the path where write a file containing the choosen information")
+    parser.add_option("-w", "--write", dest="output",
+                      help="write the chosen information into a file")
 
     #return options and argument
     (options, args) = parser.parse_args()
@@ -112,8 +112,8 @@ def main():
         outString += "PGEVersion = %s\n" % modisOgg.retPGEVersion()
         outString += "BrowseProduct = %s\n" % modisOgg.retBrowseProduct()
     #if write option it is set write the string into file
-    if options.write:
-        outFile = open(options.write, 'w')
+    if options.output:
+        outFile = open(options.output, 'w')
         outFile.write(outString)
         outFile.close()
         print "%s write correctly" % options.write
