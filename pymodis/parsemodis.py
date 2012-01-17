@@ -67,7 +67,7 @@ class parseModis:
     self.resam_list_swath = ('NN', 'BI', 'CC')
     
     # datum
-    self.datum_list = ('NONE', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
+    self.datum_list = ('NODATUM', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
     self.sphere_list = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
 
   def __str__(self):
