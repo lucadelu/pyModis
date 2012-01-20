@@ -46,11 +46,11 @@ def main():
                       help="print the values releated to the spatial max extent")
     #write into file
     parser.add_option("-w", "--write", dest="output",
-                      help="write the MODIS xml metadata file for MODIS mosaic")
+                      help="write the MODIS XML metadata file for MODIS mosaic")
 
     (options, args) = parser.parse_args()
     #create modis object
-    if len(args) == 0:
+    if len(args) < 2:
         parser.error("You have to pass the name of HDF files")
     modisOgg = parsemodis.parseModisMulti(args)
 
