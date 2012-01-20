@@ -87,8 +87,7 @@ def main():
     (options, args) = parser.parse_args()
     #test if args[0] it is set
     if len(args) == 0:
-        print "ERROR: you have to pass the destination folder for HDF file"
-        return 0   
+        parser.error("You have to pass the destination folder for HDF file")
     #check if oneday option it is set
     if options.oneday:
         options.delta = 1;
