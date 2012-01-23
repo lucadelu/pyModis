@@ -30,6 +30,18 @@ import socket
 from ftplib import FTP
 import ftplib
 
+## lists of parameters accepted by resample MRT software
+# projections
+PROJ_LIST = ['AEA','GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 
+                    'SIN','TM', 'UTM', 'MERCAT']
+# resampling
+RESAM_LIST = ['NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE']
+RESAM_LIST_SWATH = ['NN', 'BI', 'CC']
+
+# datum
+DATUM_LIST = ['NODATUM', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84']
+SPHERE_LIST = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+
 class parseModis:
   """Class to parse MODIS xml files, it also can create the parameter 
     configuration file for resampling with the MRT software
@@ -58,17 +70,6 @@ class parseModis:
     # return the code of tile for conf file
     self.code = os.path.split(self.hdfname)[1].split('.')[-2]
     self.path = os.path.split(self.hdfname)[0]
-    ## lists of parameters accepted by resample MRT software
-    # projections
-    self.proj_list = ('AEA','GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 
-                      'SIN','TM', 'UTM', 'MERCAT')
-    # resampling
-    self.resam_list = ('NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE')
-    self.resam_list_swath = ('NN', 'BI', 'CC')
-    
-    # datum
-    self.datum_list = ('NODATUM', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84')
-    self.sphere_list = (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)
 
   def __str__(self):
     """Print the file without xml tags"""
@@ -277,7 +278,10 @@ class parseModis:
                    TransverseMercator)
         datum = the datum to use, the valid values are: NAD27, NAD83, WGS66,
                 WGS76, WGS84, NODATUM
-        projpar = a list of projection parameters
+        projpar = a list of projection parameters, for more info check the 
+                  "Appendix C" of MODIS reprojection tool user’s manual
+                  https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+
         """
     #check if spectral it's write with correct construct ( value )
     if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
@@ -306,24 +310,24 @@ class parseModis:
                                                               bound['max_lon']))
     conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
     # if resampl is in resam_list set the parameter otherwise return an error
-    if resampl in self.resam_list:
+    if resampl in RESAM_LIST:
       conFile.write("RESAMPLING_TYPE = %s\n" % resampl)
     else:
       raise IOError('The resampling type %s is not supportet.\n' \
-                   'The resampling type supported are %s' % (resampl,self.resam_list))
+                   'The resampling type supported are %s' % (resampl,RESAM_LIST))
     # if projtype is in proj_list set the parameter otherwise return an error
-    if projtype in self.proj_list:
+    if projtype in PROJ_LIST:
       conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
     else:
       raise IOError('The projection type %s is not supported.\n' \
-                   'The projections supported are %s' % (projtype,self.proj_list))
+                   'The projections supported are %s' % (projtype,PROJ_LIST))
     conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s\n" % projpar)
     # if datum is in datum_list set the parameter otherwise return an error
-    if datum in self.datum_list:
+    if datum in DATUM_LIST:
       conFile.write("DATUM = %s\n" % datum)
     else:
       raise IOError('The datum %s is not supported.\n' \
-                   'The datum supported are %s' % (datum,self.datum_list))
+                   'The datum supported are %s' % (datum,DATUM_LIST))
     # if utm is not None write the UTM_ZONE parameter in the file
     if utm:
       conFile.write("UTM_ZONE = %s\n" % utm)
@@ -363,7 +367,9 @@ class parseModis:
                    MERCAT (Mercator), MOL (Mollweide), PS (Polar Stereographic),
                    SIN ()Sinusoidal), UTM (Universal TransverseMercator)
         utm = the UTM zone if projection system is UTM
-        projpar = a list of projection parameters
+        projpar = a list of projection parameters, for more info check the 
+                  "Appendix C" of MODIS reprojection tool user’s manual
+                  https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
         """
     # output name
     if not output:
@@ -391,24 +397,24 @@ class parseModis:
     conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
     conFile.write("OUTPUT_FILE_FORMAT = GEOTIFF_FMT\n")
     # if resampl is in resam_list set the parameter otherwise return an error
-    if resampl in self.resam_list_swath:
+    if resampl in RESAM_LIST_SWATH:
       conFile.write("KERNEL_TYPE (CC/BI/NN) = %s\n" % resampl)
     else:
       raise IOError('The resampling type %s is not supportet.\n' \
-                   'The resampling type supported are %s' % (resampl,self.resam_list_swath))
+                   'The resampling type supported are %s' % (resampl,RESAM_LIST_SWATH))
     # if projtype is in proj_list set the parameter otherwise return an error
-    if projtype in self.proj_list:
+    if projtype in PROJ_LIST:
       conFile.write("OUTPUT_PROJECTION_NUMBER = %s\n" % projtype)
     else:
       raise IOError('The projection type %s is not supported.\n' \
-                   'The projections supported are %s' % (projtype,self.proj_list))
+                   'The projections supported are %s' % (projtype,PROJ_LIST))
     conFile.write("OUTPUT_PROJECTION_PARAMETER = %s\n" % projpar)
     # if sphere is in sphere_list set the parameter otherwise return an error
-    if int(sphere) in self.sphere_list:
+    if int(sphere) in SPHERE_LIST:
       conFile.write("OUTPUT_PROJECTION_SPHERE = %s\n" % sphere)
     else:
       raise IOError('The sphere %s is not supported.\n' \
-                   'The spheres supported are %s' % (sphere,self.sphere_list))
+                   'The spheres supported are %s' % (sphere,SPHERE_LIST))
     # if utm is not None write the UTM_ZONE parameter in the file
     if utm:
       if utm < '-60' or utm > '60':
