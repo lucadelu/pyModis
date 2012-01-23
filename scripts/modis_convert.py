@@ -49,7 +49,7 @@ def main():
                       help = "the path to MRT software") 
     parser.add_option("-o", "--output", dest = "output",
                       help = "the name of output mosaic")                      
-    parser.add_option("-g", "--grain", dest = "res",
+    parser.add_option("-g", "--grain", dest = "res", type = "int",
                       help = "the spatial resolution of output file")
     help_datum = "the code of datum. Available: %s"  % parsemodis.DATUM_LIST
     help_datum = removeBracs(help_datum)
@@ -81,8 +81,11 @@ def main():
     if not os.path.isfile(args[0]):    
         parser.error("You have to pass the name of HDF file.")
 
+    if string.find(options.subset, '(') == -1 or  string.find(options.subset, ')') == -1:
+        parser.error('ERROR: The spectral string should be similar to: "( 1 0 )"')
+
     modisParse = parsemodis.parseModis(args[0])
-    confname = modisParse.confResample(options.subset, options.res, options.output
+    confname = modisParse.confResample(options.subset, options.res, options.output,
                             options.datum, options.resampl, options.pt, 
                             options.utm, options.pp)
     modisConver = convertmodis.convertModis(args[0], confname, options.mrt)
