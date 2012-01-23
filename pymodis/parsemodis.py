@@ -285,7 +285,7 @@ class parseModis:
         """
     #check if spectral it's write with correct construct ( value )
     if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
-      print 'ERROR: The spectral string should be similar to: ( 1 0 )'
+      raise IOError('ERROR: The spectral string should be similar to: ( 1 0 )')
     # output name
     if not output:
       fileout = self.tifname
