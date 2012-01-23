@@ -12,7 +12,7 @@ How to compile pyModis:
 
 The Logo of pyModis is pyModis.png; it is released under CC-BY-SA and it's distributed with the pyModis library
 
-With the library is distributed some executables:
+Some executables are distributed with the library:
 	- modis_download it's useful to download MODIS data
 	- modis_parse can parse the XML file of MODIS data and return some variables
 	- modis_multiparse can parse the XML file of several MODIS data and return the bounding box or it can write the XML file with the information of all tiles considered
