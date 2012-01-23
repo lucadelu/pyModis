@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
 #import system library
-import sys
+import sys, os
 import optparse
+import string
 #import modis library
 from pymodis import convertmodis
 
@@ -33,7 +34,7 @@ class OptionParser(optparse.OptionParser):
 def main():
     """Main function"""
     #usage
-    usage = "usage: %prog [options] hdf_files_list"
+    usage = "usage: %prog [options] hdflist_file"
     parser = OptionParser(usage=usage)
     #spatial extent
     #mrt path
@@ -43,25 +44,28 @@ def main():
                       help="the name of output mosaic")
     #write into file
     parser.add_option("-s", "--subset", dest="subset",
-                      help="a subset of product's layers. The string should be similar to: ( 1 0 )")
+                      help="a subset of product's layers. The string should be similar to: 1 0")
 
     (options, args) = parser.parse_args()
 
     #check the number of tiles
-    if len(args) < 2:
-        parser.error("You have to pass the name of HDF files")
+    if len(args) > 1:
+        parser.error("You have to pass the name of a file containing HDF files. (One HDF file for line)")
+
+    if not os.path.isfile(args[0]):
+        parser.error("You have to pass the name of a file containing HDF files. (One HDF file for line)")
 
     #check is a subset it is set
     if not options.subset:
         options.subset = False
     else:
-        if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
-            print 'ERROR: The spectral string should be similar to: ( 1 0 )'
-            
-    modisOgg = convertmodis.createMosaic(args, options.output, options.mrt, 
-                                        options.subset)
+        if string.find(options.subset, '(') != -1 or  string.find(options.subset, ')') != -1:
+            print 'ERROR: The spectral string should be similar to: "1 0"'
+
+    modisOgg = convertmodis.createMosaic(args[0], options.output, options.mrt, options.subset)
     modisOgg.run()
 
 #add options
 if __name__ == "__main__":
     main()
+

@@ -122,6 +122,7 @@ class createMosaic:
     self.subset = subset
 
   def write_mosaic_xml(self):
+    from parsemodis import parseModisMulti
     listHDF = []
     for i in self.HDFfiles:
       if i.find(self.basepath) == -1:
