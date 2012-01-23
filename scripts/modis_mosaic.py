@@ -60,7 +60,7 @@ def main():
         options.subset = False
     else:
         if string.find(options.subset, '(') != -1 or  string.find(options.subset, ')') != -1:
-            print 'ERROR: The spectral string should be similar to: "1 0"'
+            parser.error('ERROR: The spectral string should be similar to: "1 0"')
 
     modisOgg = convertmodis.createMosaic(args[0], options.output, options.mrt, options.subset)
     modisOgg.run()
