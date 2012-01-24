@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#  class to download modis data
+#  class to convert/process modis data
 #
 #  (c) Copyright Luca Delucchi 2010
 #  Authors: Luca Delucchi
