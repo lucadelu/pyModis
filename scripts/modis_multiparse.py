@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #import system library
 import sys
@@ -45,7 +45,7 @@ def main():
     parser.add_option("-b", action="store_true", dest="bound", default=False,
                       help="print the values releated to the spatial max extent")
     #write into file
-    parser.add_option("-w", "--write", dest="output",
+    parser.add_option("-w", "--write", dest="output", metavar="OUTPUT_FILE",
                       help="write the MODIS XML metadata file for MODIS mosaic")
 
     (options, args) = parser.parse_args()

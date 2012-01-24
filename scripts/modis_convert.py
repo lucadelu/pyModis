@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #import system library
 import sys, os
@@ -46,9 +46,9 @@ def main():
                       help = "a subset of product's layers. The string should be similar to: 1 0")
     #mrt path
     parser.add_option("-m", "--mrt", dest = "mrt", required = True,
-                      help = "the path to MRT software") 
+                      help = "the path to MRT software", metavar="MRT_PATH")
     parser.add_option("-o", "--output", dest = "output",
-                      help = "the name of output mosaic")                      
+                      help = "the name of output mosaic", metavar="OUTPUT_FILE")
     parser.add_option("-g", "--grain", dest = "res", type = "int",
                       help = "the spatial resolution of output file")
     help_datum = "the code of datum. Available: %s"  % parsemodis.DATUM_LIST
@@ -59,9 +59,9 @@ def main():
     help_resampl = "the type of resampling. Available: %s"  % parsemodis.RESAM_LIST
     help_resampl = removeBracs(help_resampl)
     parser.add_option("-r", "--resampl", dest = "resampl", default = 'NEAREST_NEIGHBOR',
-                      help = help_resampl + " [default: %default]", 
+                      help = help_resampl + " [default: %default]", metavar="RESAMPLING_TYPE",
                       type='choice', choices = parsemodis.RESAM_LIST)                      
-    parser.add_option("-p", "--proj_parameters", dest="pp",
+    parser.add_option("-p", "--proj_parameters", dest="pp", metavar="PROJECTION_PARAMETERS",
                       default = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',        
                       help="a list of projection parameters, for more info check the "\
                       + "'Appendix C' of MODIS reprojection tool user's manual" \
@@ -70,8 +70,8 @@ def main():
     help_pt = removeBracs(help_pt)
     parser.add_option("-t", "--proj_type", dest="pt", default='GEO', type='choice',
                       choices = parsemodis.PROJ_LIST, action='store',
-                      help = help_pt + " [default: %default]")
-    parser.add_option("-u", "--utm", dest = "utm",
+                      help = help_pt + " [default: %default]", metavar="PROJECTION_SYSTEM")
+    parser.add_option("-u", "--utm", dest = "utm", metavar="UTM_ZONE",
                       help = "the UTM zone if projection system is UTM")
     #return options and argument
     (options, args) = parser.parse_args()

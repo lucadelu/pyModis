@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #import system library
 import sys, os
@@ -39,9 +39,9 @@ def main():
     #spatial extent
     #mrt path
     parser.add_option("-m", "--mrt", dest="mrt", required=True,
-                      help="the path to MRT software")    
+                      help="the path to MRT software", metavar="MRT_PATH")
     parser.add_option("-o", "--output", dest="output", required=True,
-                      help="the name of output mosaic")
+                      help="the name of output mosaic", metavar="OUTPUT_FILE")
     #write into file
     parser.add_option("-s", "--subset", dest="subset",
                       help="a subset of product's layers. The string should be similar to: 1 0")

@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 #  class to download modis data
 #
 #  (c) Copyright Luca Delucchi 2010
