@@ -83,7 +83,7 @@ def main():
     parser.add_option("-p", "--proj_parameters", dest="pp", metavar="PROJECTION_PARAMETERS",
                       default = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',        
                       help="a list of projection parameters, for more info check the "\
-                      + "'Appendix C' of MODIS reprojection tool user's manual" \
+                      + "'Appendix C' of MODIS reprojection tool user's manual " \
                       + "https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf [default: %default]")
     help_pt = "the output projection system. Available: %s" % parsemodis.PROJ_LIST
     help_pt = removeBracs(help_pt)
