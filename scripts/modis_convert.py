@@ -67,7 +67,7 @@ def main():
     parser.add_option("-m", "--mrt", dest = "mrt", required = True,
                       help = "the path to MRT software", metavar="MRT_PATH")
     parser.add_option("-o", "--output", dest = "output",
-                      help = "the name of output mosaic", metavar="OUTPUT_FILE")
+                      help = "the name of output file", metavar="OUTPUT_FILE")
     parser.add_option("-g", "--grain", dest = "res", type = "int",
                       help = "the spatial resolution of output file")
     help_datum = "the code of datum. Available: %s"  % parsemodis.DATUM_LIST
