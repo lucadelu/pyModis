@@ -64,24 +64,24 @@ def main():
                       help="ftp server url [default=%default]", dest="url")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default="None",
-                      help="string of tiles separated from comma, " \
+                      help="string of tiles separated from comma " \
                       + "[default=%default for all tiles]")
     #path to add the url
     parser.add_option("-s", "--source", dest="path", default="MOLT/MOD11A1.005"
-                      , help="directory on the ftp like, " \
+                      , help="directory on the ftp " \
                       + "[default=%default]")
     #delta
     parser.add_option("-D", "--delta", dest="delta", default=10,
-                      help="delta of day from the first day, " \
+                      help="delta of day from the first day " \
                       + "[default=%default]")
     #first day
     parser.add_option("-f", "--firstday", dest="today", default=None,
-                      metavar="LAST_DAY", help="the day to start download, " \
+                      metavar="LAST_DAY", help="the day to start download " \
                       + "[default=%default is for today]; if you want change" \
                       " data you must use this format YYYY-MM-DD")
     #first day
     parser.add_option("-e", "--endday", dest="enday", default=None,
-                      metavar="FIRST_DAY", help="the day to start download, " \
+                      metavar="FIRST_DAY", help="the day to start download " \
                       + "[default=%default]; if you want change" \
                       " data you must use this format YYYY-MM-DD")
     #debug
@@ -89,7 +89,7 @@ def main():
                       help="this is useful for debug the download")
     #jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=True,
-                      help="download also the jpeg files, [default=%default]")
+                      help="download also the jpeg files [default=%default]")
     #only one day
     parser.add_option("-O", dest="oneday", action="store_true", default=True, 
                       help="download only one day, it set delta=1")
