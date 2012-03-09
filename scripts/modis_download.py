@@ -60,7 +60,7 @@ def main():
     parser.add_option("-U", "--username", dest="user", default = "anonymous",
                       help="username for connect to ftp server")
     #url
-    parser.add_option("-u", "--url", default = "e4ftl01u.ecs.nasa.gov",
+    parser.add_option("-u", "--url", default = "e4ftl01.cr.usgs.gov",
                       help="ftp server url [default=%default]", dest="url")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default="None",
