@@ -106,10 +106,12 @@ class downModis:
     LOGGING_FORMAT='%(asctime)s - %(levelname)s - %(message)s'
     logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, \
     format=LOGGING_FORMAT)
+    self.nconnection = 0
     
-  def connectFTP(self):
+  def connectFTP(self, ncon = 20):
     """ Set connection to ftp server, move to path where data are stored
     and create a list of directory for all days"""
+    self.nconnection += 1
     try:
       # connect to ftp server
       self.ftp = FTP(self.url)
@@ -125,9 +127,10 @@ class downModis:
       self.dirData = [elem.split()[-1] for elem in self.dirData if elem.startswith("d")]
       if self.debug==True:
         logging.debug("Open connection %s" % self.url)
-    except EOFError:
-      logging.error('Error in connection')
-      self.connectFTP()
+    except (EOFError, ftplib.error_perm), e:
+      logging.error('Error in connection: %s' % e)
+      if self.nconnection <= ncon:
+        self.connectFTP()
 
   def closeFTP(self):
     """ Close ftp connection """

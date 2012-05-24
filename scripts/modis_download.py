@@ -118,9 +118,11 @@ def main():
         debug = options.debug)
     #connect to ftp
     modisOgg.connectFTP()
-    #download data
-    modisOgg.downloadsAllDay()
-    
+    if modisOgg.nconnection <= 20:
+        #download data
+        modisOgg.downloadsAllDay()
+    else:
+        parse.error("Some problem with connection occur")
 
 #add options
 if __name__ == "__main__":
