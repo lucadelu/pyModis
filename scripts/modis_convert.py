@@ -67,7 +67,7 @@ def main():
     parser.add_option("-m", "--mrt", dest = "mrt", required = True,
                       help = "the path to MRT software", metavar="MRT_PATH")
     parser.add_option("-o", "--output", dest = "output",
-                      help = "the name of output mosaic", metavar="OUTPUT_FILE")
+                      help = "the name of output file", metavar="OUTPUT_FILE")
     parser.add_option("-g", "--grain", dest = "res", type = "int",
                       help = "the spatial resolution of output file")
     help_datum = "the code of datum. Available: %s"  % parsemodis.DATUM_LIST
@@ -83,7 +83,7 @@ def main():
     parser.add_option("-p", "--proj_parameters", dest="pp", metavar="PROJECTION_PARAMETERS",
                       default = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',        
                       help="a list of projection parameters, for more info check the "\
-                      + "'Appendix C' of MODIS reprojection tool user's manual" \
+                      + "'Appendix C' of MODIS reprojection tool user's manual " \
                       + "https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf [default: %default]")
     help_pt = "the output projection system. Available: %s" % parsemodis.PROJ_LIST
     help_pt = removeBracs(help_pt)

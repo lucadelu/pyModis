@@ -63,7 +63,7 @@ def main():
                       help="the name of output mosaic", metavar="OUTPUT_FILE")
     #write into file
     parser.add_option("-s", "--subset", dest="subset",
-                      help="a subset of product's layers. The string should be similar to: 1 0")
+                      help="a subset of product's layers. The string should be similar to: 1 0 [default: all layers]")
 
     (options, args) = parser.parse_args()
 

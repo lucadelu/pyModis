@@ -35,7 +35,7 @@ class downModis:
                 password,
                 destinationFolder,
                 user = "anonymous",
-                url = "e4ftl01u.ecs.nasa.gov",
+                url = "e4ftl01.cr.usgs.gov",
                 tiles = None,
                 path = "MOLT/MOD11A1.005",
                 today = None,
