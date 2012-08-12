@@ -58,7 +58,7 @@ def main():
                       help="password for connect to ftp server", required=True)
     #username
     parser.add_option("-U", "--username", dest="user", default = "anonymous",
-                      help="username for connect to ftp server")
+                      help="username for connect to ftp server [default=%default]")
     #url
     parser.add_option("-u", "--url", default = "e4ftl01.cr.usgs.gov",
                       help="ftp server url [default=%default]", dest="url")

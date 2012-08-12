@@ -23,7 +23,7 @@ from distutils.core import setup
 
 setup(
   name = 'pyModis',
-  version = '0.5.0',
+  version = '0.5.2',
   py_modules = ['pymodis.downmodis','pymodis.convertmodis','pymodis.parsemodis'],
   #packages = ['pymodis'],
   scripts = ['scripts/modis_download.py','scripts/modis_multiparse.py',

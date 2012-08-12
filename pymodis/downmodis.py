@@ -110,7 +110,10 @@ class downModis:
     
   def connectFTP(self, ncon = 20):
     """ Set connection to ftp server, move to path where data are stored
-    and create a list of directory for all days"""
+    and create a list of directory for all days
+    
+    ncon = number maximum of test to connection at the ftp server
+    """
     self.nconnection += 1
     try:
       # connect to ftp server
@@ -247,7 +250,11 @@ class downModis:
 
   def checkDataExist(self,listNewFile, move = 0):
     """ Check if a data already exists in the directory of download 
-    Move serve to know if function is called from download or move function"""
+    
+    listNewFile = list of all files, returned by getFilesList function
+    
+    move = it is useful to know if function is called from download or move function
+    """
     fileInPath = []
     # add all files in the directory where we will save new modis data
     for f in os.listdir(self.writeFilePath):
@@ -262,7 +269,12 @@ class downModis:
     return listOfDifferent
 
   def getNewerVersion(self,oldFile,newFile):
-    """ Return newer version of a file"""
+    """ Return newer version of a file
+    
+    oldFile = one of the two similar file
+    
+    newFile = one of the two similar file
+    """
     oldFileSplit = oldFile.split('.')
     newFileSplit = newFile.split('.')
     if oldFileSplit[4] > newFileSplit[4]:
@@ -271,7 +283,12 @@ class downModis:
       return newFile
 
   def downloadFile(self,filDown,filSave):
-    """Download the single file"""
+    """Download the single file
+    
+    filDown = name of the file to download
+    
+    filSave = name of the file to write
+    """
     #try to download file
     try:
       self.ftp.retrbinary("RETR " + filDown, filSave.write)
@@ -285,7 +302,10 @@ class downModis:
       self.downloadFile(filDown,filSave)
 
   def dayDownload(self,listFilesDown):
-    """ Downloads tiles are in files_hdf_consider """
+    """ Downloads tiles are in files_hdf_consider 
+    
+    listFilesDown = list of the files to download, returned by checkDataExist function
+    """
     # for each file in files' list
     for i in listFilesDown:
         fileSplit = i.split('.')
@@ -334,6 +354,7 @@ class downModis:
     return 0
 
   def debugLog(self):
+    """Function to create the debug file"""
     # create logger
     logger = logging.getLogger("PythonLibModis debug")
     logger.setLevel(logging.DEBUG)

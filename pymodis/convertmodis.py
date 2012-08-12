@@ -34,10 +34,12 @@ class convertModis:
   """
   def __init__(self, hdfname, confile, mrtpath):
     """Initialization function :
+
        hdfname = the full path to the hdf file
+       
        confile = the full path to the paramater file
-       mrtpath = the full path to mrt directory where inside you have bin and 
-                 data directories
+       
+       mrtpath = the full path to mrt directory where inside you have bin and data directories
     """
     # check if the hdf file exists
     if os.path.exists(hdfname):
@@ -76,7 +78,7 @@ class convertModis:
         return os.path.join(self.mrtpath,'resample.exe')
 
   def run(self):
-    """Exec the process"""
+    """Exec the convertion process"""
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):
@@ -87,7 +89,7 @@ class convertModis:
     return "The hdf file %s was converted" % self.name
 
 class createMosaic:
-  """A class to convert a mosaic of different modis tiles"""
+  """A class to convert several MODIS tiles into a mosaic"""
   def __init__(self,
               listfile,
               outprefix,
@@ -121,6 +123,7 @@ class createMosaic:
     self.subset = subset
 
   def write_mosaic_xml(self):
+    """Write the XML metadata file for MODIS mosaic"""
     from parsemodis import parseModisMulti
     listHDF = []
     for i in self.HDFfiles:
@@ -210,7 +213,7 @@ class processModis:
         return os.path.join(self.mrtpath,'swath2grid.exe')
 
   def run(self):
-    """Exec the process"""
+    """Exec the convertion process"""
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):

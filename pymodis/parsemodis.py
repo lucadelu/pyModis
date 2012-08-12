@@ -43,7 +43,7 @@ SPHERE_LIST = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
 class parseModis:
   """Class to parse MODIS xml files, it also can create the parameter 
-    configuration file for resampling with the MRT software
+    configuration file for resampling MODIS DATA with the MRT software or convertmodis Module
   """
   def __init__(self, filename):
     """Initialization function :
@@ -113,17 +113,17 @@ class parseModis:
     return self.granule.find('DbID').text
 
   def retInsertTime(self):
-    """Return the DbID element"""
+    """Return the InsertTime element"""
     self.getGranule()
     return self.granule.find('InsertTime').text
 
   def retLastUpdate(self):
-    """Return the DbID element"""
+    """Return the LastUpdate element"""
     self.getGranule()
     return self.granule.find('LastUpdate').text
 
   def retCollectionMetaData(self):
-    """Return the CollectionMetaData element"""
+    """Return the CollectionMetaData element as dictionary"""
     self.getGranule()
     collect = {}
     for i in self.granule.find('CollectionMetaData').getiterator():
@@ -132,7 +132,7 @@ class parseModis:
     return collect
 
   def retDataFiles(self):
-    """Return the DataFiles element"""
+    """Return the DataFiles element as dictionary"""
     self.getGranule()
     collect = {}
     datafiles = self.granule.find('DataFiles')
@@ -142,7 +142,7 @@ class parseModis:
     return collect
 
   def retDataGranule(self):
-    """Return the ECSDataGranule elements"""
+    """Return the ECSDataGranule elements as dictionary"""
     self.getGranule()
     datagran = {}
     for i in self.granule.find('ECSDataGranule').getiterator():
@@ -156,8 +156,7 @@ class parseModis:
     return self.granule.find('PGEVersionClass').find('PGEVersion').text
 
   def retRangeTime(self):
-    """Return the RangeDateTime elements inside a dictionary with the element
-       name like dictionary key
+    """Return the RangeDateTime elements as dictionary
     """
     self.getGranule()
     rangeTime = {}
@@ -167,7 +166,7 @@ class parseModis:
     return rangeTime
 
   def retBoundary(self):
-    """Return the maximum extend of the MODIS file inside a dictionary"""
+    """Return the maximum extend (Bounding Box) of the MODIS file as dictionary"""
     self.getGranule()
     self.boundary = []
     lat = []
@@ -186,7 +185,7 @@ class parseModis:
     return extent
 
   def retMeasure(self):
-    """Return statistics inside a dictionary"""
+    """Return statistics of QA as dictionary"""
     value = {}
     self.getGranule()
     mes = self.granule.find('MeasuredParameter')
@@ -207,7 +206,7 @@ class parseModis:
     return value
 
   def retPlatform(self):
-    """Return the platform values inside a dictionary."""
+    """Return the platform values as dictionary."""
     value = {}
     self.getGranule()
     plat = self.granule.find('Platform')
@@ -219,7 +218,7 @@ class parseModis:
     return value
 
   def retPSA(self):
-    """Return the PSA values inside a dictionary, the PSAName is he key and
+    """Return the PSA values as dictionary, the PSAName is the key and
        and PSAValue is the value
     """
     value = {}
@@ -230,7 +229,7 @@ class parseModis:
     return value
 
   def retInputGranule(self):
-    """Return the input files used to process the considered file"""
+    """Return the input files (InputGranule) used to process the considered file"""
     value = []
     self.getGranule()
     for i in self.granule.find('InputGranule').getiterator():
@@ -239,7 +238,7 @@ class parseModis:
     return value
 
   def retBrowseProduct(self):
-    """Return the PGEVersion element"""
+    """Return the BrowseProduct element"""
     self.getGranule()
     try:
         value = self.granule.find('BrowseProduct').find('BrowseGranuleId').text
@@ -251,35 +250,50 @@ class parseModis:
                   resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',  utm = None,
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
                   ):
-    """Create the parameter file to use with resample MRT software to create
-       tif file
-        spectral = the spectral subset to use, look the product table to 
-                   understand the layer that you want use. 
-                   For example: 
+    """Create the parameter file to use with resample MRT software to create tif file
+    
+        spectral = the spectral subset to use, look the product table to  understand the layer that you want use. For example: 
                     - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI 
                       and QA VI the other layers are not used
                     - LST ( 1 1 0 0 1 1 0 0 0 0 0 0 ) copy only layer daily and
                       nightly temperature and QA
-        res = the resolution for the output file, it must be set in the map 
-              unit of output projection system. The software will use the original
-              resolution of input file if res it isn't set
-        output = the output name, if it doesn't set will use the prefix name of 
-                 input hdf file
+
+        res = the resolution for the output file, it must be set in the map unit of output projection system. The software will use the original resolution of input file if res it isn't set
+
+        output = the output name, if it doesn't set will use the prefix name of input hdf file
+
         utm = the UTM zone if projection system is UTM
-        resampl = the type of resampling, the valid values are: NN (nearest 
-                  neighbor), BI (bilinear), CC (cubic convolution)
-        projtype = the output projection system, the valid values are: AEA 
-                   (Albers Equal Area), ER (Equirectangular), GEO (Geographic 
-                   Latitude/Longitude), HAM (Hammer), ISIN (Integerized Sinusoidal), 
-                   IGH (Interrupted Goode Homolosine), LA (Lambert Azimuthal), 
-                   LCC (LambertConformal Conic), MERCAT (Mercator), MOL (Mollweide), 
-                   PS (Polar Stereographic), SIN ()Sinusoidal), UTM (Universal 
-                   TransverseMercator)
-        datum = the datum to use, the valid values are: NAD27, NAD83, WGS66,
-                WGS76, WGS84, NODATUM
-        projpar = a list of projection parameters, for more info check the 
-                  "Appendix C" of MODIS reprojection tool user’s manual
-                  https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+
+        resampl = the type of resampling, the valid values are: 
+                    - NN (nearest neighbor)
+                    - BI (bilinear)
+                    - CC (cubic convolution)
+
+        projtype = the output projection system, the valid values are: 
+                    - AEA (Albers Equal Area)
+                    - ER (Equirectangular)
+                    - GEO (Geographic Latitude/Longitude)
+                    - HAM (Hammer)
+                    - ISIN (Integerized Sinusoidal)
+                    - IGH (Interrupted Goode Homolosine)
+                    - LA (Lambert Azimuthal)
+                    - LCC (LambertConformal Conic)
+                    - MERCAT (Mercator)
+                    - MOL (Mollweide)
+                    - PS (Polar Stereographic)
+                    - SIN (Sinusoidal)
+                    - UTM (Universal TransverseMercator)
+
+        datum = the datum to use, the valid values are: 
+                    - NAD27
+                    - NAD83
+                    - WGS66
+                    - WGS76
+                    - WGS84
+                    - NODATUM
+
+        projpar = a list of projection parameters, for more info check the "Appendix C" of MODIS reprojection tool user's manual
+        https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
 
         """
     #check if spectral it's write with correct construct ( value )
@@ -340,35 +354,62 @@ class parseModis:
                   sphere = '8', resampl = 'NN', projtype = 'GEO',  utm = None,
                   projpar = '0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0',
                   ):
-    """Create the parameter file to use with resample MRT software to create
-       tif file
+    """Create the parameter file to use with resample MRT software to create tif file
+
         sds = Name of band/s (Science Data Set) to resample
+
         geoloc = Name geolocation file (example MOD3, MYD3)
-        res = the resolution for the output file, it must be set in the map 
-              unit of output projection system. The software will use the original
-              resolution of input file if res it isn't set
-        output = the output name, if it doesn't set will use the prefix name of 
-                 input hdf file
+
+        res = the resolution for the output file, it must be set in the map unit of output projection system. The software will use the original resolution of input file if res it isn't set
+
+        output = the output name, if it doesn't set will use the prefix name of input hdf file
+
         sphere = Output sphere number. Valid options are: 
-                 0=Clarke 1866, 1=Clarke 1880, 2=Bessel, 3=International 1967, 
-                 4=International 1909, 5=WGS 72, 6=Everest, 7=WGS 66, 
-                 8=GRS1980/WGS 84, 9=Airy, 10=Modified Everest, 11=Modified Airy, 
-                 12=Walbeck, 13=Southeast Asia, 14=Australian National, 
-                 15=Krassovsky, 16=Hough, 17=Mercury1960, 18=Modified Mercury1968, 
-                 19=Sphere 19 (Radius 6370997), 20=MODIS Sphere (Radius 6371007.181)
-        resampl = the type of resampling, the valid values are: NN (nearest 
-                  neighbor), BI (bilinear), CC (cubic convolution)
-        projtype = the output projection system, the valid values are: 
-                   AEA (Albers Equal Area), ER (Equirectangular), 
-                   GEO (Geographic Latitude/Longitude), HAM (Hammer), 
-                   ISIN (Integerized Sinusoidal),IGH (Interrupted Goode Homolosine), 
-                   LA (Lambert Azimuthal), LCC (LambertConformal Conic),
-                   MERCAT (Mercator), MOL (Mollweide), PS (Polar Stereographic),
-                   SIN ()Sinusoidal), UTM (Universal TransverseMercator)
+                    - 0=Clarke 1866
+                    - 1=Clarke 1880
+                    - 2=Bessel
+                    - 3=International 1967
+                    - 4=International 1909
+                    - 5=WGS 72
+                    - 6=Everest
+                    - 7=WGS 66
+                    - 8=GRS1980/WGS 84
+                    - 9=Airy
+                    - 10=Modified Everest
+                    - 11=Modified Airy
+                    - 12=Walbeck 
+                    - 13=Southeast Asia
+                    - 14=Australian National
+                    - 15=Krassovsky
+                    - 16=Hough
+                    - 17=Mercury1960
+                    - 18=Modified Mercury1968 
+                    - 19=Sphere 19 (Radius 6370997)
+                    - 20=MODIS Sphere (Radius 6371007.181)
+
+        resampl = the type of resampling, the valid values are: 
+                    - NN (nearest neighbor)
+                    - BI (bilinear)
+                    - CC (cubic convolution)
+
+        projtype = the output projection system, the valid values are:
+                    - AEA (Albers Equal Area)
+                    - ER (Equirectangular)
+                    - GEO (Geographic Latitude/Longitude)
+                    - HAM (Hammer) 
+                    - ISIN (Integerized Sinusoidal) 
+                    - IGH (Interrupted Goode Homolosine)
+                    - LA (Lambert Azimuthal)
+                    - LCC (LambertConformal Conic)
+                    - MERCAT (Mercator)
+                    - MOL (Mollweide)
+                    - PS (Polar Stereographic),
+                    - SIN ()Sinusoidal)
+                    - UTM (Universal TransverseMercator)
+
         utm = the UTM zone if projection system is UTM
-        projpar = a list of projection parameters, for more info check the 
-                  "Appendix C" of MODIS reprojection tool user’s manual
-                  https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+
+        projpar = a list of projection parameters, for more info check the "Appendix C" of MODIS reprojection tool user's manual https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
         """
     # output name
     if not output:
@@ -427,7 +468,8 @@ class parseModis:
     return filename
 
 class parseModisMulti:
-  """A class to some variable for the xml file of a mosaic
+  """A class to obtain some variables for the xml file of several MODIS tiles. 
+    It can also create the xml file 
   """
   def __init__(self,hdflist):
     """hdflist = python list containing the hdf files"""
@@ -442,7 +484,10 @@ class parseModisMulti:
       self.nfiles += 1
 
   def _checkval(self,vals):
-    """Internal function to return values from list"""
+    """Internal function to return values from list
+    
+    vals = list of values
+    """
     if vals.count(vals[0]) == self.nfiles:
       return [vals[0]]
     else:
@@ -453,7 +498,10 @@ class parseModisMulti:
       return outvals
       
   def _checkvaldict(self,vals):
-    """Internal function to return values from dictionary"""
+    """Internal function to return values from dictionary
+    
+    vals = dictionary of values   
+    """
     keys = vals[0].keys()
     outvals = {}
     for k in keys:
@@ -468,7 +516,10 @@ class parseModisMulti:
     return outvals
 
   def _minval(self, vals):
-    """Internal function to return the minimum value"""
+    """Internal function to return the minimum value
+    
+    vals = list of values
+    """
     outval = vals[0]
     for i in range(1,len(vals)):
       if outval > i:
@@ -476,21 +527,36 @@ class parseModisMulti:
     return outval
     
   def _maxval(self, vals):
-    """Internal function to return the maximum value"""
+    """Internal function to return the maximum value
+    
+    vals = list of values   
+    """
     outval = vals[0]
     for i in range(1,len(vals)):
       if outval < i:
         outval = i
     return outval
     
-  def _cicle_values(self, ele,values):
-    """Internal function to add values from a dictionary"""
+  def _cicle_values(self, obj,values):
+    """Internal function to add values from a dictionary
+    
+    obj = element to add values
+    
+    values = dictionary containing keys and values
+    """
     for k,v in values.iteritems():
-      elem = self.ElementTree.SubElement(ele,k)
+      elem = self.ElementTree.SubElement(obj,k)
       elem.text = v
 
   def _addPoint(self,obj,lon,lat):
-    """Internal function to add a point in boundary xml tag"""
+    """Internal function to add a point in boundary xml tag
+    
+    obj = element to add point
+    
+    lon = longitude of point
+    
+    lat = latitude of point
+    """
     pt = self.ElementTree.SubElement(obj, 'Point')
     ptlon = self.ElementTree.SubElement(pt, 'PointLongitude')
     ptlon.text = str(self.boundary[lon])
@@ -498,7 +564,10 @@ class parseModisMulti:
     ptlat.text = str(self.boundary[lat])
 
   def valDTD(self,obj):
-    """Function to add DTDVersion"""
+    """Function to add DTDVersion
+    
+    obj = element to add DTDVersion
+    """
     values = []
     for i in self.parModis:
       values.append(i.retDTD())
@@ -507,7 +576,10 @@ class parseModisMulti:
       dtd.text = i
 
   def valDataCenter(self,obj):
-    """Function to add DataCenter"""
+    """Function to add DataCenter
+    
+    obj = element to add DataCenter
+    """
     values = []
     for i in self.parModis:
       values.append(i.retDataCenter())
@@ -516,7 +588,10 @@ class parseModisMulti:
       dci.text = i
       
   def valGranuleUR(self,obj):
-    """Function to add GranuleUR"""
+    """Function to add GranuleUR
+    
+    obj = element to add GranuleUR    
+    """
     values = []
     for i in self.parModis:
       values.append(i.retGranuleUR())
@@ -525,7 +600,10 @@ class parseModisMulti:
       gur.text = i
 
   def valDbID(self,obj):
-    """Function to add DbID"""
+    """Function to add DbID
+    
+    obj = element to add DbID   
+    """
     values = []
     for i in self.parModis:
       values.append(i.retDbID())
@@ -534,21 +612,30 @@ class parseModisMulti:
       dbid.text = i
       
   def valInsTime(self,obj):
-    """TODO"""
+    """Function to add the minimum of InsertTime
+    
+    obj = element to add InsertTime
+    """
     values = []
     for i in self.parModis:
       values.append(i.retInsertTime())
     obj.text = self._minval(values)
   
   def valCollectionMetaData(self,obj):
-    """Function to add CollectionMetaData"""
+    """Function to add CollectionMetaData
+    
+    obj = element to add CollectionMetaData
+    """
     values = []
     for i in self.parModis:
       values.append(i.retCollectionMetaData())
     self._cicle_values(obj,self._checkvaldict(values))
   
   def valDataFiles(self, obj):
-    """Function to add DataFileContainer"""
+    """Function to add DataFileContainer
+    
+    obj = element to add DataFileContainer
+    """
     values = []
     for i in self.parModis:
       values.append(i.retDataFiles())
@@ -557,7 +644,10 @@ class parseModisMulti:
       self._cicle_values(dfc,i)
     
   def valPGEVersion(self,obj):
-    """Function to add PGEVersion"""
+    """Function to add PGEVersion
+    
+    obj = element to add PGEVersion
+    """
     values = []
     for i in self.parModis:
       values.append(i.retPGEVersion())
@@ -566,14 +656,18 @@ class parseModisMulti:
       pge.text = i
   
   def valRangeTime(self,obj):
-    """Function to add RangeDateTime"""
+    """Function to add RangeDateTime
+    
+    obj = element to add RangeDateTime
+    """
     values = []
     for i in self.parModis:
       values.append(i.retRangeTime())
     self._cicle_values(obj,self._checkvaldict(values))
   
   def valBound(self):
-    """Function return the bounding box of mosaic"""
+    """Function return the Bounding Box of mosaic
+    """
     boundary = self.parModis[0].retBoundary()
     for i in range(1,len(self.parModis)):
       bound = self.parModis[i].retBoundary()
@@ -588,7 +682,10 @@ class parseModisMulti:
     self.boundary = boundary
   
   def valMeasuredParameter(self,obj):
-    """Function to add ParameterName"""
+    """Function to add ParameterName
+    
+    obj = element to add ParameterName
+    """
     valuesQAStats = []
     valuesQAFlags = []
     valuesParameter = []
@@ -601,14 +698,20 @@ class parseModisMulti:
       pn.text = i
   
   def valInputPointer(self,obj):
-    """Function to add InputPointer"""
+    """Function to add InputPointer
+    
+    obj = element to add InputPointer
+    """
     for i in self.parModis:
       for v in i.retInputGranule():
         ip = self.ElementTree.SubElement(obj,'InputPointer')
         ip.text = v
   
   def valPlatform(self, obj):
-    """Function to add Platform tags"""
+    """Function to add Platform elements
+    
+    obj = element to add Platform elements
+    """
     valuesSName = []
     valuesInstr = []
     valuesSensor = []
@@ -635,7 +738,10 @@ class parseModisMulti:
         ps.text = valSens[i]
 
   def writexml(self,outputname):
-    """Return a xml file for a mosaic"""
+    """Write a xml file for a mosaic
+    
+    outputname = the name of xml file
+    """
     # the root element
     granule = self.ElementTree.Element('GranuleMetaDataFile')
     # add DTDVersion
