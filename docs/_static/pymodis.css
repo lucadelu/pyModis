@@ -1,0 +1,12 @@
+body {
+    background-color: #FFFFFF;
+}
+
+h1.bigger {
+    font-size: 3em;
+    vertical-align: center;
+}
+
+div.footer {
+    background-color: #FFFFFF;
+}

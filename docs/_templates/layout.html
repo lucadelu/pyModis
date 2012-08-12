@@ -1,0 +1,17 @@
+{% extends "!layout.html" %}
+{% block extrahead %}
+<link rel="stylesheet" href="{{ pathto('_static/pymodis.css', 1) }}" type="text/css" />
+{% endblock %}
+
+{% block header %}
+<h1 class="bigger"><img src="{{ pathto('_static/pyModis.png', 1) }}"></img> pyModis</h1>
+{% endblock %}
+
+{% block footer %}
+<table align="rigth">
+<tr>
+<td><a href="http://gis.cri.fmach.it">GIS & Remote Sensing Platform, Fondazione Edmund Mach</a></td>
+<td>{{ super() }}</td>
+</tr>
+</table>
+{% endblock %}
