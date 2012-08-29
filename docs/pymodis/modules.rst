@@ -1,4 +1,4 @@
-pymodis Library
+pyModis Library
 ===============
 
 .. toctree::

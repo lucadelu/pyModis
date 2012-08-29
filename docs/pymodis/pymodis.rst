@@ -1,21 +1,5 @@
-pymodis Package
+pyModis Package
 ===============
-
-.. :mod:`pymodis` Package
-    ----------------------
-
-.. .. automodule:: pymodis.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`convertmodis` Module
---------------------------
-
-.. automodule:: pymodis.convertmodis
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 :mod:`downmodis` Module
 -----------------------
@@ -33,3 +17,10 @@ pymodis Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`convertmodis` Module
+--------------------------
+
+.. automodule:: pymodis.convertmodis
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,8 +1,16 @@
-modis_convert
--------------
+modis_convert.py
+-----------------
 
-**modis_convert** is a script to convert MODIS data to TIF file.
-    
+**modis_convert.py** is a script to convert MODIS data to TIF formats and
+different projection reference system. It is an interface to MRT mrtmosaic
+software, the best application for work with HDF MODIS data
+
+Usage
+^^^^^^
+::
+
+    modis_convert.py [options] hdf_file
+
 Options
 ^^^^^^^
 ::
@@ -11,45 +19,31 @@ Options
     -s  --subset             a subset of product's layers. The string
                              should be similar to: 1 0    [required]
     -m  --mrt                the path to MRT software    [required]
-    -o  --output             the name of output file                  
-    -g  --grain              the spatial resolution of output file    
-    -d  --datum              the code of datum [#datum]_              
+    -o  --output             the name of output file
+    -g  --grain              the spatial resolution of output file
+    -d  --datum              the code of datum
     -r  --resampl            the type of resampling
-    -p  --proj_parameters    a list of projection parameters [#proj]_
+    -p  --proj_parameters    a list of projection parameters
     -t  --proj_type          the output projection system
     -u  --utm                the UTM zone if projection system is UTM
 
-..
-    +--------+-------------------+------------------------------------------+----------+
-    | Option |   Long Option     |                    Help                  | Required |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -s   | --subset          | a subset of product's layers. The        |   True   |
-    |        |                   | string should be similar to: 1 0         |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -m   | --mrt             | the path to MRT software                 |   True   |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -o   | --output          | the name of output file                  |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -g   | --grain           | the spatial resolution of output file    |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -d   | --datum           | the code of datum [#datum]_              |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -r   | --resampl         | the type of resampling                   |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -p   | --proj_parameters | a list of projection parameters [#proj]_ |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -t   | --proj_type       | the output projection system             |          |
-    +--------+-------------------+------------------------------------------+----------+
-    |   -u   | --utm             | the UTM zone if projection system is UTM |          |
-    +--------+-------------------+------------------------------------------+----------+
+.. warning::
+
+    You can find the supported projections in the 'Appendix C' of
+    `MODIS reprojection tool user's manual`_ and the datums at section
+    ``Datum Conversion`` of the same manual
 
 Examples
 ^^^^^^^^
-Qua di sotto ci saranno gli esempi
-    
-.. rubric:: Footnotes
+Convert LAYERS from LST MODIS data with output resolution in 250 meters with
+latitude and longitude projection ::
 
-.. [#datum] Check the 
-.. [#proj] For more info check the 'Appendix C' of MODIS reprojection tool user's `manual`_
+    modis_convert.py -s "1 0 1 0" -m "/usr/local/bin/" -g 250 FILE
 
-.. _manual: https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+Convert LAYERS from NDVI MODIS data with output resolution in 500 meters with
+UTM projection in the 32  zone ::
+
+    modis_convert.py -s "1 0 1 0" -m "/usr/local/bin/" -g 500 -p UTM -u 32 FILE
+
+
+.. _`MODIS reprojection tool user's manual`: https://lpdaac.usgs.gov/sites/default/files/public/mrt41_usermanual_032811.pdf

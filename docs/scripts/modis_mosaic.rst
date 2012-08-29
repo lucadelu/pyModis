@@ -1,7 +1,14 @@
-modis_mosaic
-------------
+modis_mosaic.py
+----------------
 
-**modis_mosaic** is a script to create a mosaic of several MODIS tiles in HDF format.::
+**modis_mosaic.py** is a script to create a mosaic of several MODIS tiles 
+in HDF format.
+
+Usage
+^^^^^^
+::
+
+    modis_mosaic.py [options] hdflist_file
 
 Options
 ^^^^^^^
@@ -15,3 +22,11 @@ Options
 
 Examples
 ^^^^^^^^
+
+Convert all the layers of several tiles::
+
+    modis_mosaic.py -m "/usr/local/bin/" -o FILE_mosaik FILE1 FILE2 ...
+
+Convert LAYERS of several LST MODIS tiles::
+
+    modis_mosaic.py -s "1 0 1 0" -m "/usr/local/bin/" -o FILE_mosaik FILE1 FILE2 ...

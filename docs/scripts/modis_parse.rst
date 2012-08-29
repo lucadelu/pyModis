@@ -1,8 +1,16 @@
-modis_parse
------------
+modis_parse.py
+---------------
 
-**modis_parse** is a script to parse the XML metadata file for a MODIS tile.::
-    
+**modis_parse.pys** is a script to parse the XML metadata file for a MODIS 
+tile and return the requested value. It can also write the metadata inside
+a text file.
+
+Usage
+^^^^^^
+::
+
+    modis_parse.py [options] hdf_file
+
 Options
 ^^^^^^^
 ::
@@ -22,3 +30,15 @@ Options
 
 Examples
 ^^^^^^^^
+
+Return all values of metadata ::
+
+    modis_parse.py -a FILE
+
+Write all values to a file ::
+
+    modis_parse.py -a -w metadata_FILE.txt FILE
+
+Print spatial extent and quality ::
+
+    modis_parse.py -b -q FILE

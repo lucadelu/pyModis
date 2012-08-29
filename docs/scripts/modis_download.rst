@@ -1,8 +1,15 @@
-modis_download
---------------
+modis_download.py
+------------------
 
-**modis_download** is a script to download MODIS data. It can download large amount of data and it's very useful to use with cron jobs to receive data with a fixed delay of time.::
-    
+**modis_download.py** is a script to download MODIS data from NASA FTP servers. It can download large amount of data and it's very useful to use with cron jobs to receive data with a fixed delay of time.
+
+Usage
+^^^^^
+
+::
+
+    modis_download.py [options] destination_folder
+
 Options
 ^^^^^^^
 ::
@@ -11,7 +18,7 @@ Options
                       usually your email address  [required]
     -U  --username    username for connect to ftp server 
                       [default=anonymous]
-    -u  --url         ftp server url [default=]
+    -u  --url         ftp server url [default=e4ftl01.cr.usgs.gov]
     -t  --tiles       string of tiles separated from comma 
                       ([default=None] for all tiles)
     -s  --source      directory on the ftp 
@@ -29,4 +36,16 @@ Options
 
 Examples
 ^^^^^^^^
+
+Download Terra LST data for a month for Europe ::
+
+    modis_download.py -P your.mail@prov.org -t TODO -f 2008-01-01 -e 2008-01-31
+
+Download the last 15 days of Aqua LST data ::
+
+    modis_download.py -P your.mail@prov.org -s MOLA/MYD11A1.005 -t TODO -D 15
+
+Download all tiles of NDVI for one day (you have know the rigth day otherwise it download nothing) ::
+
+    modis_download.py -P your.mail@prov.org -s TODO -f 2010-12-31 -O
 

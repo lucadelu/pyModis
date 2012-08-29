@@ -3,8 +3,8 @@ body {
 }
 
 h1.bigger {
-    font-size: 3em;
-    vertical-align: center;
+    font-size: 4em;
+    vertical-align: middle;
 }
 
 div.footer {
