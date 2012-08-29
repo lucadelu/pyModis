@@ -20,26 +20,23 @@
 ##################################################################
 
 from datetime import *
-import string
 import os
 import sys
-import glob
-import logging
-import socket
-from ftplib import FTP
-import ftplib
+
 
 class convertModis:
-  """A class to convert modis data from hdf to tif using resample (from MRT tools)
+  """A class to convert modis data from hdf to tif using resample
+  (from MRT tools)
   """
   def __init__(self, hdfname, confile, mrtpath):
     """Initialization function :
 
        hdfname = the full path to the hdf file
-       
+
        confile = the full path to the paramater file
-       
-       mrtpath = the full path to mrt directory where inside you have bin and data directories
+
+       mrtpath = the full path to mrt directory where inside you have bin and
+       data directories
     """
     # check if the hdf file exists
     if os.path.exists(hdfname):
@@ -87,6 +84,7 @@ class convertModis:
     else:
       subprocess.call([execut,'-p',self.conf])
     return "The hdf file %s was converted" % self.name
+
 
 class createMosaic:
   """A class to convert several MODIS tiles into a mosaic"""
@@ -162,6 +160,7 @@ class createMosaic:
         subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
                         subprocess.STDOUT)
     return "The mosaic file %s is created" % self.out
+
 
 class processModis:
   """A class to process raw modis data from hdf to tif using swath2grid (from MRT Swath tools)

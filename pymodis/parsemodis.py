@@ -22,31 +22,30 @@
 from datetime import *
 import string
 import os
-import sys
-import glob
-import logging
-import socket
-from ftplib import FTP
-import ftplib
 
 ## lists of parameters accepted by resample MRT software
 # projections
-PROJ_LIST = ['AEA','GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS', 
-                    'SIN','TM', 'UTM', 'MERCAT']
+PROJ_LIST = ['AEA','GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS',
+             'SIN','TM', 'UTM', 'MERCAT']
 # resampling
 RESAM_LIST = ['NEAREST_NEIGHBOR', 'BICUBIC', 'CUBIC_CONVOLUTION', 'NONE']
 RESAM_LIST_SWATH = ['NN', 'BI', 'CC']
 
 # datum
 DATUM_LIST = ['NODATUM', 'NAD27', 'NAD83', 'WGS66', 'WGS72', 'WGS84']
-SPHERE_LIST = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+SPHERE_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+               19, 20]
+
 
 class parseModis:
   """Class to parse MODIS xml files, it also can create the parameter 
-    configuration file for resampling MODIS DATA with the MRT software or convertmodis Module
+    configuration file for resampling MODIS DATA with the MRT software or 
+    convertmodis Module
   """
+  
   def __init__(self, filename):
     """Initialization function :
+
        filename = the name of MODIS hdf file
     """
     from xml.etree import ElementTree
@@ -166,7 +165,8 @@ class parseModis:
     return rangeTime
 
   def retBoundary(self):
-    """Return the maximum extend (Bounding Box) of the MODIS file as dictionary"""
+    """Return the maximum extend (Bounding Box) of the MODIS file as 
+    dictionary"""
     self.getGranule()
     self.boundary = []
     lat = []
@@ -229,7 +229,8 @@ class parseModis:
     return value
 
   def retInputGranule(self):
-    """Return the input files (InputGranule) used to process the considered file"""
+    """Return the input files (InputGranule) used to process the considered 
+    file"""
     value = []
     self.getGranule()
     for i in self.granule.find('InputGranule').getiterator():
@@ -250,49 +251,56 @@ class parseModis:
                   resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',  utm = None,
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
                   ):
-    """Create the parameter file to use with resample MRT software to create tif file
+    """Create the parameter file to use with resample MRT software to create
+    tif file
     
-        spectral = the spectral subset to use, look the product table to  understand the layer that you want use. For example: 
-                    - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI 
-                      and QA VI the other layers are not used
-                    - LST ( 1 1 0 0 1 1 0 0 0 0 0 0 ) copy only layer daily and
-                      nightly temperature and QA
+        spectral = the spectral subset to use, look the product table to
+        understand the layer that you want use. For example:
 
-        res = the resolution for the output file, it must be set in the map unit of output projection system. The software will use the original resolution of input file if res it isn't set
+            - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI
+              and QA VI the other layers are not used
+            - LST ( 1 1 0 0 1 1 0 0 0 0 0 0 ) copy only layer daily and
+              nightly temperature and QA
 
-        output = the output name, if it doesn't set will use the prefix name of input hdf file
+        res = the resolution for the output file, it must be set in the map
+        unit of output projection system. The software will use the
+        original resolution of input file if res it isn't set
+
+        output = the output name, if it doesn't set will use the prefix name 
+        of input hdf file
 
         utm = the UTM zone if projection system is UTM
 
         resampl = the type of resampling, the valid values are: 
-                    - NN (nearest neighbor)
-                    - BI (bilinear)
-                    - CC (cubic convolution)
+            - NN (nearest neighbor)
+            - BI (bilinear)
+            - CC (cubic convolution)
 
         projtype = the output projection system, the valid values are: 
-                    - AEA (Albers Equal Area)
-                    - ER (Equirectangular)
-                    - GEO (Geographic Latitude/Longitude)
-                    - HAM (Hammer)
-                    - ISIN (Integerized Sinusoidal)
-                    - IGH (Interrupted Goode Homolosine)
-                    - LA (Lambert Azimuthal)
-                    - LCC (LambertConformal Conic)
-                    - MERCAT (Mercator)
-                    - MOL (Mollweide)
-                    - PS (Polar Stereographic)
-                    - SIN (Sinusoidal)
-                    - UTM (Universal TransverseMercator)
+            - AEA (Albers Equal Area)
+            - ER (Equirectangular)
+            - GEO (Geographic Latitude/Longitude)
+            - HAM (Hammer)
+            - ISIN (Integerized Sinusoidal)
+            - IGH (Interrupted Goode Homolosine)
+            - LA (Lambert Azimuthal)
+            - LCC (LambertConformal Conic)
+            - MERCAT (Mercator)
+            - MOL (Mollweide)
+            - PS (Polar Stereographic)
+            - SIN (Sinusoidal)
+            - UTM (Universal TransverseMercator)
 
         datum = the datum to use, the valid values are: 
-                    - NAD27
-                    - NAD83
-                    - WGS66
-                    - WGS76
-                    - WGS84
-                    - NODATUM
+            - NAD27
+            - NAD83
+            - WGS66
+            - WGS76
+            - WGS84
+            - NODATUM
 
-        projpar = a list of projection parameters, for more info check the "Appendix C" of MODIS reprojection tool user's manual
+        projpar = a list of projection parameters, for more info check the
+        Appendix C of MODIS reprojection tool user manual
         https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
 
         """
@@ -354,62 +362,68 @@ class parseModis:
                   sphere = '8', resampl = 'NN', projtype = 'GEO',  utm = None,
                   projpar = '0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0',
                   ):
-    """Create the parameter file to use with resample MRT software to create tif file
+    """Create the parameter file to use with resample MRT software to create 
+       tif file
 
         sds = Name of band/s (Science Data Set) to resample
 
         geoloc = Name geolocation file (example MOD3, MYD3)
 
-        res = the resolution for the output file, it must be set in the map unit of output projection system. The software will use the original resolution of input file if res it isn't set
+        res = the resolution for the output file, it must be set in the map 
+        unit of output projection system. The software will use the 
+        original resolution of input file if res it isn't set
 
-        output = the output name, if it doesn't set will use the prefix name of input hdf file
+        output = the output name, if it doesn't set will use the prefix name 
+        of input hdf file
 
         sphere = Output sphere number. Valid options are: 
-                    - 0=Clarke 1866
-                    - 1=Clarke 1880
-                    - 2=Bessel
-                    - 3=International 1967
-                    - 4=International 1909
-                    - 5=WGS 72
-                    - 6=Everest
-                    - 7=WGS 66
-                    - 8=GRS1980/WGS 84
-                    - 9=Airy
-                    - 10=Modified Everest
-                    - 11=Modified Airy
-                    - 12=Walbeck 
-                    - 13=Southeast Asia
-                    - 14=Australian National
-                    - 15=Krassovsky
-                    - 16=Hough
-                    - 17=Mercury1960
-                    - 18=Modified Mercury1968 
-                    - 19=Sphere 19 (Radius 6370997)
-                    - 20=MODIS Sphere (Radius 6371007.181)
+            - 0=Clarke 1866
+            - 1=Clarke 1880
+            - 2=Bessel
+            - 3=International 1967
+            - 4=International 1909
+            - 5=WGS 72
+            - 6=Everest
+            - 7=WGS 66
+            - 8=GRS1980/WGS 84
+            - 9=Airy
+            - 10=Modified Everest
+            - 11=Modified Airy
+            - 12=Walbeck
+            - 13=Southeast Asia
+            - 14=Australian National
+            - 15=Krassovsky
+            - 16=Hough
+            - 17=Mercury1960
+            - 18=Modified Mercury1968
+            - 19=Sphere 19 (Radius 6370997)
+            - 20=MODIS Sphere (Radius 6371007.181)
 
         resampl = the type of resampling, the valid values are: 
-                    - NN (nearest neighbor)
-                    - BI (bilinear)
-                    - CC (cubic convolution)
+            - NN (nearest neighbor)
+            - BI (bilinear)
+            - CC (cubic convolution)
 
         projtype = the output projection system, the valid values are:
-                    - AEA (Albers Equal Area)
-                    - ER (Equirectangular)
-                    - GEO (Geographic Latitude/Longitude)
-                    - HAM (Hammer) 
-                    - ISIN (Integerized Sinusoidal) 
-                    - IGH (Interrupted Goode Homolosine)
-                    - LA (Lambert Azimuthal)
-                    - LCC (LambertConformal Conic)
-                    - MERCAT (Mercator)
-                    - MOL (Mollweide)
-                    - PS (Polar Stereographic),
-                    - SIN ()Sinusoidal)
-                    - UTM (Universal TransverseMercator)
+            - AEA (Albers Equal Area)
+            - ER (Equirectangular)
+            - GEO (Geographic Latitude/Longitude)
+            - HAM (Hammer)
+            - ISIN (Integerized Sinusoidal)
+            - IGH (Interrupted Goode Homolosine)
+            - LA (Lambert Azimuthal)
+            - LCC (LambertConformal Conic)
+            - MERCAT (Mercator)
+            - MOL (Mollweide)
+            - PS (Polar Stereographic),
+            - SIN ()Sinusoidal)
+            - UTM (Universal TransverseMercator)
 
         utm = the UTM zone if projection system is UTM
 
-        projpar = a list of projection parameters, for more info check the "Appendix C" of MODIS reprojection tool user's manual https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+        projpar = a list of projection parameters, for more info check
+        the Appendix C of MODIS reprojection tool user manual
+        https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
         """
     # output name
     if not output:
@@ -467,10 +481,12 @@ class parseModis:
     conFile.close()
     return filename
 
+
 class parseModisMulti:
-  """A class to obtain some variables for the xml file of several MODIS tiles. 
-    It can also create the xml file 
+  """A class to obtain some variables for the xml file of several MODIS tiles.
+    It can also create the xml file
   """
+  
   def __init__(self,hdflist):
     """hdflist = python list containing the hdf files"""
     from xml.etree import ElementTree
@@ -496,7 +512,7 @@ class parseModisMulti:
         if outvals.count(i) == 0:
           outvals.append(i)
       return outvals
-      
+
   def _checkvaldict(self,vals):
     """Internal function to return values from dictionary
     
@@ -525,7 +541,7 @@ class parseModisMulti:
       if outval > i:
         outval = i
     return outval
-    
+
   def _maxval(self, vals):
     """Internal function to return the maximum value
     
@@ -536,7 +552,7 @@ class parseModisMulti:
       if outval < i:
         outval = i
     return outval
-    
+
   def _cicle_values(self, obj,values):
     """Internal function to add values from a dictionary
     
@@ -586,7 +602,7 @@ class parseModisMulti:
     for i in self._checkval(values):
       dci = self.ElementTree.SubElement(obj,'DataCenterId')
       dci.text = i
-      
+
   def valGranuleUR(self,obj):
     """Function to add GranuleUR
     
@@ -610,7 +626,7 @@ class parseModisMulti:
     for i in self._checkval(values):
       dbid = self.ElementTree.SubElement(obj,'DbID')
       dbid.text = i
-      
+
   def valInsTime(self,obj):
     """Function to add the minimum of InsertTime
     
@@ -620,7 +636,7 @@ class parseModisMulti:
     for i in self.parModis:
       values.append(i.retInsertTime())
     obj.text = self._minval(values)
-  
+
   def valCollectionMetaData(self,obj):
     """Function to add CollectionMetaData
     
@@ -630,7 +646,7 @@ class parseModisMulti:
     for i in self.parModis:
       values.append(i.retCollectionMetaData())
     self._cicle_values(obj,self._checkvaldict(values))
-  
+
   def valDataFiles(self, obj):
     """Function to add DataFileContainer
     
@@ -642,7 +658,7 @@ class parseModisMulti:
     for i in values:
       dfc = self.ElementTree.SubElement(obj, 'DataFileContainer')
       self._cicle_values(dfc,i)
-    
+
   def valPGEVersion(self,obj):
     """Function to add PGEVersion
     
@@ -654,7 +670,7 @@ class parseModisMulti:
     for i in self._checkval(values):
       pge = self.ElementTree.SubElement(obj,'PGEVersion')
       pge.text = i
-  
+
   def valRangeTime(self,obj):
     """Function to add RangeDateTime
     
@@ -664,7 +680,7 @@ class parseModisMulti:
     for i in self.parModis:
       values.append(i.retRangeTime())
     self._cicle_values(obj,self._checkvaldict(values))
-  
+
   def valBound(self):
     """Function return the Bounding Box of mosaic
     """
@@ -680,7 +696,7 @@ class parseModisMulti:
       if bound['max_lon'] > boundary['max_lon']:
         boundary['max_lon'] = bound['max_lon']
     self.boundary = boundary
-  
+
   def valMeasuredParameter(self,obj):
     """Function to add ParameterName
     
@@ -696,7 +712,7 @@ class parseModisMulti:
     for i in self._checkval(valuesParameter):
       pn = self.ElementTree.SubElement(obj,'ParameterName')
       pn.text = i
-  
+
   def valInputPointer(self,obj):
     """Function to add InputPointer
     
@@ -706,7 +722,7 @@ class parseModisMulti:
       for v in i.retInputGranule():
         ip = self.ElementTree.SubElement(obj,'InputPointer')
         ip.text = v
-  
+
   def valPlatform(self, obj):
     """Function to add Platform elements
     
