@@ -10,3 +10,8 @@ h1.bigger {
 div.footer {
     background-color: #FFFFFF;
 }
+
+h1 {
+    font-size: 2.5em;
+    vertical-align: middle;
+}
