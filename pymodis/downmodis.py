@@ -49,6 +49,7 @@ class downModis:
         destinationFolder = where the files will be stored
 
         user = your username, by default anonymous
+
         url = the url where to download the MODIS data
 
         path = the directory where the data that you want to download are
@@ -287,14 +288,14 @@ class downModis:
     else:
       return newFile
 
-  def downloadFile(self,filDown,filSave):
+  def downloadFile(self,filDown,filHdf):
     """Download the single file
     
     filDown = name of the file to download
     
     filSave = name of the file to write
     """
-    #try to download file
+    filSave = open(filHdf, "wb")
     try:
       self.ftp.retrbinary("RETR " + filDown, filSave.write)
       self.filelist.write("%s\n" % filDown)
@@ -303,8 +304,20 @@ class downModis:
     #if it have an error it try to download again the file
     except (ftplib.error_reply,socket.error), e:
       logging.error("Cannot download %s, retry.." % filDown)
+      filSave.close()
+      os.remove(filSave.name)
       self.connectFTP()
-      self.downloadFile(filDown,filSave)
+      self.downloadFile(filDown,filHdf)
+    filSave.close()
+    orig_size = self.ftp.size(filDown)
+    transf_size = os.path.getsize(filSave.name)
+    if orig_size == transf_size:
+      return 0
+    else:
+      logging.warning("Different size for file %s - original data: %s, downloaded: %s" %
+                      (filDown, orig_size, transf_size)) 
+      os.remove(filSave.name)
+      self.downloadFile(filDown,filHdf)
 
   def dayDownload(self,listFilesDown):
     """ Downloads tiles are in files_hdf_consider 
@@ -323,13 +336,13 @@ class downModis:
           + fileSplit[-1])
           numFiles = len(oldFile)
           if numFiles == 0:
-            file_hdf = open(os.path.join(self.writeFilePath,i), "wb")
+            file_hdf = os.path.join(self.writeFilePath,i)
           elif numFiles == 1:
             # check the version of file  
             fileDown = self.getNewerVersion(oldFile[0],i)
             if fileDown != oldFile[0]:
               os.remove(os.path.join(self.writeFilePath,oldFile[0]))
-              file_hdf = open(os.path.join(self.writeFilePath,fileDown), "wb")
+              file_hdf = os.path.join(self.writeFilePath,fileDown)
           elif numFiles > 1:
             logging.error("There are to much files for %s" % i)
             #raise EOFError("There are to much file with the same prefix")
