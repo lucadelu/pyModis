@@ -2,9 +2,9 @@ pyModis Scripts
 ===============
 
 The **pyModis scripts** provide you a complete toolkit to work with
-MODIS data, you can download, analyze, convert data. They are
+MODIS data, you can download, analyze and convert data. They are
 developed to work from command line and inside scripts to
-update automatically your MODIS files database.
+update automatically your MODIS files dataset.
 
 Actually the tools are 5:
 

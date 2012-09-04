@@ -13,12 +13,12 @@ by ``pyModis`` library and tools
 How to install pyModis
 -----------------------
 
-It is possible to install ``pyModis`` in a very simple way. First you 
-need to download ``pyModis`` source code from 
-`github repository <https://github.com/lucadelu/pyModis>`_.
+Install ``pyModis`` is very simple. First you need to download ``pyModis``
+source code from `github repository <https://github.com/lucadelu/pyModis>`_.
 
 You can use `git <http://git-scm.com/>`_ to download the latest code 
-(with the different stable version, the last and the older) ::
+(with all the history and so it contain all the different stable versions, 
+from the last to the first) ::
 
     git clone git://github.com/lucadelu/pyModis.github
 
@@ -56,7 +56,7 @@ This documentation is make with `Sphinx <sphinx.pocoo.org>`_, so you
 need to install it to compile the original files to obtain different
 output formats.
 
-Please enter inside ``docs`` folder of ``pymodis`` source and run ::
+Please enter inside ``docs`` folder of ``pyModis`` source and run ::
 
     make <target>
     
