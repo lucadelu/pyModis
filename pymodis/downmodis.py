@@ -20,9 +20,7 @@
 ##################################################################
 
 from datetime import *
-import string
 import os
-import sys
 import glob
 import logging
 import socket
@@ -45,19 +43,26 @@ class downModis:
                 debug = False
               ):
     """Initialization function :
+
         password = is your password, usually your email address
+
         destinationFolder = where the files will be stored
+
         user = your username, by default anonymous
         url = the url where to download the MODIS data
-        path = the directory where the data that you want to download are 
+
+        path = the directory where the data that you want to download are
                stored on the ftp server
+
         tiles = a list of tiles that you want to download, None == all tiles
-        today = the day to start downloading; in order to pass a date different from
-                today use the format YYYY-MM-DD
-        delta = timelag i.e. the number of days starting from today 
+
+        today = the day to start downloading; in order to pass a date different
+                from today use the format YYYY-MM-DD
+
+        delta = timelag i.e. the number of days starting from today
                 (backwards
 
-        Creates a ftp instance, connects user to ftp server and goes into the 
+        Creates a ftp instance, connects user to ftp server and goes into the
         directory where the MODIS data are stored
     """
 
