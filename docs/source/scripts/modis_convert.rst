@@ -36,7 +36,7 @@ Options
 Examples
 ^^^^^^^^
 Convert LAYERS from LST MODIS data with output resolution in 250 meters with
-latitude and longitude projection ::
+latitude and longitude reference system ::
 
     modis_convert.py -s "1 0 1 0" -m "/usr/local/bin/" -g 250 FILE
 

@@ -13,11 +13,11 @@ by ``pyModis`` library and tools
 How to install pyModis
 -----------------------
 
-Install ``pyModis`` is very simple. First you need to download ``pyModis``
+Installing ``pyModis`` is very simple. First you need to download ``pyModis``
 source code from `github repository <https://github.com/lucadelu/pyModis>`_.
 
 You can use `git <http://git-scm.com/>`_ to download the latest code 
-(with all the history and so it contain all the different stable versions, 
+(with the whole history and so it contain all the different stable versions, 
 from the last to the first) ::
 
     git clone git://github.com/lucadelu/pyModis.github
@@ -25,13 +25,13 @@ from the last to the first) ::
 or `download the latest stable version <https://github.com/lucadelu/pyModis/tags>`_ 
 from the repository and decompress it
 
-Now enter inside the ``pyModis`` folder and launch as administrator of 
+Now enter the ``pyModis`` folder and launch as administrator of 
 your computer ::
 
     python setup.py install
 
 If the installation doesn't return any errors you should be able to use
-``pyModis`` library from a Python console. So launch a your favorite
+``pyModis`` library from a Python console. Then, launch a your favorite
 Python console (I really suggest ``ipython``) and digit ::
 
     import pymodis
@@ -40,11 +40,11 @@ If the console doesn't return any error like this ::
 
     ImportError: No module named pymodis
 
-the ``pyModis`` library is installed correctly and you can use it
+the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis`` 
 
-How to report bug
-------------------
+How to report a bug
+--------------------
 
 If you find any problems in ``pyModis`` library you can report it using
 the `issues tracker of github <https://github.com/lucadelu/pyModis/issues>`_.
@@ -52,11 +52,11 @@ the `issues tracker of github <https://github.com/lucadelu/pyModis/issues>`_.
 How to compile documentation
 -----------------------------
 
-This documentation is make with `Sphinx <sphinx.pocoo.org>`_, so you
+This documentation has been made with `Sphinx <sphinx.pocoo.org>`_, so you
 need to install it to compile the original files to obtain different
 output formats.
 
-Please enter inside ``docs`` folder of ``pyModis`` source and run ::
+Please enter the ``docs`` folder of ``pyModis`` source and run ::
 
     make <target>
     
@@ -81,3 +81,31 @@ with one of the following target to obtain the desired output:
   - **changes**: to make an overview of all changed/added/deprecated items
   - **linkcheck**: to check all external links for integrity
   - **doctest**: to run all doctests embedded in the documentation (if enabled)
+
+Ohloh statistics
+-----------------
+  
+.. only:: html 
+  
+  .. raw:: html
+
+      <table align="center">
+	<tr>
+	  <td align="center">
+	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_basic_stats.js"></script>
+	  </td>
+	  <td align="center">
+	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_languages.js"></script>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2" align="center">
+	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_cocomo.js"></script>
+	  </td>
+	</tr>
+      </table>
+      
+.. only:: latex
+
+  For more information about ``pyModis`` please visit the 
+  `pyModis Ohloh page <http://www.ohloh.net/p/pyModis>`_

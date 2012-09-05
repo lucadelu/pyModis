@@ -1,7 +1,7 @@
 modis_download.py
 ------------------
 
-**modis_download.py** is a script to download MODIS data from NASA FTP servers. It can download large amount of data and it's very useful to use with cron jobs to receive data with a fixed delay of time.
+**modis_download.py** is a script to download MODIS data from NASA FTP servers. It can download large amounts of data and it can be profitably used with cron jobs to receive data with a fixed delay of time.
 
 Usage
 ^^^^^
@@ -14,9 +14,9 @@ Options
 ^^^^^^^
 ::
     
-    -P  --password    password for connect to ftp server, 
+    -P  --password    password to connect to ftp server, 
                       usually your email address  [required]
-    -U  --username    username for connect to ftp server 
+    -U  --username    username to connect to ftp server 
                       [default=anonymous]
     -u  --url         ftp server url [default=e4ftl01.cr.usgs.gov]
     -t  --tiles       string of tiles separated from comma 
@@ -30,7 +30,7 @@ Options
     -e  --enddaythe   day to finish download, if you want change
                       data you have to use this format YYYY-MM-DD
                       ([default=None] use delta option)
-    -x                this is useful for debug the download
+    -x                this is useful for debugging the download
     -j                download also the jpeg files [default=True]
     -O                download only one day, it set delta=1
 
