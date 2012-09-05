@@ -12,4 +12,4 @@
 /build
 
 # Sphinx's builds
-/docs/_build
+/docs/build
