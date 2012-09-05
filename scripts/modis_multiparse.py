@@ -62,7 +62,7 @@ def main():
     parser = OptionParser(usage=usage)
     #spatial extent
     parser.add_option("-b", action="store_true", dest="bound", default=False,
-                      help="print the values releated to the spatial max extent")
+                      help="print the values related to the spatial max extent")
     #write into file
     parser.add_option("-w", "--write", dest="output", metavar="OUTPUT_FILE",
                       help="write the MODIS XML metadata file for MODIS mosaic")

@@ -248,13 +248,13 @@ class parseModis:
     return value    
 
   def confResample(self, spectral, res = None, output = None, datum = 'WGS84',
-                  resampl = 'NEAREST_NEIGHBOR', projtype = 'GEO',  utm = None,
+                  resample = 'NEAREST_NEIGHBOR', projtype = 'GEO',  utm = None,
                   projpar = '( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
                   ):
     """Create the parameter file to use with resample MRT software to create
     tif file
     
-        spectral = the spectral subset to use, look the product table to
+        spectral = the spectral subset to be used, look the product table to
         understand the layer that you want use. For example:
 
             - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI
@@ -271,12 +271,12 @@ class parseModis:
 
         utm = the UTM zone if projection system is UTM
 
-        resampl = the type of resampling, the valid values are: 
+        resample = the type of resampling, the valid values are:
             - NN (nearest neighbor)
             - BI (bilinear)
             - CC (cubic convolution)
 
-        projtype = the output projection system, the valid values are: 
+        projtype = the output projection system, the valid values are:
             - AEA (Albers Equal Area)
             - ER (Equirectangular)
             - GEO (Geographic Latitude/Longitude)
@@ -291,7 +291,7 @@ class parseModis:
             - SIN (Sinusoidal)
             - UTM (Universal TransverseMercator)
 
-        datum = the datum to use, the valid values are: 
+        datum = the datum to use, the valid values are:
             - NAD27
             - NAD83
             - WGS66
@@ -330,12 +330,12 @@ class parseModis:
     conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )\n" % (bound['min_lat'],
                                                               bound['max_lon']))
     conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
-    # if resampl is in resam_list set the parameter otherwise return an error
-    if resampl in RESAM_LIST:
-      conFile.write("RESAMPLING_TYPE = %s\n" % resampl)
+    # if resample is in resam_list set the parameter otherwise return an error
+    if resample in RESAM_LIST:
+      conFile.write("RESAMPLING_TYPE = %s\n" % resample)
     else:
       raise IOError('The resampling type %s is not supportet.\n' \
-                   'The resampling type supported are %s' % (resampl,RESAM_LIST))
+                   'The resampling type supported are %s' % (resample,RESAM_LIST))
     # if projtype is in proj_list set the parameter otherwise return an error
     if projtype in PROJ_LIST:
       conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
@@ -359,7 +359,7 @@ class parseModis:
     return filename
 
   def confResample_swath(self, sds, geoloc, res, output = None, 
-                  sphere = '8', resampl = 'NN', projtype = 'GEO',  utm = None,
+                  sphere = '8', resample = 'NN', projtype = 'GEO',  utm = None,
                   projpar = '0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0',
                   ):
     """Create the parameter file to use with resample MRT software to create 
@@ -376,7 +376,7 @@ class parseModis:
         output = the output name, if it doesn't set will use the prefix name 
         of input hdf file
 
-        sphere = Output sphere number. Valid options are: 
+        sphere = Output sphere number. Valid options are:
             - 0=Clarke 1866
             - 1=Clarke 1880
             - 2=Bessel
@@ -399,7 +399,7 @@ class parseModis:
             - 19=Sphere 19 (Radius 6370997)
             - 20=MODIS Sphere (Radius 6371007.181)
 
-        resampl = the type of resampling, the valid values are: 
+        resample = the type of resampling, the valid values are:
             - NN (nearest neighbor)
             - BI (bilinear)
             - CC (cubic convolution)
@@ -450,12 +450,12 @@ class parseModis:
                                                               bound['max_lon']))
     conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
     conFile.write("OUTPUT_FILE_FORMAT = GEOTIFF_FMT\n")
-    # if resampl is in resam_list set the parameter otherwise return an error
-    if resampl in RESAM_LIST_SWATH:
-      conFile.write("KERNEL_TYPE (CC/BI/NN) = %s\n" % resampl)
+    # if resample is in resam_list set the parameter otherwise return an error
+    if resample in RESAM_LIST_SWATH:
+      conFile.write("KERNEL_TYPE (CC/BI/NN) = %s\n" % resample)
     else:
       raise IOError('The resampling type %s is not supportet.\n' \
-                   'The resampling type supported are %s' % (resampl,RESAM_LIST_SWATH))
+                   'The resampling type supported are %s' % (resample,RESAM_LIST_SWATH))
     # if projtype is in proj_list set the parameter otherwise return an error
     if projtype in PROJ_LIST:
       conFile.write("OUTPUT_PROJECTION_NUMBER = %s\n" % projtype)

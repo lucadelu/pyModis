@@ -55,10 +55,10 @@ def main():
     parser = OptionParser(usage=usage)
     #password
     parser.add_option("-P", "--password", dest="password",
-                      help="password for connect to ftp server", required=True)
+                      help="password to connect to ftp server", required=True)
     #username
     parser.add_option("-U", "--username", dest="user", default = "anonymous",
-                      help="username for connect to ftp server [default=%default]")
+                      help="username to connect to ftp server [default=%default]")
     #url
     parser.add_option("-u", "--url", default = "e4ftl01.cr.usgs.gov",
                       help="ftp server url [default=%default]", dest="url")
@@ -86,7 +86,7 @@ def main():
                       " data you must use this format YYYY-MM-DD")
     #debug
     parser.add_option("-x", action="store_true", dest="debug", default=True,
-                      help="this is useful for debug the download")
+                      help="this is useful for debugging the download")
     #jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=True,
                       help="download also the jpeg files [default=%default]")

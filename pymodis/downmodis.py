@@ -116,7 +116,7 @@ class downModis:
     
   def connectFTP(self, ncon = 20):
     """ Set connection to ftp server, move to path where data are stored
-    and create a list of directory for all days
+    and create a list of directories for all days
     
     ncon = number maximum of test to connection at the ftp server
     """
@@ -255,11 +255,11 @@ class downModis:
       self.getFilesList()
 
   def checkDataExist(self,listNewFile, move = 0):
-    """ Check if a data already exists in the directory of download 
+    """ Check if a file already exists in the directory of download
     
     listNewFile = list of all files, returned by getFilesList function
     
-    move = it is useful to know if function is called from download or move function
+    move = it is useful to know if a function is called from download or move function
     """
     fileInPath = []
     # add all files in the directory where we will save new modis data

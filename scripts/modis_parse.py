@@ -65,13 +65,13 @@ def main():
                       help="print all possible values of metadata")
     #spatial extent
     parser.add_option("-b", action="store_true", dest="bound", default=False,
-                      help="print the values releated to the spatial max extent")
+                      help="print the values related to the spatial max extent")
     #data files                  
     parser.add_option("-d", action="store_true", dest="dataf", default=False,
-                      help="print the values releated to the date files")
+                      help="print the values related to the date files")
     #data granule
     parser.add_option("-e", action="store_true", dest="datae", default=False,
-                      help="print the values releated to the ECSDataGranule")
+                      help="print the values related to the ECSDataGranule")
     #input files
     parser.add_option("-i", action="store_true", dest="input", default=False,
                       help="print the input layers")
@@ -80,16 +80,16 @@ def main():
                       help="print the other values")
     #platform information
     parser.add_option("-p", action="store_true", dest="plat", default=False,
-                      help="print the values releated to platform")
+                      help="print the values related to platform")
     #data quality
     parser.add_option("-q", action="store_true", dest="qa", default=False,
-                      help="print the values releated to quality")
+                      help="print the values related to quality")
     #psas
     parser.add_option("-s", action="store_true", dest="psas", default=False,
-                      help="print the values releated to psas")
+                      help="print the values related to psas")
     #time
     parser.add_option("-t", action="store_true", dest="time", default=False,
-                      help="print the values releated to times")
+                      help="print the values related to times")
     #write into file
     parser.add_option("-w", "--write", dest="output", metavar="OUTPUT_FILE",
                       help="write the chosen information into a file")
