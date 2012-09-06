@@ -143,7 +143,8 @@ html_last_updated_fmt = '%b %d, %Y'
 html_sidebars = {"**":["localtoc.html",'relations.html','searchbox.html','oholosidebar.html']}
 
 pdfpath = os.path.join(thispath,'build','latex','pyModis.pdf')
-if os.path.exists(pdfpath):
+if os.path.exists(pdfpath) and os.path.exists(os.path.join(thispath,'build','html')):
+    #TODO fix the copy, should be in the Makefile
     shutil.copy2(pdfpath,os.path.join(thispath,'build','html'))
     html_sidebars['**'].insert(3,'pdfsidebar.html')
 
