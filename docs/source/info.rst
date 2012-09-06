@@ -8,7 +8,7 @@ The only required software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/
 to convert or mosaic MODIS HDF files. 
 
 For *download* or *parse* HDF files only standard Python modules are used 
-by ``pyModis`` library and tools
+by ``pyModis`` library and tools.
 
 How to install pyModis
 -----------------------
@@ -23,7 +23,7 @@ from the last to the first) ::
     git clone git://github.com/lucadelu/pyModis.github
 
 or `download the latest stable version <https://github.com/lucadelu/pyModis/tags>`_ 
-from the repository and decompress it
+from the repository and decompress it.
 
 Now enter the ``pyModis`` folder and launch as administrator of 
 your computer ::
@@ -41,7 +41,7 @@ If the console doesn't return any error like this ::
     ImportError: No module named pymodis
 
 the ``pyModis`` library has been installed properly and you can use it
-or one of the tools distributed with ``pyModis`` 
+or one of the tools distributed with ``pyModis``.
 
 How to report a bug
 --------------------

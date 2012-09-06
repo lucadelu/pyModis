@@ -35,7 +35,7 @@ It has several features:
    pymodis/modules
 
 We acknowledge the `Fondazione Edmund Mach`_ for promoting the development of 
-and contribution to free and open source software.   
+free and open source software.   
 
 .. Indices and tables
    ==================
@@ -45,5 +45,5 @@ and contribution to free and open source software.
    * :ref:`search`
 
 .. _GIS and Remote Sensing Platform: http://gis.cri.fmach.it
-.. _Fondazione Edmund Mach: http://www.fondazioneedumndmach.it
+.. _Fondazione Edmund Mach: http://www.fmach.it
 .. _MODIS Reprojection Tool: https://lpdaac.usgs.gov/lpdaac/tools/modis_reprojection_tool
