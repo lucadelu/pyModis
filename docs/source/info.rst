@@ -52,7 +52,7 @@ the `issues tracker of github <https://github.com/lucadelu/pyModis/issues>`_.
 How to compile documentation
 -----------------------------
 
-This documentation has been made with `Sphinx <sphinx.pocoo.org>`_, so you
+This documentation has been made with `Sphinx <http://sphinx.pocoo.org>`_, so you
 need to install it to compile the original files to obtain different
 output formats.
 
