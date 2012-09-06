@@ -16,6 +16,10 @@ h1 {
     vertical-align: middle;
 }
 
+h3 {
+    font-size: 1.1em;
+}
+
 a {
     color: #00ab08;
 }

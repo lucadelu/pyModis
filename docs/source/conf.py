@@ -11,8 +11,13 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
-sys.path.insert(0, os.path.split(os.path.split(os.path.abspath('.'))[0])[0])
+import sys
+import os
+import shutil
+
+thispath = os.path.split(os.path.abspath('.'))[0]
+
+sys.path.insert(0, os.path.split(thispath)[0])
 
 import pymodis
 modisversion = pymodis.__version__
@@ -135,7 +140,12 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-html_sidebars = {"index":["localtoc.html",'relations.html','searchbox.html','oholosidebar.html']}
+html_sidebars = {"**":["localtoc.html",'relations.html','searchbox.html','oholosidebar.html']}
+
+pdfpath = os.path.join(thispath,'build','latex','pyModis.pdf')
+if os.path.exists(pdfpath):
+    shutil.copy2(pdfpath,os.path.join(thispath,'build','html'))
+    html_sidebars['**'].insert(3,'pdfsidebar.html')
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

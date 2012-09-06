@@ -82,6 +82,17 @@ with one of the following target to obtain the desired output:
   - **linkcheck**: to check all external links for integrity
   - **doctest**: to run all doctests embedded in the documentation (if enabled)
 
+PDF link in HTML
+^^^^^^^^^^^^^^^^^^
+To insert a link to PDF file of pyModis documentation into HTML documentation
+(the link will be added on the sidebar) you have to compile first the PDF and
+after the HTML, so you need to launch::
+
+  make latexpdf
+  make html
+  
+If PDF file is missing no link will be added
+  
 Ohloh statistics
 -----------------
   
@@ -95,11 +106,14 @@ Ohloh statistics
 	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_basic_stats.js"></script>
 	  </td>
 	  <td align="center">
-	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_languages.js"></script>
+	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_factoids.js"></script>
 	  </td>
 	</tr>
 	<tr>
-	  <td colspan="2" align="center">
+	  <td align="center">
+	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_languages.js"></script>
+	  </td>	
+	  <td align="center">
 	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_cocomo.js"></script>
 	  </td>
 	</tr>

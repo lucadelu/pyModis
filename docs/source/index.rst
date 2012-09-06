@@ -3,15 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pyModis documentation!
-===================================
+Welcome to pyModis
+===================
 
-This library was developed to replace old bash scripts by Markus Neteler 
+``pyModis`` library was developed to replace old bash scripts by Markus Neteler 
 to download MODIS data from NASA FTP server. It is very useful for 
 `GIS and Remote Sensing Platform`_ of `Fondazione Edmund Mach`_ to update 
-its large dataset of MODIS data.
+its large dataset of MODIS data. 
 
-We acknowledge the Fondazione Edmund Mach for promoting the development of and contribution to free and open source software.
+It has several features:
+
+  - it is very useful for downloading large numbers of MODIS HDF/XML files
+    and for using this in a cron job for automated continuous updating
+
+  - it can parse the XML file to obtain information about the HDF files
+
+  - it can convert a HDF MODIS file to a GEOTIF file using `MODIS Reprojection Tool`_
+
+  - it can create a mosaic of several tiles using `MODIS Reprojection Tool`_ and
+    create the xml metadata file with the information of all tiles used in mosaic
 
 .. only:: html
 
@@ -24,6 +34,8 @@ We acknowledge the Fondazione Edmund Mach for promoting the development of and c
    scripts/software
    pymodis/modules
 
+We acknowledge the `Fondazione Edmund Mach`_ for promoting the development of 
+and contribution to free and open source software.   
 
 .. Indices and tables
    ==================
@@ -34,3 +46,4 @@ We acknowledge the Fondazione Edmund Mach for promoting the development of and c
 
 .. _GIS and Remote Sensing Platform: http://gis.cri.fmach.it
 .. _Fondazione Edmund Mach: http://www.fondazioneedumndmach.it
+.. _MODIS Reprojection Tool: https://lpdaac.usgs.gov/lpdaac/tools/modis_reprojection_tool
