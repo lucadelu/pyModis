@@ -43,16 +43,19 @@ clean:
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	if test -e $(BUILDDIR)/latex/pyModis.pdf; then cp $(BUILDDIR)/latex/pyModis.pdf $(BUILDDIR)/html; fi;
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
+	if test -e $(BUILDDIR)/latex/pyModis.pdf; then cp $(BUILDDIR)/latex/pyModis.pdf $(BUILDDIR)/dirhtml; fi;
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/dirhtml."
 
 singlehtml:
 	$(SPHINXBUILD) -b singlehtml $(ALLSPHINXOPTS) $(BUILDDIR)/singlehtml
+	if test -e $(BUILDDIR)/latex/pyModis.pdf; then cp $(BUILDDIR)/latex/pyModis.pdf $(BUILDDIR)/singlehtml; fi;
 	@echo
 	@echo "Build finished. The HTML page is in $(BUILDDIR)/singlehtml."
 
