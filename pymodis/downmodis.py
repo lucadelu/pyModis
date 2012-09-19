@@ -164,26 +164,26 @@ class downModis:
       logging.error("Error %s when try to come back" % e)
       self.setDirectoryOver()
 
-  def str2date(self,strin):
+  def _str2date(self,strin):
       """Return a date object from a string"""
       todaySplit = strin.split('-')
       return date(int(todaySplit[0]), int(todaySplit[1]),int(todaySplit[2]))
 
-  def getToday(self):
+  def _getToday(self):
     """Return the first day for start to download"""
     if self.today == None:
       # set today variable to today
       self.today = date.today()
     else:
       # set today variable to data pass from user
-      self.today = self.str2date(self.today)
+      self.today = self._str2date(self.today)
       # set enday variable to data
     if self.enday != None:
-      self.enday = self.str2date(self.enday)
+      self.enday = self._str2date(self.enday)
       
   def getListDays(self):
       """ Return a list of all selected days """
-      self.getToday()
+      self._getToday()
 
       today_s = self.today.strftime("%Y.%m.%d")
       # dirData is reverse sorted
@@ -288,7 +288,7 @@ class downModis:
     else:
       return newFile
 
-  def downloadFile(self,filDown,filHdf):
+  def _downloadFile(self,filDown,filHdf):
     """Download the single file
     
     filDown = name of the file to download
@@ -307,7 +307,7 @@ class downModis:
       filSave.close()
       os.remove(filSave.name)
       self.connectFTP()
-      self.downloadFile(filDown,filHdf)
+      self._downloadFile(filDown,filHdf)
     filSave.close()
     orig_size = self.ftp.size(filDown)
     transf_size = os.path.getsize(filSave.name)
@@ -317,7 +317,7 @@ class downModis:
       logging.warning("Different size for file %s - original data: %s, downloaded: %s" %
                       (filDown, orig_size, transf_size)) 
       os.remove(filSave.name)
-      self.downloadFile(filDown,filHdf)
+      self._downloadFile(filDown,filHdf)
 
   def dayDownload(self,listFilesDown):
     """ Downloads tiles are in files_hdf_consider 
@@ -347,7 +347,7 @@ class downModis:
             logging.error("There are to much files for %s" % i)
             #raise EOFError("There are to much file with the same prefix")
           if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
-            self.downloadFile(i,file_hdf)
+            self._downloadFile(i,file_hdf)
 
   def downloadsAllDay(self):
     """ Downloads all the tiles considered """
