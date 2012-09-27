@@ -20,20 +20,21 @@
 ##################################################################
 
 #import system library
-import sys
 import optparse
 #import modis library
 from pymodis import parsemodis
 
+
 def readDict(dic):
     """Function to decode dictionary"""
-    out=""
-    for k,v in dic.iteritems():
+    out = ""
+    for k, v in dic.iteritems():
         out += "%s = %s\n" % (k, v)
     return out
 
 #classes for required options
 strREQUIRED = 'required'
+
 
 class OptionWithDefault(optparse.Option):
     ATTRS = optparse.Option.ATTRS + [strREQUIRED]
@@ -43,17 +44,19 @@ class OptionWithDefault(optparse.Option):
             attrs['help'] = '(Required) ' + attrs.get('help', "")
         optparse.Option.__init__(self, *opts, **attrs)
 
+
 class OptionParser(optparse.OptionParser):
     def __init__(self, **kwargs):
         kwargs['option_class'] = OptionWithDefault
         optparse.OptionParser.__init__(self, **kwargs)
-    
+
     def check_values(self, values, args):
         for option in self.option_list:
             if hasattr(option, strREQUIRED) and option.required:
                 if not getattr(values, option.dest):
                     self.error("option %s is required" % (str(option)))
         return optparse.OptionParser.check_values(self, values, args)
+
 
 def main():
     """Main function"""

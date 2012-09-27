@@ -20,34 +20,36 @@
 ##################################################################
 
 #import system library
-import sys
 import optparse
 #import modis library
 from pymodis import parsemodis
 
+
 def readDict(dic):
     """Function to decode dictionary"""
-    out=""
-    for k,v in dic.iteritems():
+    out = ""
+    for k, v in dic.iteritems():
         out += "%s = %s\n" % (k, v)
     return out
 
 #classes for required options
 strREQUIRED = 'required'
 
+
 class OptionWithDefault(optparse.Option):
     ATTRS = optparse.Option.ATTRS + [strREQUIRED]
-    
+
     def __init__(self, *opts, **attrs):
         if attrs.get(strREQUIRED, False):
             attrs['help'] = '(Required) ' + attrs.get('help', "")
         optparse.Option.__init__(self, *opts, **attrs)
 
+
 class OptionParser(optparse.OptionParser):
     def __init__(self, **kwargs):
         kwargs['option_class'] = OptionWithDefault
         optparse.OptionParser.__init__(self, **kwargs)
-    
+
     def check_values(self, values, args):
         for option in self.option_list:
             if hasattr(option, strREQUIRED) and option.required:
@@ -55,18 +57,19 @@ class OptionParser(optparse.OptionParser):
                     self.error("option %s is required" % (str(option)))
         return optparse.OptionParser.check_values(self, values, args)
 
+
 def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] hdf_file"
-    parser = OptionParser(usage=usage)    
+    parser = OptionParser(usage=usage)
     #all data
     parser.add_option("-a", action="store_true", dest="all", default=False,
                       help="print all possible values of metadata")
     #spatial extent
     parser.add_option("-b", action="store_true", dest="bound", default=False,
                       help="print the values related to the spatial max extent")
-    #data files                  
+    #data files
     parser.add_option("-d", action="store_true", dest="dataf", default=False,
                       help="print the values related to the date files")
     #data granule
@@ -102,7 +105,7 @@ def main():
     modisOgg = parsemodis.parseModis(args[0])
     #the output string
     outString = ""
-    
+
     if options.all or options.bound:
         outString += readDict(modisOgg.retBoundary())
     if options.all or options.time:
@@ -112,9 +115,9 @@ def main():
     if options.all or options.datae:
         outString += readDict(modisOgg.retDataGranule())
     if options.all or options.dataf:
-        outString += readDict(modisOgg.retDataFiles())      
+        outString += readDict(modisOgg.retDataFiles())
     if options.all or options.input:
-        outString += 'InputFiles = ' 
+        outString += 'InputFiles = '
         outString += ', '.join(modisOgg.retInputGranule())
     if options.all or options.plat:
         outString += readDict(modisOgg.retPlatform())
@@ -143,4 +146,3 @@ def main():
 #add options
 if __name__ == "__main__":
     main()
-
