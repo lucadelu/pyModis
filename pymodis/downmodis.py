@@ -116,8 +116,9 @@ class downModis:
 
   def removeEmptyFiles(self):
     """Check if some file has size ugual 0"""
-    year = date.today().year
-    files = glob.glob1(self.writeFilePath, '%s.A%s*' % (self.product, str(year)))
+    year = str(date.today().year)
+    pref = self.product.split('.')[0]
+    files = glob.glob1(self.writeFilePath, '%s.A%s*' % (pref, year))
     for f in files:
         fil = os.path.join(self.writeFilePath, f)
         if os.path.getsize(fil) == 0:
