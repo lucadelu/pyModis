@@ -87,16 +87,19 @@ def main():
                       " data you must use this format YYYY-MM-DD")
     #debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
-                      help="this is useful for debugging the download")
+                      help="this is useful for debugging the " \
+                      "download [default=%default]")
     #jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=False,
                       help="download also the jpeg files [default=%default]")
     #only one day
     parser.add_option("-O", dest="oneday", action="store_true", default=False,
-                      help="download only one day, it set delta=1")
+                      help="download only one day, it set " \
+                      "delta=1 [default=%default]")
     #remove file with size = 0
     parser.add_option("-r", dest="empty", action="store_true", default=False,
-                      help="remove files with size ugual to zero")
+                      help="remove files with size ugual to zero from " \
+                      "'destination_folder'  [default=%default]")
     #parser.add_option("-A", dest="alldays", action="store_true", default=True,
                       #help="download all days from the first")
 
