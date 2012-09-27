@@ -113,6 +113,15 @@ class downModis:
     logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, \
     format=LOGGING_FORMAT)
     self.nconnection = 0
+
+  def removeEmptyFiles(self):
+    """Check if some file has size ugual 0"""
+    year = date.today().year
+    files = glob.glob1(self.writeFilePath, '%s.A%s*' % (self.product, str(year)))
+    for f in files:
+        fil = os.path.join(self.writeFilePath, f)
+        if os.path.getsize(fil) == 0:
+            os.remove(fil)
     
   def connectFTP(self, ncon = 20):
     """ Set connection to ftp server, move to path where data are stored
@@ -349,9 +358,11 @@ class downModis:
           if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
             self._downloadFile(i,file_hdf)
 
-  def downloadsAllDay(self):
+  def downloadsAllDay(self, clean = False):
     """ Downloads all the tiles considered """
     #return the days to download
+    if clean:
+        self.removeEmptyFiles()
     days = self.getListDays()
     if self.debug==True:
       logging.debug("The number of days to download is: %i" % len(days))
