@@ -6,10 +6,10 @@
 Welcome to pyModis
 ===================
 
-``pyModis`` library was developed to replace old bash scripts by Markus Neteler 
-to download MODIS data from NASA FTP server. It is very useful for 
+``pyModis`` library was developed to replace old bash scripts developed by Markus
+Neteler to download MODIS data from NASA FTP server. It is very useful for
 `GIS and Remote Sensing Platform`_ of `Fondazione Edmund Mach`_ to update 
-its large dataset of MODIS data. 
+its large collection of MODIS data.
 
 It has several features:
 
@@ -18,9 +18,9 @@ It has several features:
 
   - it can parse the XML file to obtain information about the HDF files
 
-  - it can convert a HDF MODIS file to a GEOTIF file using `MODIS Reprojection Tool`_
+  - it can convert a HDF MODIS file to GEOTIF file using `MODIS Reprojection Tool`_
 
-  - it can create a mosaic of several tiles using `MODIS Reprojection Tool`_ and
+  - it can create a mosaic of several tiles using `MODIS Reprojection Tool`_ and can
     create the xml metadata file with the information of all tiles used in mosaic
 
 .. only:: html
