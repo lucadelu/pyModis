@@ -315,11 +315,14 @@ class downModis:
       if self.debug==True:
         logging.debug("File %s downloaded" % filDown)
     #if it have an error it try to download again the file
-    except (ftplib.error_reply, socket.error, ftplib.error_temp), e:
+    except (ftplib.error_reply, socket.error, ftplib.error_temp, EOFError), e:
       logging.error("Cannot download %s, retry.." % filDown)
       filSave.close()
       os.remove(filSave.name)
-      self.connectFTP()
+      try:
+          self.ftp.pwd()
+      except (ftplib.error_temp), e:
+          self.connectFTP()
       self._downloadFile(filDown, filHdf)
     filSave.close()
     orig_size = self.ftp.size(filDown)
