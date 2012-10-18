@@ -196,7 +196,7 @@ class downModis:
       self.enday = self._str2date(self.enday)
 
   def getListDays(self):
-      """ Return a list of all selected days """
+      """Return a list of all selected days"""
       self._getToday()
 
       today_s = self.today.strftime("%Y.%m.%d")
@@ -225,6 +225,10 @@ class downModis:
         # remove days outside new delta
         days = days[:delta]
       return days
+
+  def getAllDays(self):
+    """Return a list of all days"""
+    return self.dirData
 
   def getFilesList(self):
     """ Create a list of files to download, it is possible choose to download
@@ -365,12 +369,15 @@ class downModis:
           if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
             self._downloadFile(i, file_hdf)
 
-  def downloadsAllDay(self, clean = False):
+  def downloadsAllDay(self, clean=False, allDays=False):
     """ Downloads all the tiles considered """
     #return the days to download
     if clean:
         self.removeEmptyFiles()
-    days = self.getListDays()
+    if allDays:
+        days = self.getAllDays()
+    else:
+        days = self.getListDays()
     if self.debug == True:
       logging.debug("The number of days to download is: %i" % len(days))
     #for each day

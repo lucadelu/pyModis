@@ -96,6 +96,11 @@ def main():
     parser.add_option("-O", dest="oneday", action="store_true", default=False,
                       help="download only one day, it set " \
                       "delta=1 [default=%default]")
+    #all days
+    parser.add_option("-A", dest="alldays", action="store_true", default=False,
+                      help="download all days, it usefull for first download "\
+                      "of a product. It overwrite the 'firstday' and 'endday'"\
+                      " options [default=%default]")
     #remove file with size = 0
     parser.add_option("-r", dest="empty", action="store_true", default=False,
                       help="remove files with size ugual to zero from " \
@@ -126,7 +131,7 @@ def main():
     modisOgg.connectFTP()
     if modisOgg.nconnection <= 20:
         #download data
-        modisOgg.downloadsAllDay(clean=options.empty)
+        modisOgg.downloadsAllDay(clean=options.empty, allDays=options.alldays)
     else:
         parser.error("Some problem with connection occur")
 
