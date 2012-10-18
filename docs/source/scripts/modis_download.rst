@@ -13,7 +13,8 @@ Usage
 Options
 ^^^^^^^
 ::
-    
+
+    -h  --help        show the help   
     -P  --password    password to connect to ftp server, 
                       usually your email address  [required]
     -U  --username    username to connect to ftp server 
@@ -31,8 +32,15 @@ Options
                       data you have to use this format YYYY-MM-DD
                       ([default=None] use delta option)
     -x                this is useful for debugging the download
-    -j                download also the jpeg files [default=True]
-    -O                download only one day, it set delta=1
+                      [default=False]
+    -j                download also the jpeg files [default=False]
+    -O                download only one day, it set delta=1 [default=False]
+    -A                download all days, it usefull for first download of a
+                      product. It overwrite the 'firstday' and 'endday'
+                      options [default=False]
+    -r                remove files with size ugual to zero from
+                      'destination_folder'  [default=False]
+
 
 Examples
 ^^^^^^^^
