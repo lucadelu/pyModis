@@ -325,7 +325,7 @@ class downModis:
       os.remove(filSave.name)
       try:
           self.ftp.pwd()
-      except (ftplib.error_temp), e:
+      except (ftplib.error_temp, EOFError), e:
           self.connectFTP()
       self._downloadFile(filDown, filHdf)
     filSave.close()
