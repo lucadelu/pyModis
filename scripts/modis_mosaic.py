@@ -72,7 +72,7 @@ def main():
     (options, args) = parser.parse_args()
 
     #check the number of tiles
-    if len(args) > 1:
+    if len(args) > 1 or len(args) == 0:
         parser.error("You have to pass the name of a file containing HDF " \
                      "files. (One HDF file for line)")
 
@@ -84,7 +84,7 @@ def main():
     if not options.subset:
         options.subset = False
     else:
-        if string.find(options.subset, '(') != -1 or  string.find(options.subset, ')') != -1:
+        if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
             parser.error('ERROR: The spectral string should be similar to: "1 0"')
 
     modisOgg = convertmodis.createMosaic(args[0], options.output, options.mrt,
