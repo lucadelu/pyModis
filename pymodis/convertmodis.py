@@ -128,7 +128,7 @@ class createMosaic:
       if i.find(self.basepath) == -1:
         print "Attection maybe you have the not full path in the HDF file list"
         listHDF.append(os.path.join(self.basepath,i.strip()))
-      else:
+      elif i.find('.hdf.xml') == -1:
         listHDF.append(i.strip())
     pmm = parseModisMulti(listHDF)
     pmm.writexml(self.outxml)
