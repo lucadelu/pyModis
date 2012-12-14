@@ -23,6 +23,8 @@ from datetime import *
 import os
 import sys
 
+def fullpath():
+  """Return full path"""
 
 class convertModis:
   """A class to convert modis data from hdf to tif using resample
@@ -94,10 +96,14 @@ class createMosaic:
               mrtpath,
               subset = False
               ):
+    import tempfile
     # check if the hdf file exists
     if os.path.exists(listfile):
       self.basepath = os.path.split(listfile)[0]
+      self.fullpath = os.path.join(os.getcwd(), self.basepath)
       self.listfiles = listfile
+      self.tmplistfiles = open(os.path.join(tempfile.gettempdir(),
+                               '%s.prm' % str(os.getpid())), 'w')
       self.HDFfiles = open(listfile).readlines()
     else:
       raise IOError('%s not exists' % hdfname)
@@ -130,8 +136,10 @@ class createMosaic:
         listHDF.append(os.path.join(self.basepath,i.strip()))
       elif i.find('.hdf.xml') == -1:
         listHDF.append(i.strip())
+        self.tmplistfiles.write(os.path.join(self.fullpath,i))
     pmm = parseModisMulti(listHDF)
     pmm.writexml(self.outxml)
+    self.tmplistfiles.close()
 
 
   def executable(self):
@@ -154,11 +162,11 @@ class createMosaic:
     else:
       self.write_mosaic_xml()
       if self.subset:
-        subprocess.call([execut,'-i',self.listfiles,'-o',self.out,'-s',self.subset], 
-                        stderr = subprocess.STDOUT)
+        subprocess.call([execut,'-i',self.tmplistfiles.name,'-o',self.out,'-s',
+                         self.subset], stderr = subprocess.STDOUT)
       else:
-        subprocess.call([execut,'-i',self.listfiles,'-o',self.out], stderr = 
-                        subprocess.STDOUT)
+        subprocess.call([execut,'-i',self.tmplistfiles.name,'-o',self.out],
+                        stderr = subprocess.STDOUT)
     return "The mosaic file %s is created" % self.out
 
 
