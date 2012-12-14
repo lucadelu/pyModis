@@ -1,6 +1,2 @@
-all = [
-      "downmodis.py",
-      "parsemodis.py",
-      "convertmodis.py"
-]
-__version__ = '0.6.0'
+import downmodis, parsemodis, convertmodis
+__version__ = '0.6.1'
