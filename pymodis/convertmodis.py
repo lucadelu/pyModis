@@ -23,8 +23,6 @@ from datetime import *
 import os
 import sys
 
-def fullpath():
-  """Return full path"""
 
 class convertModis:
   """A class to convert modis data from hdf to tif using resample
@@ -100,7 +98,7 @@ class createMosaic:
     # check if the hdf file exists
     if os.path.exists(listfile):
       self.basepath = os.path.split(listfile)[0]
-      self.fullpath = os.path.join(os.getcwd(), self.basepath)
+      self.fullpath = os.path.realpath(self.basepath)
       self.listfiles = listfile
       self.tmplistfiles = open(os.path.join(tempfile.gettempdir(),
                                '%s.prm' % str(os.getpid())), 'w')
