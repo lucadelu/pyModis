@@ -67,7 +67,7 @@ def main():
     #layer subset
     parser.add_option("-s", "--subset", dest="subset", required=True,
                       help="a subset of product's layers. The string should "\
-                      "be similar to: 1 0")
+                      "be similar to: ( 1 0 )")
     #mrt path
     parser.add_option("-m", "--mrt", dest="mrt", required=True,
                       help="the path to MRT software", metavar="MRT_PATH")
