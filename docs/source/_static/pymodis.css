@@ -31,3 +31,7 @@ div.related ul li a {
 .pre {
     color: #00ab08;
 }
+
+p.admonition-title {
+    background-color: rgba(207, 66, 0, 0.85)
+}

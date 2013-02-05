@@ -32,6 +32,7 @@ It has several features:
    
    info
    scripts/software
+   examples/full_example   
    pymodis/modules
 
 We acknowledge the `Fondazione Edmund Mach`_ for promoting the development of 
