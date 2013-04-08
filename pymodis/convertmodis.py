@@ -129,12 +129,13 @@ class createMosaic:
     from parsemodis import parseModisMulti
     listHDF = []
     for i in self.HDFfiles:
-      if i.find(self.basepath) == -1:
+      if i.find(self.basepath) == -1 and i.find('.hdf.xml') == -1:
         print "Attection maybe you have the not full path in the HDF file list"
         listHDF.append(os.path.join(self.basepath,i.strip()))
+        self.tmplistfiles.write("%s\n" % os.path.join(self.basepath,i.strip()))
       elif i.find('.hdf.xml') == -1:
         listHDF.append(i.strip())
-        self.tmplistfiles.write(os.path.join(self.fullpath,i))
+        self.tmplistfiles.write("%s\n" % os.path.join(self.fullpath,i.strip()))
     pmm = parseModisMulti(listHDF)
     pmm.writexml(self.outxml)
     self.tmplistfiles.close()
