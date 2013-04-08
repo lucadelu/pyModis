@@ -8,11 +8,24 @@ automatically update your MODIS files dataset.
 
 Currently the tools are 5:
 
+.. only:: latex
+
+  * :doc:`modis_download`
+  * :doc:`modis_parse`
+  * :doc:`modis_multiparse`
+  * :doc:`modis_mosaic`
+  * :doc:`modis_convert`
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position
+
 .. toctree::
    :maxdepth: 1
-   
+
    modis_download
    modis_parse
    modis_multiparse
    modis_mosaic
    modis_convert
+
