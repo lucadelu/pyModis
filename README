@@ -18,3 +18,5 @@ Some executables are distributed with the library:
 	- modis_multiparse can parse the XML file of several MODIS data and return the bounding box or it can write the XML file with the information of all tiles considered
 	- modis_mosaic create the mosaic of server MODIS tiles
 	- modis_convert convert MODIS data from HDF format and Sinusoidal projection to other formats and projections
+
+More info at http://pymodis.fem-environment.eu/
