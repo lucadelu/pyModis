@@ -88,8 +88,8 @@ def main():
                       type='choice', choices=parsemodis.RESAM_LIST)
     parser.add_option("-p", "--proj_parameters", dest="pp",
                       metavar="PROJECTION_PARAMETERS",
-                      default='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0"\
-                      " 0.0 0.0 0.0 0.0 )',
+                      default='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0' \
+                      ' 0.0 0.0 0.0 0.0 )',
                       help="a list of projection parameters, for more info "\
                       "check the 'Appendix C' of MODIS reprojection tool user"\
                       "'s manual https://lpdaac.usgs.gov/content/download" \
@@ -113,6 +113,11 @@ def main():
 
     if string.find(options.subset, '(') == -1 or  string.find(options.subset, ')') == -1:
         parser.error('ERROR: The spectral string should be similar to: "( 1 0 )"')
+
+    if not options.output.endswith('.tif') and \
+        not options.output.endswith('.hdf') and \
+        not options.output.endswith('.hdr'):
+            parser.error("Valid extensions for output are .hdf, .hdr, or .tif")
 
     modisParse = parsemodis.parseModis(args[0])
     confname = modisParse.confResample(options.subset, options.res,
