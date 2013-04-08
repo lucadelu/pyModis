@@ -16,9 +16,18 @@ Downloading data
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
-::
+.. only:: html
 
-  modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 -P yourmail@mail.org /tmp/
+  ::
+
+    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 -P yourmail@mail.org /tmp/
+
+.. only:: latex
+
+  ::
+
+    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 
+		      -P yourmail@mail.org /tmp/
 
 .. warning::
 
@@ -62,6 +71,15 @@ Convert data
 The last part of the procedure is to convert the mosaic, from HDF format and sinusoidal 
 projection, to GeoTIFF with several projection. You have to use :doc:`../scripts/modis_convert`
 
-::
+.. only:: html
 
-  modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/ -o /tmp/finalfile -g 250 /tmp/outputfile.hdf
+  ::
+
+    modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/ -o /tmp/finalfile.tif -g 250 /tmp/outputfile.hdf
+
+.. only:: latex
+
+  ::
+
+    modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/ 
+		     -o /tmp/finalfile.tif -g 250 /tmp/outputfile.hdf
