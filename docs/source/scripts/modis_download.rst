@@ -57,3 +57,8 @@ Download all tiles of NDVI for one day (you have know the rigth day otherwise it
 
     modis_download.py -P your.mail@prov.org -s TODO -f 2010-12-31 -O
 
+.. only:: latex
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position

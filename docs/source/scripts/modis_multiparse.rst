@@ -29,3 +29,9 @@ Print values of spatial bounding box ::
 Write xml file to use with hdf file create by :doc:`modis_convert` ::
 
     modis_multiparse.py -w FILE_mosaic.xml FILE1 FILE2 ...
+
+.. only:: latex
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position

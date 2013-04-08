@@ -42,3 +42,9 @@ Write all values to a file ::
 Print spatial extent and quality ::
 
     modis_parse.py -b -q FILE
+
+.. only:: latex
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position

@@ -47,3 +47,9 @@ UTM projection in the 32  zone ::
 
 
 .. _`MODIS reprojection tool user's manual`: https://lpdaac.usgs.gov/sites/default/files/public/mrt41_usermanual_032811.pdf
+
+.. only:: latex
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position

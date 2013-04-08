@@ -30,3 +30,9 @@ Convert all the layers of several tiles::
 Convert LAYERS of several LST MODIS tiles::
 
     modis_mosaic.py -s "1 0 1 0" -m "/usr/local/bin/" -o FILE_mosaik FILE1 FILE2 ...
+
+.. only:: latex
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position
