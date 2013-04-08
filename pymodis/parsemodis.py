@@ -818,7 +818,7 @@ class parseModisMulti:
     # TODO ADD BrowseProduct
     output = open(outputname, 'w')
     output.write('<?xml version="1.0" encoding="UTF-8"?>')
-    output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.gsfc."\
-    "nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/ScienceGranuleMetadata.dtd">')
+    output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.gsfc.' \
+    'nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/ScienceGranuleMetadata.dtd">')
     output.write(self.ElementTree.tostring(granule))
     output.close()
