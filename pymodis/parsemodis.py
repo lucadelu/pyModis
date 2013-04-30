@@ -501,6 +501,12 @@ class parseModisMulti:
       self.parModis.append(parseModis(i))
       self.nfiles += 1
 
+
+  def _most_common(self, lst):
+    """Return the most common value of a list"""
+    return max(set(lst), key=lst.count)
+
+
   def _checkval(self, vals):
     """Internal function to return values from list
 
@@ -528,6 +534,8 @@ class parseModisMulti:
         valtemp.append(v[k])
       if valtemp.count(valtemp[0]) == self.nfiles:
         outvals[k] = valtemp[0]
+      elif len(valtemp) == self.nfiles:
+        outvals[k] = self._most_common(valtemp)
       else:
         raise IOError('Something wrong reading XML files')
 
