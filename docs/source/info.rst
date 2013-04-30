@@ -13,6 +13,32 @@ by ``pyModis`` library and tools.
 How to install pyModis
 -----------------------
 
+Using pip
+^^^^^^^^^^^^^^
+
+From version 0.6.3 it is possible to install ``pyModis`` using
+`pip <https://pypi.python.org/pypi/pip>`_. You have to run the following
+command as administrator
+
+::
+
+  pip install pyModis
+
+If you need to update you ``pyModis`` version you have to run
+
+::
+
+  pip install --upgrade pyModis
+
+With ``pip`` it is also really simple to remove the library
+
+::
+
+  pip uninstall pyModis
+
+Compile from source
+^^^^^^^^^^^^^^^^^^^^^^
+
 Installing ``pyModis`` is very simple. First you need to download ``pyModis``
 source code from `github repository <https://github.com/lucadelu/pyModis>`_.
 
@@ -20,7 +46,7 @@ You can use `git <http://git-scm.com/>`_ to download the latest code
 (with the whole history and so it contain all the different stable versions, 
 from the last to the first) ::
 
-    git clone git://github.com/lucadelu/pyModis.github
+    git clone https://github.com/lucadelu/pyModis.git
 
 or `download the latest stable version <https://github.com/lucadelu/pyModis/tags>`_ 
 from the repository and decompress it.
