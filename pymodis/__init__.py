@@ -1,2 +1,2 @@
-import downmodis, parsemodis, convertmodis, optparse_gui
+import downmodis, parsemodis, convertmodis
 __version__ = '0.6.3'
