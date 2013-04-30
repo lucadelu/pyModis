@@ -1,0 +1,4 @@
+- version 0.6.3, 2014-04-30 -- first release installable using pip
+ * fix parseModisMulti class to work with different range of times
+ * update setup.py to be compliant with Pipy
+ * update README

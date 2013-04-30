@@ -1,22 +1,38 @@
-Thank you for downlaoding pyModis
+Welcome in pyModis library
+******************************
 
-pyModis is a python library to download and process Modis data from NASA ftp
+*Thank you for downlaoding pyModis*
 
-(c) Copyright Luca Delucchi - 2010
+**pyModis is a python library to download and process Modis data from NASA ftp**
 
-pyModis is licensed under the terms of GNU GPL 2
-    Read COPYING for more info
+Copyright Luca Delucchi - 2010-2013
 
-How to compile pyModis:
-    See INSTALL file.
+License
+===========
 
-The Logo of pyModis is pyModis.png; it is released under CC-BY-SA and it's distributed with the pyModis library
+pyModis is licensed under the terms of **GNU GPL 2**. Read COPYING for more info
+
+Install
+===========
+
+How to compile or install pyModis see INSTALL file.
+
+Executables
+================
 
 Some executables are distributed with the library:
-	- modis_download it's useful to download MODIS data
-	- modis_parse can parse the XML file of MODIS data and return some variables
-	- modis_multiparse can parse the XML file of several MODIS data and return the bounding box or it can write the XML file with the information of all tiles considered
-	- modis_mosaic create the mosaic of server MODIS tiles
-	- modis_convert convert MODIS data from HDF format and Sinusoidal projection to other formats and projections
 
-More info at http://pymodis.fem-environment.eu/
+  * **modis_download** it's useful to download MODIS data
+  * **modis_parse** can parse the XML file of MODIS data and return some variables
+  * **modis_multiparse** can parse the XML file of several MODIS data and return the bounding box or it can write the XML file with the information of all
+    tiles considered
+  * **modis_mosaic** create the mosaic of server MODIS tiles
+  * **modis_convert** convert MODIS data from HDF format and Sinusoidal projection to other formats and projections
+
+
+Other info
+============
+
+The logo of pyModis is pyModis.png; it is released under CC-BY-SA and it's distributed with the pyModis library
+
+More info about pyModis at http://pymodis.fem-environment.eu/

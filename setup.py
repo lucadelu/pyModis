@@ -20,10 +20,16 @@
 #
 ##################################################################
 from distutils.core import setup
+import os
+
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 setup(
   name='pyModis',
-  version='0.6.2',
+  version='0.6.3',
   py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
               'pymodis.parsemodis'],
   #packages = ['pymodis'],
@@ -34,7 +40,19 @@ setup(
   author_email='luca.delucchi@fmach.it',
   url='http://pymodis.fem-environment.eu',
   description='Python library for MODIS data',
-  long_description='Python library to download, convert and process MODIS ' \
-                   'data, it use also MODIS Reprojection Tools from NASA',
-  license='GNU GPL 2 or later'
+  long_description=read('README'),
+  license='GNU GPL 2 or later',
+  platforms=['Any'],
+  classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)"
+  ],
 )
