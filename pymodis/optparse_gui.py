@@ -14,7 +14,7 @@ import optparse
 
 import wx
 
-__version__ = 0.1
+__version__ = 0.2
 __revision__ = '$Id$'
 
 #for required options
@@ -27,14 +27,14 @@ class OptparseDialog(wx.Dialog):
     Based on the wx.Dialog sample from wx Docs & Demos'''
     def __init__(
             self,
-            option_parser,  # The OptionParser object
+            optParser,  # The OptionParser object
+            title,
+            name,
             parent=None,
             ID=0,
-            title='Optparse Dialog',
             pos=wx.DefaultPosition,
             size=wx.DefaultSize,
             style=wx.DEFAULT_DIALOG_STYLE,
-            name='OptparseDialog',
             ):
 
         provider = wx.SimpleHelpProvider()
@@ -53,14 +53,14 @@ class OptparseDialog(wx.Dialog):
 #       IN THE TOP OF GUI THERE WAS THE NAME OF THE SCRIPT, BUT NOW IT IS IN
 #       THE TITLE
 
-#        top_label_text = '%s %s' % (option_parser.get_prog_name(),
-#                                     option_parser.get_version())
+#        top_label_text = '%s %s' % (optParser.get_prog_name(),
+#                                     optParser.get_version())
 #        label = wx.StaticText(self, -1, top_label_text)
 #        sizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
         # Add a text control for entering args
         box = wx.BoxSizer(wx.HORIZONTAL)
-        label = wx.StaticText(self, -1, 'Destination Folder')
+        label = wx.StaticText(self, -1, self._checkScript(optParser.get_prog_name()))
         label.SetHelpText('This is the place to enter the args')
 
         self.args_ctrl = wx.TextCtrl(self, -1, '', size=(-1, 100),
@@ -78,7 +78,7 @@ class OptparseDialog(wx.Dialog):
         self.browse_option_map = {}
 
         # Add controls for all the options
-        for option in option_parser.option_list:
+        for option in optParser.option_list:
             if option.dest is None:
                 continue
 
@@ -98,7 +98,7 @@ class OptparseDialog(wx.Dialog):
                         self, -1, choices=option.choices,
                         value=option.default,
                         style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SORT
-)
+                    )
                 else:
                     if 'MULTILINE' in option.help:
                         ctrl = wx.TextCtrl(self, -1, "", size=(300, 100),
@@ -188,6 +188,16 @@ class OptparseDialog(wx.Dialog):
         args = re.findall(r'(?:((?:(?:\w|\d)+)|".*?"))\s*', args_buff)
         return args
 
+    def _checkScript(self, name):
+        if name == 'modis_convert.py' or name == 'modis_parse.py':
+            return 'File HDF'
+        elif name == 'modis_download.py':
+            return 'Destination Folder'
+        elif name == 'modis_mosaic.py':
+            return 'File containig HDF list'
+        elif name == 'modis_multiparse.py':
+            return 'List of HDF file'
+
     def getOptionsAndArgs(self):
         '''Returns the tuple (options, args)
         options -  a dictionary of option names and values
@@ -240,7 +250,7 @@ class OptionParser(optparse.OptionParser):
                 if default is not None:
                     option.default = default
 
-        dlg = OptparseDialog(option_parser=self, name=self.description,
+        dlg = OptparseDialog(optParser=self, name=self.description,
                              title="%s GUI" % self.description)
 
         if args:
@@ -280,11 +290,11 @@ class OptionParser(optparse.OptionParser):
 def sample_parse_args():
     usage = "usage: %prog [options] args"
     if 1 == len(sys.argv):
-        option_parser_class = OptionParser
+        optParser_class = OptionParser
     else:
-        option_parser_class = optparse.OptionParser
+        optParser_class = optparse.OptionParser
 
-    parser = option_parser_class(usage=usage, version='0.1')
+    parser = optParser_class(usage=usage, version='0.1')
     parser.add_option("-f", "--file", dest="filename", default=r'c:\1.txt',
                       help="read data from FILENAME")
     parser.add_option("-t", "--text", dest="text", default=r'c:\1.txt',
@@ -305,9 +315,9 @@ def sample_parse_args():
 
 def sample_parse_args_issue1():
     usage = "usage: %prog [options] args"
-    option_parser_class = OptionParser
+    optParser_class = OptionParser
 
-    parser = option_parser_class(usage=usage, version='0.1')
+    parser = optParser_class(usage=usage, version='0.1')
     parser.add_option("-f", "--file", dest="filename", default=r'c:\1.txt',
                       type='file',
                       help="read data from FILENAME")
