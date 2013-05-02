@@ -50,10 +50,30 @@ class OptparseDialog(wx.Dialog):
 
         self.option_controls = {}
 
-        top_label_text = '%s %s' % (option_parser.get_prog_name(),
-                                     option_parser.get_version())
-        label = wx.StaticText(self, -1, top_label_text)
-        sizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+#       IN THE TOP OF GUI THERE WAS THE NAME OF THE SCRIPT, BUT NOW IT IS IN
+#       THE TITLE
+
+#        top_label_text = '%s %s' % (option_parser.get_prog_name(),
+#                                     option_parser.get_version())
+#        label = wx.StaticText(self, -1, top_label_text)
+#        sizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+
+        # Add a text control for entering args
+        box = wx.BoxSizer(wx.HORIZONTAL)
+        label = wx.StaticText(self, -1, 'Destination Folder')
+        label.SetHelpText('This is the place to enter the args')
+
+        self.args_ctrl = wx.TextCtrl(self, -1, '', size=(-1, 100),
+                            style=wx.TE_MULTILINE | wx.TE_PROCESS_ENTER)
+        self.args_ctrl.SetHelpText(
+            '''Args can either be separated by a space or a newline
+            Args the contain spaces must be entered like so: "arg with space"
+            '''
+        )
+        box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+        box.Add(self.args_ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
+
+        sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
 
         self.browse_option_map = {}
 
@@ -109,23 +129,6 @@ class OptparseDialog(wx.Dialog):
             sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
             self.option_controls[option] = ctrl
-
-        # Add a text control for entering args
-        box = wx.BoxSizer(wx.HORIZONTAL)
-        label = wx.StaticText(self, -1, 'Destination Folder')
-        label.SetHelpText('This is the place to enter the args')
-
-        self.args_ctrl = wx.TextCtrl(self, -1, '', size=(-1, 100),
-                            style=wx.TE_MULTILINE | wx.TE_PROCESS_ENTER)
-        self.args_ctrl.SetHelpText(
-'''Args can either be separated by a space or a newline
-Args the contain spaces must be entered like so: "arg with sapce"
-'''
-)
-        box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
-        box.Add(self.args_ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
-
-        sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
 
         line = wx.StaticLine(self, -1, size=(20, -1), style=wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
