@@ -21,9 +21,7 @@
 
 import sys
 #import modis library
-from pymodis import downmodis
-from pymodis import optparse_gui
-from pymodis import optparse_required
+from pymodis import downmodis, optparse_gui, optparse_required
 
 
 def main():
@@ -34,7 +32,7 @@ def main():
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
-    parser = option_parser_class(usage=usage)
+    parser = option_parser_class(usage=usage, description='modis_download')
     #password
     parser.add_option("-P", "--password", dest="password",
                       help="password to connect to ftp server", required=True)
