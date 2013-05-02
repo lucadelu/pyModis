@@ -35,7 +35,7 @@ class OptparseDialog(wx.Dialog):
             size=wx.DefaultSize,
             style=wx.DEFAULT_DIALOG_STYLE,
             name='OptparseDialog',
-):
+            ):
 
         provider = wx.SimpleHelpProvider()
         wx.HelpProvider_Set(provider)
@@ -76,8 +76,8 @@ class OptparseDialog(wx.Dialog):
                         option.default = option.choices[0]
                     ctrl = wx.ComboBox(
                         self, -1, choices=option.choices,
-                        value = option.default,
-                        style = wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SORT
+                        value=option.default,
+                        style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SORT
 )
                 else:
                     if 'MULTILINE' in option.help:
@@ -90,32 +90,32 @@ class OptparseDialog(wx.Dialog):
                        (option.default is not None):
                         ctrl.Value = unicode(option.default)
 
-                box.Add(ctrl, 1, wx.ALIGN_CENTRE|wx.ALL, 5)
+                box.Add(ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
 
                 if option.type in ['file', 'directory']:
                     browse = wx.Button(self, label='...')
                     browse.SetHelpText('Click to open %s browser' % (option.type))
                     self.browse_option_map[browse.GetId()] = option, ctrl
                     wx.EVT_BUTTON(self, browse.GetId(), self.OnSelectPath)
-                    box.Add(browse, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+                    box.Add(browse, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
             elif option.action in ('store_true', 'store_false'):
-                ctrl = wx.CheckBox(self, -1, option.dest, size = (300, -1))
-                box.Add(ctrl, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+                ctrl = wx.CheckBox(self, -1, option.dest, size=(300, -1))
+                box.Add(ctrl, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
             else:
-                raise NotImplementedError ('Unknown option action: %s' % repr(option.action))
+                raise NotImplementedError('Unknown option action: %s' % repr(option.action))
 
             ctrl.SetHelpText(option.help)
-            sizer.Add(box, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+            sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
-            self.option_controls[ option ] = ctrl
+            self.option_controls[option] = ctrl
 
         # Add a text control for entering args
         box = wx.BoxSizer(wx.HORIZONTAL)
         label = wx.StaticText(self, -1, 'Destination Folder')
         label.SetHelpText('This is the place to enter the args')
 
-        self.args_ctrl = wx.TextCtrl(self, -1, '', size = (-1, 100),
+        self.args_ctrl = wx.TextCtrl(self, -1, '', size=(-1, 100),
                             style=wx.TE_MULTILINE | wx.TE_PROCESS_ENTER)
         self.args_ctrl.SetHelpText(
 '''Args can either be separated by a space or a newline
@@ -125,10 +125,10 @@ Args the contain spaces must be entered like so: "arg with sapce"
         box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
         box.Add(self.args_ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
 
-        sizer.Add(box , 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
+        sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
 
-        line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
+        line = wx.StaticLine(self, -1, size=(20, -1), style=wx.LI_HORIZONTAL)
+        sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
 
         btnsizer = wx.StdDialogButtonSizer()
 
@@ -146,7 +146,7 @@ Args the contain spaces must be entered like so: "arg with sapce"
         btnsizer.AddButton(btn)
         btnsizer.Realize()
 
-        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
         self.SetSizer(sizer)
         sizer.Fit(self)
@@ -156,17 +156,17 @@ Args the contain spaces must be entered like so: "arg with sapce"
         path = os.path.abspath(ctrl.Value)
         if option.type == 'file':
             dlg = wx.FileDialog(self,
-                                message = 'Select file for %s' % (option.dest),
-                                defaultDir = os.path.dirname(path),
-                                defaultFile = path)
+                                message='Select file for %s' % (option.dest),
+                                defaultDir=os.path.dirname(path),
+                                defaultFile=path)
         elif option.type == 'directory':
-            if os.path.isfile (path):
-                path = os.path.dirname (path)
+            if os.path.isfile(path):
+                path = os.path.dirname(path)
             dlg = wx.DirDialog(self,
-                               message = 'Select directory for %s' % (option.dest),
-                               defaultPath = path)
+                               message='Select directory for %s' % (option.dest),
+                               defaultPath=path)
         else:
-            raise NotImplementedError(`option.type`)
+            raise NotImplementedError(repr(option.type))
         dlg_result = dlg.ShowModal()
         if wx.ID_OK != dlg_result:
             return
@@ -199,7 +199,7 @@ class UserCancelledError(Exception):
     pass
 
 
-class Option (optparse.Option):
+class Option(optparse.Option):
     SUPER = optparse.Option
     TYPES = SUPER.TYPES + ('file', 'directory')
 
@@ -223,7 +223,7 @@ class OptionParser(optparse.OptionParser):
             kwargs['option_class'] = Option
         self.SUPER.__init__(self, *args, **kwargs)
 
-    def parse_args(self, args = None, values = None):
+    def parse_args(self, args=None, values=None):
         '''
         This is the heart of it all - overrides optparse.OptionParser.parse_args
         @param arg is irrelevant and thus ignored,
@@ -237,7 +237,7 @@ class OptionParser(optparse.OptionParser):
                 if default is not None:
                     option.default = default
 
-        dlg = OptparseDialog(option_parser = self)
+        dlg = OptparseDialog(option_parser=self)
 
         if args:
             dlg.args_ctrl.Value = ' '.join(args)
@@ -271,7 +271,7 @@ class OptionParser(optparse.OptionParser):
         return self.SUPER.error(self, msg)
 
 
-################################################################################
+#############################################################################
 
 def sample_parse_args():
     usage = "usage: %prog [options] args"
@@ -280,46 +280,48 @@ def sample_parse_args():
     else:
         option_parser_class = optparse.OptionParser
 
-    parser = option_parser_class(usage = usage, version='0.1')
-    parser.add_option("-f", "--file", dest="filename", default = r'c:\1.txt',
+    parser = option_parser_class(usage=usage, version='0.1')
+    parser.add_option("-f", "--file", dest="filename", default=r'c:\1.txt',
                       help="read data from FILENAME")
-    parser.add_option("-t", "--text", dest="text", default = r'c:\1.txt',
+    parser.add_option("-t", "--text", dest="text", default=r'c:\1.txt',
                       help="MULTILINE text field")
     parser.add_option("-a", "--action", dest="action",
-                      choices = ['delete', 'copy', 'move'],
+                      choices=['delete', 'copy', 'move'],
                       help="Which action do you wish to take?!")
-    parser.add_option("-n", "--number", dest="number", default = 23,
-                      type = 'int',
+    parser.add_option("-n", "--number", dest="number", default=23,
+                      type='int',
                       help="Just a number")
     parser.add_option("-v", "--verbose",
                       action="store_true", dest="verbose",
-                      help = 'To be or not to be? (verbose)')
+                      help='To be or not to be? (verbose)')
 
     (options, args) = parser.parse_args()
     return options, args
+
 
 def sample_parse_args_issue1():
     usage = "usage: %prog [options] args"
     option_parser_class = OptionParser
 
-    parser = option_parser_class(usage = usage, version='0.1')
-    parser.add_option("-f", "--file", dest="filename", default = r'c:\1.txt',
-                      type = 'file',
+    parser = option_parser_class(usage=usage, version='0.1')
+    parser.add_option("-f", "--file", dest="filename", default=r'c:\1.txt',
+                      type='file',
                       help="read data from FILENAME")
-    parser.add_option("-t", "--text", dest="text", default = r'c:\1.txt',
+    parser.add_option("-t", "--text", dest="text", default=r'c:\1.txt',
                       help="MULTILINE text field")
     parser.add_option("-a", "--action", dest="action",
-                      choices = ['delete', 'copy', 'move'],
+                      choices=['delete', 'copy', 'move'],
                       help="Which action do you wish to take?!")
-    parser.add_option("-n", "--number", dest="number", default = 23,
-                      type = 'int',
+    parser.add_option("-n", "--number", dest="number", default=23,
+                      type='int',
                       help="Just a number")
     parser.add_option("-v", "--verbose",
                       action="store_true", dest="verbose",
-                      help = 'To be or not to be? (verbose)')
+                      help='To be or not to be? (verbose)')
 
     (options, args) = parser.parse_args()
     return options, args
+
 
 def main():
     options, args = sample_parse_args_issue1()
