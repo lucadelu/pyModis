@@ -2,6 +2,8 @@ pymodis/convertmodis.py
 pymodis/downmodis.py
 pymodis/__init__.py
 pymodis/parsemodis.py
+pymodis/optparse_gui.py
+pymodis/optparse_required.py
 scripts/modis_download.py
 scripts/modis_parse.py
 scripts/modis_parse.py
