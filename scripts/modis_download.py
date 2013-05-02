@@ -19,42 +19,22 @@
 #
 ##################################################################
 
-#import system library
-import optparse
+import sys
 #import modis library
 from pymodis import downmodis
-
-#classes for required options
-strREQUIRED = 'required'
-
-
-class OptionWithDefault(optparse.Option):
-    ATTRS = optparse.Option.ATTRS + [strREQUIRED]
-
-    def __init__(self, *opts, **attrs):
-        if attrs.get(strREQUIRED, False):
-            attrs['help'] = '(Required) ' + attrs.get('help', "")
-        optparse.Option.__init__(self, *opts, **attrs)
-
-
-class OptionParser(optparse.OptionParser):
-    def __init__(self, **kwargs):
-        kwargs['option_class'] = OptionWithDefault
-        optparse.OptionParser.__init__(self, **kwargs)
-
-    def check_values(self, values, args):
-        for option in self.option_list:
-            if hasattr(option, strREQUIRED) and option.required:
-                if not getattr(values, option.dest):
-                    self.error("option %s is required" % (str(option)))
-        return optparse.OptionParser.check_values(self, values, args)
+from pymodis import optparse_gui
+from pymodis import optparse_required
 
 
 def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
-    parser = OptionParser(usage=usage)
+    if 1 == len(sys.argv):
+        option_parser_class = optparse_gui.OptionParser
+    else:
+        option_parser_class = optparse_required.OptionParser
+    parser = option_parser_class(usage=usage)
     #password
     parser.add_option("-P", "--password", dest="password",
                       help="password to connect to ftp server", required=True)
