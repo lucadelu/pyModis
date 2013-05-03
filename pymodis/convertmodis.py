@@ -149,7 +149,7 @@ class createMosaic:
         return os.path.join(self.mrtpathbin,'mrtmosaic')
     elif sys.platform.count('win32') != -1:
       if os.path.exists(os.path.join(self.mrtpathbin,'mrtmosaic.exe')):
-        return os.path.join(self.mrtpath,'mrtmosaic.exe')
+        return os.path.join(self.mrtpathbin,'mrtmosaic.exe')
 
   def run(self):
     """Exect the mosaic process"""
