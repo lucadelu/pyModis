@@ -95,6 +95,7 @@ class createMosaic:
               subset = False
               ):
     import tempfile
+    self.mrtpath = mrtpath
     # check if the hdf file exists
     if os.path.exists(listfile):
       self.basepath = os.path.split(listfile)[0]
