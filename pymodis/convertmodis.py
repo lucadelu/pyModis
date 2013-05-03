@@ -121,7 +121,7 @@ class createMosaic:
     else:
       raise IOError('The path %s not exists' % mrtpath)
     self.out = os.path.join(self.basepath, outprefix + '.hdf')
-    self.outxml = os.path.join(self.basepath, self.out + '.xml')
+    self.outxml = self.out + '.xml'
     self.subset = subset
 
   def write_mosaic_xml(self):
