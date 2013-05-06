@@ -1,4 +1,7 @@
-- version 0.6.3, 2014-04-30 -- first release installable using pip
+- version 0.6.3, 2013-04-30 -- first release installable using pip
  * fix parseModisMulti class to work with different range of times
  * update setup.py to be compliant with Pipy
  * update README
+- version 0.6.4, 2013-05-06 -- update scripts
+ * move option required for optparse from script to optparse_required library
+ * update INSTALL 

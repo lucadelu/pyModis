@@ -29,9 +29,9 @@ def read(fname):
 
 setup(
   name='pyModis',
-  version='0.6.3',
+  version='0.6.4',
   py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
-              'pymodis.parsemodis'],
+              'pymodis.parsemodis', 'pymodis.optparse_required'],
   #packages = ['pymodis'],
   scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
            'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
