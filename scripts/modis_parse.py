@@ -19,10 +19,8 @@
 #
 ##################################################################
 
-#import system library
-import optparse
 #import modis library
-from pymodis import parsemodis
+from pymodis import parsemodis, optparse_required
 
 
 def readDict(dic):
@@ -32,37 +30,12 @@ def readDict(dic):
         out += "%s = %s\n" % (k, v)
     return out
 
-#classes for required options
-strREQUIRED = 'required'
-
-
-class OptionWithDefault(optparse.Option):
-    ATTRS = optparse.Option.ATTRS + [strREQUIRED]
-
-    def __init__(self, *opts, **attrs):
-        if attrs.get(strREQUIRED, False):
-            attrs['help'] = '(Required) ' + attrs.get('help', "")
-        optparse.Option.__init__(self, *opts, **attrs)
-
-
-class OptionParser(optparse.OptionParser):
-    def __init__(self, **kwargs):
-        kwargs['option_class'] = OptionWithDefault
-        optparse.OptionParser.__init__(self, **kwargs)
-
-    def check_values(self, values, args):
-        for option in self.option_list:
-            if hasattr(option, strREQUIRED) and option.required:
-                if not getattr(values, option.dest):
-                    self.error("option %s is required" % (str(option)))
-        return optparse.OptionParser.check_values(self, values, args)
-
 
 def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] hdf_file"
-    parser = OptionParser(usage=usage)
+    parser = optparse_required.OptionParser(usage=usage)
     #all data
     parser.add_option("-a", action="store_true", dest="all", default=False,
                       help="print all possible values of metadata")
@@ -146,3 +119,4 @@ def main():
 #add options
 if __name__ == "__main__":
     main()
+
