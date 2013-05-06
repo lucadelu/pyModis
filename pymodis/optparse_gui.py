@@ -59,21 +59,10 @@ class OptparseDialog(wx.Dialog):
 #        sizer.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
         # Add a text control for entering args
-        box = wx.BoxSizer(wx.HORIZONTAL)
-        label = wx.StaticText(self, -1, self._checkScript(optParser.get_prog_name()))
-        label.SetHelpText('This is the place to enter the args')
 
-        self.args_ctrl = wx.TextCtrl(self, -1, '', size=(-1, 100),
-                            style=wx.TE_MULTILINE | wx.TE_PROCESS_ENTER)
-        self.args_ctrl.SetHelpText(
-            '''Args can either be separated by a space or a newline
-            Args the contain spaces must be entered like so: "arg with space"
-            '''
-        )
-        box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
-        box.Add(self.args_ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
-
-        sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
+        arg = self._checkArg(optParser.get_prog_name())
+        sizer.Add(arg, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT |
+                  wx.TOP, 5)
 
         self.browse_option_map = {}
 
@@ -188,15 +177,52 @@ class OptparseDialog(wx.Dialog):
         args = re.findall(r'(?:((?:(?:\w|\d)+)|".*?"))\s*', args_buff)
         return args
 
-    def _checkScript(self, name):
+    def _checkArg(self, name):
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
         if name == 'modis_convert.py' or name == 'modis_parse.py':
-            return 'File HDF'
+            ltext = 'File HDF'
+            self.htext = 'Select HDF file'
         elif name == 'modis_download.py':
-            return 'Destination Folder'
+            ltext = 'Destination Folder'
+            self.htext = 'Select directory where save MODIS files'
         elif name == 'modis_mosaic.py':
-            return 'File containig HDF list'
+            ltext = 'File containig HDF list'
+            self.htext = 'Select file containig a list of MODIS file'
         elif name == 'modis_multiparse.py':
-            return 'List of HDF file'
+            ltext = 'List of HDF file'
+            self.htext = 'List of MODIS files'
+        label = wx.StaticText(self, -1, ltext)
+        label.SetHelpText(self.htext)
+        self.args_ctrl = wx.TextCtrl(parent=self, id=wx.ID_ANY, value='',
+                                     size=(100, -1), style=0)
+        bbrowse = wx.Button(parent=self, id=wx.ID_ANY, label='Browse',
+                            size=(-1, -1))
+        sizer.Add(item=label, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL |
+                  wx.ALL, border=5)
+        sizer.Add(item=self.args_ctrl, flag=wx.ALIGN_LEFT |
+                  wx.ALIGN_CENTRE_VERTICAL | wx.ALL, border=5)
+        sizer.Add(item=bbrowse, flag=wx.ALIGN_LEFT | wx.ALL, border=5)
+        bbrowse.Bind(wx.EVT_BUTTON, self.OnBrowse)
+        self.args_ctrl.Bind(wx.EVT_TEXT, self.OnText)
+        return sizer
+
+    def OnText(self, event):
+        """!File changed"""
+        self.wktfile = event.GetString()
+        if len(self.wktfile) > 0 and os.path.isfile(self.wktfile):
+            print 'ok'
+            #TODO
+        event.Skip()
+
+    def OnBrowse(self, event):
+        """!Choose file"""
+        dlg = wx.FileDialog(parent=self, message=self.htext,
+                            defaultDir=os.getcwd(), style=wx.OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            path = dlg.GetPath()
+            self.args_ctrl.SetValue(path)
+        dlg.Destroy()
+        event.Skip()
 
     def getOptionsAndArgs(self):
         '''Returns the tuple (options, args)
