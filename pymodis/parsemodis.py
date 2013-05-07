@@ -250,6 +250,7 @@ class parseModis:
   def confResample(self, spectral, res=None, output=None, datum='WGS84',
                   resample='NEAREST_NEIGHBOR', projtype='GEO',  utm=None,
                   projpar='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
+                  bound=None
                   ):
     """Create the parameter file to use with resample MRT software to create
     tif file
@@ -322,8 +323,9 @@ class parseModis:
     conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
     conFile.write("SPECTRAL_SUBSET = %s\n" % spectral)
     conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG\n")
-    # return the boundary from the input xml file
-    bound = self.retBoundary()
+    if not bound:
+     # return the boundary from the input xml file
+     bound = self.retBoundary()
     # Order:  UL: N W  - LR: S E
     conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )\n" % (bound['max_lat'],
                                                               bound['min_lon']))
@@ -362,6 +364,7 @@ class parseModis:
   def confResample_swath(self, sds, geoloc, res, output=None, 
                   sphere='8', resample='NN', projtype='GEO',  utm=None,
                   projpar='0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0',
+                  bound=None
                   ):
     """Create the parameter file to use with resample MRT software to create
        tif file
@@ -442,8 +445,9 @@ class parseModis:
     conFile.write("GEOLOCATION_FILENAME = %s\n" % geoloc)
     conFile.write("INPUT_SDS_NAME = %s\n" % sds)
     conFile.write("OUTPUT_SPATIAL_SUBSET_TYPE = LAT_LONG\n")
-    # return the boundary from the input xml file
-    bound = self.retBoundary()
+    if not bound:
+     # return the boundary from the input xml file
+     bound = self.retBoundary()
     # Order:  UL: N W  - LR: S E
     conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = %f %f\n" % (bound['max_lat'],
                                                               bound['min_lon']))
