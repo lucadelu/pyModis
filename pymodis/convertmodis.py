@@ -144,10 +144,10 @@ class createMosaic:
   def executable(self):
     """Return the executable of mrtmosaic MRT software
     """
-    if sys.platform.count('linux') != -1:
+    if sys.platform.count('linux'):
       if os.path.exists(os.path.join(self.mrtpathbin,'mrtmosaic')):
         return os.path.join(self.mrtpathbin,'mrtmosaic')
-    elif sys.platform.count('win32') != -1:
+    elif sys.platform.count('win32'):
       if os.path.exists(os.path.join(self.mrtpathbin,'mrtmosaic.exe')):
         return os.path.join(self.mrtpath,'mrtmosaic.exe')
 
