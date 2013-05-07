@@ -304,6 +304,11 @@ class parseModis:
         Appendix C of MODIS reprojection tool user manual
         https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
 
+        bound = dictionary with the following keys:
+            - max_lat
+            - max_lon
+            - min_lat
+            - min_lon
         """
     #check if spectral it's write with correct construct ( value )
     if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
@@ -324,8 +329,13 @@ class parseModis:
     conFile.write("SPECTRAL_SUBSET = %s\n" % spectral)
     conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG\n")
     if not bound:
-     # return the boundary from the input xml file
-     bound = self.retBoundary()
+      # return the boundary from the input xml file
+      bound = self.retBoundary()
+    else:
+      if 'max_lat' not in bound or 'min_lat' not in bound  or \
+      'min_lon' not in bound or 'max_lon' not in bound:
+          raise IOError('bound variable is a dictionary with the following ' \
+                        'keys: max_lat, min_lat, min_lon, max_lon')
     # Order:  UL: N W  - LR: S E
     conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )\n" % (bound['max_lat'],
                                                               bound['min_lon']))
@@ -428,6 +438,12 @@ class parseModis:
         projpar = a list of projection parameters, for more info check
         the Appendix C of MODIS reprojection tool user manual
         https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+
+        bound = dictionary with the following keys:
+            - max_lat
+            - max_lon
+            - min_lat
+            - min_lon
         """
     # output name
     if not output:
@@ -446,8 +462,13 @@ class parseModis:
     conFile.write("INPUT_SDS_NAME = %s\n" % sds)
     conFile.write("OUTPUT_SPATIAL_SUBSET_TYPE = LAT_LONG\n")
     if not bound:
-     # return the boundary from the input xml file
-     bound = self.retBoundary()
+      # return the boundary from the input xml file
+      bound = self.retBoundary()
+    else:
+      if 'max_lat' not in bound or 'min_lat' not in bound  or \
+      'min_lon' not in bound or 'max_lon' not in bound:
+          raise IOError('bound variable is a dictionary with the following ' \
+                        'keys: max_lat, min_lat, min_lon, max_lon')
     # Order:  UL: N W  - LR: S E
     conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = %f %f\n" % (bound['max_lat'],
                                                               bound['min_lon']))
