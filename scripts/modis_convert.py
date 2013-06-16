@@ -57,11 +57,11 @@ def main():
     help_datum = removeBracs(help_datum)
     parser.add_option("-d", "--datum", dest="datum", default="WGS84",
                       type='choice', choices=parsemodis.DATUM_LIST,
-                      help=help_datum + " [default: %default]")
+                      help=help_datum + " [default=%default]")
     help_resampl = "the type of resampling. Available: %s" % parsemodis.RESAM_LIST
     help_resampl = removeBracs(help_resampl)
     parser.add_option("-r", "--resampl", dest="resampl",
-                      help=help_resampl + " [default: %default]",
+                      help=help_resampl + " [default=%default]",
                       metavar="RESAMPLING_TYPE", default='NEAREST_NEIGHBOR',
                       type='choice', choices=parsemodis.RESAM_LIST)
     parser.add_option("-p", "--proj_parameters", dest="pp",
@@ -72,13 +72,13 @@ def main():
                       "check the 'Appendix C' of MODIS reprojection tool user"\
                       "'s manual https://lpdaac.usgs.gov/content/download" \
                       "/4831/22895/file/mrt41_usermanual_032811.pdf "\
-                      "[default: %default]")
+                      "[default=%default]")
     help_pt = "the output projection system. Available: %s" % parsemodis.PROJ_LIST
     help_pt = removeBracs(help_pt)
     parser.add_option("-t", "--proj_type", dest="pt", default='GEO',
                       type='choice', metavar="PROJECTION_SYSTEM",
                       choices=parsemodis.PROJ_LIST, action='store',
-                      help=help_pt + " [default: %default]")
+                      help=help_pt + " [default=%default]")
     parser.add_option("-u", "--utm", dest="utm", metavar="UTM_ZONE",
                       help="the UTM zone if projection system is UTM")
     #return options and argument
