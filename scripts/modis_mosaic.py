@@ -38,7 +38,7 @@ def main():
     parser = option_parser_class(usage=usage, description='modis_convert')
     #spatial extent
     #mrt path
-    parser.add_option("-m", "--mrt", dest="mrt", required=True,
+    parser.add_option("-m", "--mrt", dest="mrt_path", required=True,
                       help="the path to MRT software", metavar="MRT_PATH")
     parser.add_option("-o", "--output", dest="output", required=True,
                       help="the name of output mosaic", metavar="OUTPUT_FILE")
@@ -65,8 +65,8 @@ def main():
         if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
             parser.error('ERROR: The spectral string should be similar to: "1 0"')
 
-    modisOgg = convertmodis.createMosaic(args[0], options.output, options.mrt,
-                                         options.subset)
+    modisOgg = convertmodis.createMosaic(args[0], options.output,
+                                         options.mrt_path,  options.subset)
     modisOgg.run()
 
 #add options
