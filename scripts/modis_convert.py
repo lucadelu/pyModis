@@ -47,11 +47,11 @@ def main():
                       help="a subset of product's layers. The string should "\
                       "be similar to: ( 1 0 )")
     #mrt path
-    parser.add_option("-m", "--mrt", dest="mrt", required=True,
+    parser.add_option("-m", "--mrt", dest="mrt_path", required=True,
                       help="the path to MRT software", metavar="MRT_PATH")
     parser.add_option("-o", "--output", dest="output",
                       help="the name of output file", metavar="OUTPUT_FILE")
-    parser.add_option("-g", "--grain", dest="res", type="int",
+    parser.add_option("-g", "--grain", dest="resolution", type="int",
                       help="the spatial resolution of output file")
     help_datum = "the code of datum. Available: %s" % parsemodis.DATUM_LIST
     help_datum = removeBracs(help_datum)
@@ -60,11 +60,17 @@ def main():
                       help=help_datum + " [default=%default]")
     help_resampl = "the type of resampling. Available: %s" % parsemodis.RESAM_LIST
     help_resampl = removeBracs(help_resampl)
-    parser.add_option("-r", "--resampl", dest="resampl",
+    parser.add_option("-r", "--resampl", dest="resampling",
                       help=help_resampl + " [default=%default]",
                       metavar="RESAMPLING_TYPE", default='NEAREST_NEIGHBOR',
                       type='choice', choices=parsemodis.RESAM_LIST)
-    parser.add_option("-p", "--proj_parameters", dest="pp",
+    help_pt = "the output projection system. Available: %s" % parsemodis.PROJ_LIST
+    help_pt = removeBracs(help_pt)
+    parser.add_option("-t", "--proj_type", dest="projection_type", default='GEO',
+                      type='choice', metavar="PROJECTION_SYSTEM",
+                      choices=parsemodis.PROJ_LIST, action='store',
+                      help=help_pt + " [default=%default]")
+    parser.add_option("-p", "--proj_parameters", dest="projection_parameter",
                       metavar="PROJECTION_PARAMETERS",
                       default='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0' \
                       ' 0.0 0.0 0.0 0.0 )',
@@ -73,13 +79,7 @@ def main():
                       "'s manual https://lpdaac.usgs.gov/content/download" \
                       "/4831/22895/file/mrt41_usermanual_032811.pdf "\
                       "[default=%default]")
-    help_pt = "the output projection system. Available: %s" % parsemodis.PROJ_LIST
-    help_pt = removeBracs(help_pt)
-    parser.add_option("-t", "--proj_type", dest="pt", default='GEO',
-                      type='choice', metavar="PROJECTION_SYSTEM",
-                      choices=parsemodis.PROJ_LIST, action='store',
-                      help=help_pt + " [default=%default]")
-    parser.add_option("-u", "--utm", dest="utm", metavar="UTM_ZONE",
+    parser.add_option("-u", "--utm", dest="utm_zone", metavar="UTM_ZONE",
                       help="the UTM zone if projection system is UTM")
     #return options and argument
     (options, args) = parser.parse_args()
@@ -98,11 +98,13 @@ def main():
             parser.error("Valid extensions for output are .hdf, .hdr, or .tif")
 
     modisParse = parsemodis.parseModis(args[0])
-    confname = modisParse.confResample(options.subset, options.res,
+    confname = modisParse.confResample(options.subset, options.resolution,
                                        options.output, options.datum,
-                                       options.resampl, options.pt,
-                                       options.utm, options.pp)
-    modisConver = convertmodis.convertModis(args[0], confname, options.mrt)
+                                       options.resampling,
+                                       options.projection_type, options.utm_zone,
+                                       options.projection_parameter)
+    modisConver = convertmodis.convertModis(args[0], confname,
+                                            options.mrt_path)
     modisConver.run()
 
 #add options
