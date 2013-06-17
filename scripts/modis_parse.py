@@ -43,16 +43,19 @@ def main():
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_parse')
     #all data
+    #write into file
+    parser.add_option("-w", "--write", dest="output", metavar="OUTPUT_FILE",
+                      help="write the chosen information into a file")
     parser.add_option("-a", action="store_true", dest="all", default=False,
                       help="print all possible values of metadata")
     #spatial extent
-    parser.add_option("-b", action="store_true", dest="bound", default=False,
+    parser.add_option("-b", action="store_true", dest="boundary", default=False,
                       help="print the values related to the spatial max extent")
     #data files
-    parser.add_option("-d", action="store_true", dest="dataf", default=False,
+    parser.add_option("-d", action="store_true", dest="data", default=False,
                       help="print the values related to the date files")
     #data granule
-    parser.add_option("-e", action="store_true", dest="datae", default=False,
+    parser.add_option("-e", action="store_true", dest="data_ecs", default=False,
                       help="print the values related to the ECSDataGranule")
     #input files
     parser.add_option("-i", action="store_true", dest="input", default=False,
@@ -61,7 +64,7 @@ def main():
     parser.add_option("-o", action="store_true", dest="other", default=False,
                       help="print the other values")
     #platform information
-    parser.add_option("-p", action="store_true", dest="plat", default=False,
+    parser.add_option("-p", action="store_true", dest="platform", default=False,
                       help="print the values related to platform")
     #data quality
     parser.add_option("-q", action="store_true", dest="qa", default=False,
@@ -72,9 +75,6 @@ def main():
     #time
     parser.add_option("-t", action="store_true", dest="time", default=False,
                       help="print the values related to times")
-    #write into file
-    parser.add_option("-w", "--write", dest="output", metavar="OUTPUT_FILE",
-                      help="write the chosen information into a file")
 
     #return options and argument
     (options, args) = parser.parse_args()
@@ -85,20 +85,21 @@ def main():
     #the output string
     outString = ""
 
-    if options.all or options.bound:
+    if options.all or options.boundary:
         outString += readDict(modisOgg.retBoundary())
     if options.all or options.time:
         outString += "InsertTime = %s\n" % modisOgg.retInsertTime()
         outString += "LastUpdate = %s\n" % modisOgg.retLastUpdate()
         outString += readDict(modisOgg.retRangeTime())
-    if options.all or options.datae:
+    if options.all or options.data_ecs:
         outString += readDict(modisOgg.retDataGranule())
-    if options.all or options.dataf:
+    if options.all or options.data:
         outString += readDict(modisOgg.retDataFiles())
     if options.all or options.input:
         outString += 'InputFiles = '
         outString += ', '.join(modisOgg.retInputGranule())
-    if options.all or options.plat:
+        outString += '\n'
+    if options.all or options.platform:
         outString += readDict(modisOgg.retPlatform())
     if options.all or options.psas:
         outString += readDict(modisOgg.retPSA())
@@ -106,8 +107,6 @@ def main():
         out = modisOgg.retMeasure()
         outString += readDict(out['QAStats'])
         outString += readDict(out['QAFlags'])
-    if options.all or options.plat:
-        outString += readDict(modisOgg.retPlatform())
     if options.all or options.other:
         outString += readDict(modisOgg.retCollectionMetaData())
         outString += "PGEVersion = %s\n" % modisOgg.retPGEVersion()
