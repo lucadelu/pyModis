@@ -23,8 +23,12 @@
 import os
 import sys
 import string
+from types import ListType
 #import modis library
 from pymodis import convertmodis, optparse_gui, optparse_required
+
+ERROR = "You have to pass the name of a file containing HDF files." \
+        " (One HDF file for line)"
 
 
 def main():
@@ -50,9 +54,16 @@ def main():
     (options, args) = parser.parse_args()
 
     #check the number of tiles
-    if len(args) > 1 or len(args) == 0:
-        parser.error("You have to pass the name of a file containing HDF " \
-                     "files. (One HDF file for line)")
+    if not args:
+        print ERROR
+        sys.exit()
+    else:
+        if type(args) != ListType:
+            print ERROR
+            sys.exit()
+        elif len(args) > 1:
+            print ERROR
+            sys.exit()
 
     if not os.path.isfile(args[0]):
         parser.error("You have to pass the name of a file containing HDF " \
