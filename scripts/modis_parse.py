@@ -21,8 +21,11 @@
 
 #import system library
 import sys
+from types import ListType
 #import modis library
 from pymodis import parsemodis, optparse_gui, optparse_required
+
+ERROR = "You have to pass the name of HDF file"
 
 
 def readDict(dic):
@@ -78,8 +81,13 @@ def main():
 
     #return options and argument
     (options, args) = parser.parse_args()
-    if len(args) == 0:
-        parser.error("You have to pass the name of HDF file")
+    if not args:
+        print ERROR
+        sys.exit()
+    else:
+        if type(args) != ListType:
+            print ERROR
+            sys.exit()
     #create modis object
     modisOgg = parsemodis.parseModis(args[0])
     #the output string
