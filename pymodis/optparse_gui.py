@@ -14,11 +14,22 @@ import optparse
 
 import wx
 
+from pymodis import optparse_required
+
 __version__ = 0.2
 __revision__ = '$Id$'
 
 #for required options
 strREQUIRED = 'required'
+
+
+def checkLabel(option):
+    label = option.dest.capitalize()
+    label = label.replace('_', ' ')
+    if option.required == True:
+        return "%s [%s]" % (label, strREQUIRED)
+    else:
+        return label
 
 
 class OptparseDialog(wx.Dialog):
@@ -36,7 +47,8 @@ class OptparseDialog(wx.Dialog):
             size=wx.DefaultSize,
             style=wx.DEFAULT_DIALOG_STYLE,
             ):
-
+#        self.SetIcon(wx.Icon("/home/lucadelu/github/pyModis/pyModis_icon.png"),
+#                     wx.BITMAP_TYPE_PNG)
         provider = wx.SimpleHelpProvider()
         wx.HelpProvider_Set(provider)
 
@@ -76,8 +88,9 @@ class OptparseDialog(wx.Dialog):
 
             box = wx.BoxSizer(wx.HORIZONTAL)
             if 'store' == option.action:
-                label = wx.StaticText(self, -1, option.dest)
-                label.SetHelpText(option.help)
+                label = wx.StaticText(self, -1, checkLabel(option))
+                label.SetHelpText(option.help.replace(' [default=%default]',
+                                                      ''))
                 box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
                 if 'choice' == option.type:
@@ -103,18 +116,21 @@ class OptparseDialog(wx.Dialog):
 
                 if option.type in ['file', 'directory']:
                     browse = wx.Button(self, label='...')
-                    browse.SetHelpText('Click to open %s browser' % (option.type))
+                    browse.SetHelpText('Click to open %s browser' % (
+                                        option.type))
                     self.browse_option_map[browse.GetId()] = option, ctrl
                     wx.EVT_BUTTON(self, browse.GetId(), self.OnSelectPath)
                     box.Add(browse, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
             elif option.action in ('store_true', 'store_false'):
-                ctrl = wx.CheckBox(self, -1, option.dest, size=(300, -1))
+                ctrl = wx.CheckBox(self, -1, checkLabel(option),
+                                   size=(300, -1))
                 box.Add(ctrl, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
             else:
-                raise NotImplementedError('Unknown option action: %s' % repr(option.action))
+                raise NotImplementedError('Unknown option action: %s' % \
+                                          repr(option.action))
 
-            ctrl.SetHelpText(option.help)
+            ctrl.SetHelpText(option.help.replace(' [default=%default]', ''))
             sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
             self.option_controls[option] = ctrl
@@ -163,7 +179,6 @@ class OptparseDialog(wx.Dialog):
         if wx.ID_OK != dlg_result:
             return
         ctrl.Value = dlg.GetPath()
-##        import open_py_shell;open_py_shell.open_py_shell(locals())
 
     def _getOptions(self):
         option_values = {}
@@ -172,25 +187,23 @@ class OptparseDialog(wx.Dialog):
 
         return option_values
 
-    def _getArgs(self):
-        args_buff = self.args_ctrl.Value
-        args = re.findall(r'(?:((?:(?:\w|\d)+)|".*?"))\s*', args_buff)
-        return args
-
     def _checkArg(self, name):
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         if name == 'modis_convert.py' or name == 'modis_parse.py':
-            ltext = 'File HDF'
+            ltext = 'File HDF [%s]' % strREQUIRED
             self.htext = 'Select HDF file'
         elif name == 'modis_download.py':
-            ltext = 'Destination Folder'
+            ltext = 'Destination Folder [%s]' % strREQUIRED
             self.htext = 'Select directory where save MODIS files'
         elif name == 'modis_mosaic.py':
-            ltext = 'File containig HDF list'
+            ltext = 'File containig HDF list [%s]' % strREQUIRED
             self.htext = 'Select file containig a list of MODIS file'
         elif name == 'modis_multiparse.py':
-            ltext = 'List of HDF file'
+            ltext = 'List of HDF file [%s]' % strREQUIRED
             self.htext = 'List of MODIS files'
+        else:
+            ltext = 'Test'
+            self.htext = 'Test'
         label = wx.StaticText(self, -1, ltext)
         label.SetHelpText(self.htext)
         self.args_ctrl = wx.TextCtrl(parent=self, id=wx.ID_ANY, value='',
@@ -208,10 +221,10 @@ class OptparseDialog(wx.Dialog):
 
     def OnText(self, event):
         """!File changed"""
+        self.args_ctrl = []
         self.wktfile = event.GetString()
-        if len(self.wktfile) > 0 and os.path.isfile(self.wktfile):
-            print 'ok'
-            #TODO
+        if len(self.wktfile) > 0:
+            self.args_ctrl.append(self.wktfile)
         event.Skip()
 
     def OnBrowse(self, event):
@@ -230,7 +243,7 @@ class OptparseDialog(wx.Dialog):
         args - a sequence of args'''
 
         option_values = self._getOptions()
-        args = self._getArgs()
+        args = self.args_ctrl
         return option_values, args
 
 
@@ -257,7 +270,6 @@ class OptionParser(optparse.OptionParser):
     def __init__(self, *args, **kwargs):
         if wx.GetApp() is None:
             self.app = wx.App(False)
-
         if 'option_class' not in kwargs:
             kwargs['option_class'] = Option
         self.SUPER.__init__(self, *args, **kwargs)
@@ -284,7 +296,7 @@ class OptionParser(optparse.OptionParser):
 
         dlg_result = dlg.ShowModal()
         if wx.ID_OK != dlg_result:
-            raise UserCancelledError('User has canceled')
+            sys.exit()
 
         if values is None:
             values = self.get_default_values()
@@ -292,6 +304,8 @@ class OptionParser(optparse.OptionParser):
         option_values, args = dlg.getOptionsAndArgs()
 
         for option, value in option_values.iteritems():
+            if option.required and value == "":
+                self.error("The option %s is mandatory" % option)
             if ('store_true' == option.action) and (value is False):
                 setattr(values, option.dest, False)
                 continue
@@ -308,7 +322,7 @@ class OptionParser(optparse.OptionParser):
 
     def error(self, msg):
         wx.MessageDialog(None, msg, 'Error!', wx.ICON_ERROR).ShowModal()
-        return self.SUPER.error(self, msg)
+        sys.exit()
 
 
 #############################################################################
