@@ -13,6 +13,7 @@ strREQUIRED = 'required'
 
 class OptionWithDefault(optparse.Option):
     ATTRS = optparse.Option.ATTRS + [strREQUIRED]
+    TYPES = optparse.Option.TYPES + ('file', 'directory')
 
     def __init__(self, *opts, **attrs):
         if attrs.get(strREQUIRED, False):
