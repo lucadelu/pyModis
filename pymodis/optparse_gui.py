@@ -9,12 +9,9 @@ options/args, instead of parsing command line arguments
 
 import os
 import sys
-import re
 import optparse
 
 import wx
-
-from pymodis import optparse_required
 
 __version__ = 0.2
 __revision__ = '$Id$'
@@ -104,7 +101,8 @@ class OptparseDialog(wx.Dialog):
                 else:
                     if 'MULTILINE' in option.help:
                         ctrl = wx.TextCtrl(self, -1, "", size=(300, 100),
-                                           style=wx.TE_MULTILINE | wx.TE_PROCESS_ENTER)
+                                           style=wx.TE_MULTILINE |
+                                                 wx.TE_PROCESS_ENTER)
                     else:
                         ctrl = wx.TextCtrl(self, -1, "", size=(300, -1))
 
@@ -136,7 +134,8 @@ class OptparseDialog(wx.Dialog):
             self.option_controls[option] = ctrl
 
         line = wx.StaticLine(self, -1, size=(20, -1), style=wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
+        sizer.Add(line, 0,
+                  wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
 
         btnsizer = wx.StdDialogButtonSizer()
 
@@ -276,7 +275,7 @@ class OptionParser(optparse.OptionParser):
 
     def parse_args(self, args=None, values=None):
         '''
-        This is the heart of it all - overrides optparse.OptionParser.parse_args
+        This is the heart of it all overrides optparse.OptionParser.parse_args
         @param arg is irrelevant and thus ignored,
                it's here only for interface compatibility
         '''
