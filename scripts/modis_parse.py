@@ -124,7 +124,7 @@ def main():
         outFile = open(options.output, 'w')
         outFile.write(outString)
         outFile.close()
-        print "%s write correctly" % options.write
+        print "%s write correctly" % outFile.name
     #else print the string
     else:
         print outString
