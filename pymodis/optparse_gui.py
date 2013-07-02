@@ -12,6 +12,7 @@ import sys
 import optparse
 
 import wx
+import wx.lib.filebrowsebutton as filebrowse
 
 __version__ = 0.2
 __revision__ = '$Id$'
@@ -56,7 +57,7 @@ class OptparseDialog(wx.Dialog):
         self.PostCreate(pre)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-
+        self.args_ctrl = []
         self.option_controls = {}
 
 #       IN THE TOP OF GUI THERE WAS THE NAME OF THE SCRIPT, BUT NOW IT IS IN
@@ -98,6 +99,26 @@ class OptparseDialog(wx.Dialog):
                         value=option.default,
                         style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SORT
                     )
+                elif option.type in ['file', 'output']:
+                    if option.type == 'file':
+                        fmode = wx.OPEN
+                    elif option.type == 'output':
+                        fmode = wx.SAVE
+                    ctrl = filebrowse.FileBrowseButton(self, id=wx.ID_ANY,
+                                  fileMask='*',
+                                  labelText='',
+                                  dialogTitle='Choose output file',
+                                  buttonText='Browse',
+                                  startDirectory=os.getcwd(),
+                                  fileMode=fmode,
+                                  )
+                elif option.type == 'directory':
+                    ctrl = filebrowse.DirBrowseButton(self, id=wx.ID_ANY,
+                                  labelText='',
+                                  dialogTitle='Choose output file',
+                                  buttonText='Browse',
+                                  startDirectory=os.getcwd(),
+                                  )
                 else:
                     if 'MULTILINE' in option.help:
                         ctrl = wx.TextCtrl(self, -1, "", size=(300, 100),
@@ -111,14 +132,6 @@ class OptparseDialog(wx.Dialog):
                         ctrl.Value = unicode(option.default)
 
                 box.Add(ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
-
-                if option.type in ['file', 'directory']:
-                    browse = wx.Button(self, label='...')
-                    browse.SetHelpText('Click to open %s browser' % (
-                                        option.type))
-                    self.browse_option_map[browse.GetId()] = option, ctrl
-                    wx.EVT_BUTTON(self, browse.GetId(), self.OnSelectPath)
-                    box.Add(browse, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
             elif option.action in ('store_true', 'store_false'):
                 ctrl = wx.CheckBox(self, -1, checkLabel(option),
@@ -158,31 +171,13 @@ class OptparseDialog(wx.Dialog):
         self.SetSizer(sizer)
         sizer.Fit(self)
 
-    def OnSelectPath(self, event):
-        option, ctrl = self.browse_option_map[event.GetId()]
-        path = os.path.abspath(ctrl.Value)
-        if option.type == 'file':
-            dlg = wx.FileDialog(self,
-                                message='Select file for %s' % (option.dest),
-                                defaultDir=os.path.dirname(path),
-                                defaultFile=path)
-        elif option.type == 'directory':
-            if os.path.isfile(path):
-                path = os.path.dirname(path)
-            dlg = wx.DirDialog(self,
-                               message='Select directory for %s' % (option.dest),
-                               defaultPath=path)
-        else:
-            raise NotImplementedError(repr(option.type))
-        dlg_result = dlg.ShowModal()
-        if wx.ID_OK != dlg_result:
-            return
-        ctrl.Value = dlg.GetPath()
-
     def _getOptions(self):
         option_values = {}
         for option, ctrl in self.option_controls.iteritems():
-            option_values[option] = ctrl.Value
+            try:
+                option_values[option] = ctrl.Value
+            except:
+                option_values[option] = ctrl.GetValue()
 
         return option_values
 
@@ -191,39 +186,66 @@ class OptparseDialog(wx.Dialog):
         if name == 'modis_convert.py' or name == 'modis_parse.py':
             ltext = 'File HDF [%s]' % strREQUIRED
             self.htext = 'Select HDF file'
+            self.typecont = 'file'
         elif name == 'modis_download.py':
             ltext = 'Destination Folder [%s]' % strREQUIRED
             self.htext = 'Select directory where save MODIS files'
+            self.typecont = 'dir'
         elif name == 'modis_mosaic.py':
             ltext = 'File containig HDF list [%s]' % strREQUIRED
             self.htext = 'Select file containig a list of MODIS file'
+            self.typecont = 'file'
         elif name == 'modis_multiparse.py':
             ltext = 'List of HDF file [%s]' % strREQUIRED
             self.htext = 'List of MODIS files'
+            self.typecont = 'mfile'
         else:
             ltext = 'Test'
             self.htext = 'Test'
         label = wx.StaticText(self, -1, ltext)
         label.SetHelpText(self.htext)
-        self.args_ctrl = wx.TextCtrl(parent=self, id=wx.ID_ANY, value='',
-                                     size=(100, -1), style=0)
-        bbrowse = wx.Button(parent=self, id=wx.ID_ANY, label='Browse',
-                            size=(-1, -1))
+#        self.args_ctrl = wx.TextCtrl(parent=self, id=wx.ID_ANY, value='',
+#                                     size=(100, -1), style=0)
+#        bbrowse = wx.Button(parent=self, id=wx.ID_ANY, label='Browse',
+#                            size=(-1, -1))
         sizer.Add(item=label, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL |
                   wx.ALL, border=5)
-        sizer.Add(item=self.args_ctrl, flag=wx.ALIGN_LEFT |
-                  wx.ALIGN_CENTRE_VERTICAL | wx.ALL, border=5)
-        sizer.Add(item=bbrowse, flag=wx.ALIGN_LEFT | wx.ALL, border=5)
-        bbrowse.Bind(wx.EVT_BUTTON, self.OnBrowse)
-        self.args_ctrl.Bind(wx.EVT_TEXT, self.OnText)
+#        sizer.Add(item=self.args_ctrl, flag=wx.ALIGN_LEFT |
+#                  wx.ALIGN_CENTRE_VERTICAL | wx.ALL, border=5)
+#        sizer.Add(item=bbrowse, flag=wx.ALIGN_LEFT | wx.ALL, border=5)
+#        bbrowse.Bind(wx.EVT_BUTTON, self.OnBrowse)
+#        self.args_ctrl.Bind(wx.EVT_TEXT, self.OnText)
+        if self.typecont == 'dir':
+            self.arg_ctrl = filebrowse.DirBrowseButton(self, id=wx.ID_ANY,
+              labelText='',
+              dialogTitle=self.htext,
+              buttonText='Browse',
+              startDirectory=os.getcwd(),
+              changeCallback = self.OnText
+              )
+        elif self.typecont in ['file', 'mfile']:
+            self.arg_ctrl = filebrowse.FileBrowseButton(self, id=wx.ID_ANY,
+                          fileMask='*',
+                          labelText='',
+                          dialogTitle=self.htext,
+                          buttonText='Browse',
+                          startDirectory=os.getcwd(),
+                          fileMode=wx.OPEN,
+                          changeCallback = self.OnText
+                          )
+        sizer.Add(item=self.arg_ctrl, flag=wx.ALIGN_LEFT | wx.ALL, border=5)
         return sizer
 
     def OnText(self, event):
         """!File changed"""
-        self.args_ctrl = []
-        self.wktfile = event.GetString()
-        if len(self.wktfile) > 0:
-            self.args_ctrl.append(self.wktfile)
+        myId = event.GetId()
+        me = wx.FindWindowById(myId)
+        wktfile = me.GetValue()
+        if len(wktfile) > 0:
+            if self.typecont == 'mfile':
+                self.args_ctrl.append(wktfile.split(','))
+            else:
+                self.args_ctrl.append(wktfile)
         event.Skip()
 
     def OnBrowse(self, event):
@@ -252,7 +274,7 @@ class UserCancelledError(Exception):
 
 class Option(optparse.Option):
     SUPER = optparse.Option
-    TYPES = SUPER.TYPES + ('file', 'directory')
+    TYPES = SUPER.TYPES + ('file', 'output', 'directory')
 
     #for required options
     ATTRS = optparse.Option.ATTRS + [strREQUIRED]
