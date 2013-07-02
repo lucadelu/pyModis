@@ -48,7 +48,8 @@ def main():
                       "be similar to: ( 1 0 )")
     #mrt path
     parser.add_option("-m", "--mrt", dest="mrt_path", required=True,
-                      help="the path to MRT software", metavar="MRT_PATH")
+                      help="the path to MRT software", metavar="MRT_PATH",
+                      type='directory')
     parser.add_option("-o", "--output", dest="output",
                       help="the name of output file", metavar="OUTPUT_FILE")
     parser.add_option("-g", "--grain", dest="resolution", type="int",

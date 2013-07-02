@@ -43,7 +43,8 @@ def main():
     #spatial extent
     #mrt path
     parser.add_option("-m", "--mrt", dest="mrt_path", required=True,
-                      help="the path to MRT software", metavar="MRT_PATH")
+                      help="the path to MRT software", metavar="MRT_PATH",
+                      type='directory')
     parser.add_option("-o", "--output", dest="output", required=True,
                       help="the name of output mosaic", metavar="OUTPUT_FILE")
     #write into file

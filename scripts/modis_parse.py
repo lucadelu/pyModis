@@ -48,7 +48,8 @@ def main():
     #all data
     #write into file
     parser.add_option("-w", "--write", dest="output", metavar="OUTPUT_FILE",
-                      help="write the chosen information into a file")
+                      help="write the chosen information into a file",
+                      type='output')
     parser.add_option("-a", action="store_true", dest="all", default=False,
                       help="print all possible values of metadata")
     #spatial extent
