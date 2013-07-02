@@ -121,7 +121,7 @@ class createMosaic:
     else:
       raise IOError('The path %s not exists' % mrtpath)
     self.out = os.path.join(self.basepath, outprefix + '.hdf')
-    self.outxml = os.path.join(self.basepath, self.out + '.xml')
+    self.outxml = self.out + '.xml'
     self.subset = subset
 
   def write_mosaic_xml(self):
@@ -149,7 +149,7 @@ class createMosaic:
         return os.path.join(self.mrtpathbin,'mrtmosaic')
     elif sys.platform.count('win32'):
       if os.path.exists(os.path.join(self.mrtpathbin,'mrtmosaic.exe')):
-        return os.path.join(self.mrtpath,'mrtmosaic.exe')
+        return os.path.join(self.mrtpathbin, 'mrtmosaic.exe')
 
   def run(self):
     """Exect the mosaic process"""

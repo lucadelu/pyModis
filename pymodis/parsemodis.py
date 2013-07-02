@@ -53,7 +53,7 @@ class parseModis:
       # hdf name
       self.hdfname = filename
     else:
-      raise IOError('%s not exists' % self.hdfname)
+      raise IOError('%s not exists' % filename)
 
     if os.path.exists(self.hdfname + '.xml'):
       # xml hdf name
