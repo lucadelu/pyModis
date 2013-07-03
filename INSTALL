@@ -20,6 +20,24 @@ You can download Python from http://www.python.org/download/releases/
 INSTALL
 ========
 
+Using pip
+^^^^^^^^^^
+
+You can use pip to install pyModis
+
+    pip install pyModis
+
+To upgrade version
+
+    pip install --upgrade pyModis
+
+To uninstall
+
+   pip uninstall pyModis
+
+From source
+^^^^^^^^^^^^
+
 Download the last stable version from Github
 
 
