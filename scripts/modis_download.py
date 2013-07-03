@@ -27,22 +27,26 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
-    parser = optparse_required.OptionParser(usage=usage)
+    parser = option_parser_class(usage=usage, description='modis_download')
     #password
-    parser.add_option("-P", "--password", dest="password",
-                      help="password to connect to ftp server", required=True)
+    parser.add_option("-P", "--password", dest="password", default="None",
+                      help="password to connect to ftp server [default=" \
+                           "%default]")
     #username
     parser.add_option("-U", "--username", dest="user", default="anonymous",
                       help="username to connect to ftp server [default=%default]")
     #url
-    parser.add_option("-u", "--url", default="e4ftl01.cr.usgs.gov",
+    parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
                       help="ftp server url [default=%default]", dest="url")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default="None",
                       help="string of tiles separated from comma " \
                       + "[default=%default for all tiles]")
+    #path to add the path in the server
+    parser.add_option("-s", "--source", dest="path", default="MOLT",
+                      help="directory on the ftp [default=%default]")
     #path to add the url
-    parser.add_option("-s", "--source", dest="path", default="MOLT/MOD11A1.005",
+    parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
                       help="directory on the ftp [default=%default]")
     #delta
     parser.add_option("-D", "--delta", dest="delta", default=10,
@@ -96,12 +100,12 @@ def main():
         options.delta = 1
     #set modis object
     modisOgg = downmodis.downModis(url=options.url, user=options.user,
-        password=options.password, destinationFolder=args[0],
-        tiles=options.tiles, path=options.path, today=options.today,
-        enddate=options.enday, delta=int(options.delta), jpg=options.jpg,
-        debug=options.debug)
+               password=options.password, destinationFolder=args[0],
+               tiles=options.tiles, path=options.path, product=options.prod, 
+               today=options.today, enddate=options.enday, jpg=options.jpg,
+               delta=int(options.delta), debug=options.debug)
     #connect to ftp
-    modisOgg.connectFTP()
+    modisOgg.connect()
     if modisOgg.nconnection <= 20:
         #download data
         modisOgg.downloadsAllDay(clean=options.empty, allDays=options.alldays)
@@ -111,4 +115,3 @@ def main():
 #add options
 if __name__ == "__main__":
     main()
-
