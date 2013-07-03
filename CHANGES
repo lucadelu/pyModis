@@ -4,4 +4,6 @@
  * update README
 - version 0.6.4, 2013-05-06 -- update scripts
  * move option required for optparse from script to optparse_required library
- * update INSTALL 
+ * update INSTALL
+- version 0.7.0 2013-07-05 -- update repository
+ * add support for http NASA repository 
