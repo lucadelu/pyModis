@@ -6,4 +6,4 @@
  * move option required for optparse from script to optparse_required library
  * update INSTALL
 - version 0.7.0 2013-07-05 -- update repository
- * add support for http NASA repository 
+ * add support for http NASA repository

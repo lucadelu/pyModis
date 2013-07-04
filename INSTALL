@@ -23,8 +23,7 @@ INSTALL
 Using pip
 ^^^^^^^^^^
 
-You can use pip to install pyModis 
-
+You can use pip to install pyModis
     pip install pyModis
 
 To upgrade version
