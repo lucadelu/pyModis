@@ -34,9 +34,8 @@ def main():
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_download')
     #password
-    parser.add_option("-P", "--password", dest="password", default="None",
-                      help="password to connect to ftp server [default=" \
-                           "%default]")
+    parser.add_option("-P", "--password", dest="password",
+                      help="password to connect to ftp server")
     #username
     parser.add_option("-U", "--username", dest="user", default="anonymous",
                       help="username to connect to ftp server [default=%default]")
@@ -44,7 +43,7 @@ def main():
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
                       help="ftp server url [default=%default]", dest="url")
     #tiles
-    parser.add_option("-t", "--tiles", dest="tiles", default="None",
+    parser.add_option("-t", "--tiles", dest="tiles", default=None,
                       help="string of tiles separated from comma " \
                       + "[default=%default for all tiles]")
     #path to add the path in the server
@@ -62,7 +61,7 @@ def main():
                       metavar="FIRST_DAY", help="the day to start download " \
                       + "[default=%default is for today]; if you want change" \
                       " data you must use this format YYYY-MM-DD")
-    #first day
+    #last day
     parser.add_option("-e", "--endday", dest="enday", default=None,
                       metavar="LAST_DAY", help="the day to stop download " \
                       + "[default=%default]; if you want change" \
