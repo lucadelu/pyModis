@@ -131,18 +131,37 @@ class downModis:
 
             destinationFolder = where the files will be stored
 
-            url = the url where to download the MODIS data
+            password = the password, should be your email address to use to
+                       connect to FTP server.
+                       Not use this variable if the server is HTPP
+
+            password = the user, by  default is anonymous, to use to connect
+                       to FTP server.
+                       Not use this variable if the server is HTPP
+
+            url = the url where download the MODIS data, it can be FTP or
+                  HTTP and it have to start with http:// or ftp://
 
             path = the directory where the data that you want to download are
                    stored on the ftp server
+
+            product = the code of product to download, che code should be
+                      ugual to the one of the url
 
             tiles = a list of tiles to download, None == all tiles
 
             today = the day to start downloading; in order to pass a date
                     different from today use the format YYYY-MM-DD
 
+            enddate = the day to finish downloading; in order to pass a date
+                      use the format YYYY-MM-DD
+
             delta = timelag i.e. the number of days starting from today
                     backwards
+
+            jpeg = set True if you want to download also the jpg file
+
+            debug = set True if you want to obtain debug information
 
         """
 
