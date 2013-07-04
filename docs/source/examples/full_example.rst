@@ -20,14 +20,13 @@ For first you need to obtain data, so you need to use :doc:`../scripts/modis_dow
 
   ::
 
-    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 -P yourmail@mail.org /tmp/
+    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04
 
 .. only:: latex
 
   ::
 
     modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 
-		      -P yourmail@mail.org /tmp/
 
 .. warning::
 
@@ -36,8 +35,6 @@ For first you need to obtain data, so you need to use :doc:`../scripts/modis_dow
 
   In this example we download data for only one day (2012-12-05)
   using the option "-O".
-
-  Please change yourmail@mail.org with your mail.
 
 Inside ``/tmp/`` directory you will find a file called *listfileMOD11A1.005.txt*
 containing the names of files downloaded. The name of file it is related to
