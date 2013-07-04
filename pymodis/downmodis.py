@@ -90,7 +90,7 @@ class modisHtmlParser(HTMLParser):
         regex = re.compile('(\d{4})[/.-](\d{2})[/.-](\d{2})$')
         return [elem for elem in self.fileids if regex.match(elem)]
 
-    def get_tiles(self, prod, tiles, jpeg=False, tile=True):
+    def get_tiles(self, prod, tiles, jpeg=False):
         """ Return a list of file to download """
         finalList = []
         for i in self.fileids:
@@ -99,14 +99,15 @@ class modisHtmlParser(HTMLParser):
             # where find the tile index
             if not name.count(prod):
                 continue
-            if not tile and not (name.count('jpg') or name.count('BROWSE')):
+            if not tiles and not (name.count('jpg') or name.count('BROWSE')):
                 finalList.append(i)
             #is a jpeg of tiles number
-            if tile and tiles.count(name[3]) == 1 and jpeg:
-                finalList.append(i)
+            if tiles:
+                if tiles.count(name[3]) == 1 and jpeg:
+                    finalList.append(i)
             #is a hdf of tiles number
-            if tile and tiles.count(name[2]) == 1:
-                finalList.append(i)
+                elif tiles.count(name[2]) == 1:
+                    finalList.append(i)
         return finalList
 
 
@@ -356,8 +357,10 @@ class downModis:
         """
     # return the file's list inside the directory of each day
         try:
-            http = modisHtmlParser(urllib2.urlopen(urljoin(self.url,
-                                                          self.path, day)))
+            url = urljoin(self.url, self.path, day)
+            if self.debug == True:
+                logging.debug("The url is: %s" % url)
+            http = modisHtmlParser(urllib2.urlopen(url))
             # download also jpeg
             if self.jpeg:
                 # finallist is ugual to all file with jpeg file
@@ -369,12 +372,7 @@ class downModis:
                                                self.tiles, jpeg=True)
             # not download jpeg
             else:
-                if not self.tiles:
-                    finalList = http.get_tiles(self.product_code,
-                                               self.tiles, tile=False)
-                else:
-                    finalList = http.get_tiles(self.product_code,
-                                               self.tiles)
+                finalList = http.get_tiles(self.product_code, self.tiles)
             if self.debug == True:
                 logging.debug("The number of file to download is: %i" % len(finalList))
             return finalList
@@ -386,21 +384,23 @@ class downModis:
         """ Create a list of files to download from ftp server, it is possible
             choose to download also the jpeg files or only the hdf files
         """
-        def cicle_file(jpeg=False, tile=True):
+        def cicle_file(jpeg=False):
             """Check the type of file"""
             finalList = []
             for i in self.listfiles:
                 name = i.split('.')
                 # distinguish jpeg files from hdf files by the number of index
                 # where find the tile index
-                if not tile and not (name.count('jpg') or name.count('BROWSE')):
+                if not self.tiles and not (name.count('jpg') or
+                                           name.count('BROWSE')):
                     finalList.append(i)
                 #is a jpeg of tiles number
-                if tile and self.tiles.count(name[3]) == 1 and jpeg:
-                    finalList.append(i)
+                if self.tiles:
+                    if self.tiles.count(name[3]) == 1 and jpeg:
+                        finalList.append(i)
                 #is a hdf of tiles number
-                if tile and self.tiles.count(name[2]) == 1:
-                    finalList.append(i)
+                    elif self.tiles.count(name[2]) == 1:
+                        finalList.append(i)
             return finalList
 
         # return the file's list inside the directory of each day
@@ -416,10 +416,7 @@ class downModis:
                     finalList = cicle_file(jpeg=True)
             # not download jpeg
             else:
-                if not self.tiles:
-                    finalList = cicle_file(tile=False)
-                else:
-                    finalList = cicle_file()
+                finalList = cicle_file()
             if self.debug == True:
                 logging.debug("The number of file to download is: %i" % len(finalList))
             return finalList
@@ -543,24 +540,23 @@ class downModis:
             fileSplit = i.split('.')
             filePrefix = "%s.%s.%s.%s" % (fileSplit[0], fileSplit[1],
                                           fileSplit[2], fileSplit[3])
-            #for debug, download only xml
-            if (self.debug and fileSplit[-1] == 'xml') or not self.debug:
-                # check data exists in the return directory
-                oldFile = glob.glob1(self.writeFilePath, filePrefix + "*" \
-                + fileSplit[-1])
-                numFiles = len(oldFile)
-                if numFiles == 0:
-                    file_hdf = os.path.join(self.writeFilePath, i)
-                elif numFiles == 1:
-                    # check the version of file
-                    fileDown = getNewerVersion(oldFile[0], i)
-                    if fileDown != oldFile[0]:
-                        os.remove(os.path.join(self.writeFilePath, oldFile[0]))
-                        file_hdf = os.path.join(self.writeFilePath, fileDown)
-                elif numFiles > 1:
-                    logging.error("There are to much files for %s" % i)
-                if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
-                    self.downloadFile(i, file_hdf, day)
+
+            # check data exists in the return directory
+            oldFile = glob.glob1(self.writeFilePath, filePrefix + "*" \
+            + fileSplit[-1])
+            numFiles = len(oldFile)
+            if numFiles == 0:
+                file_hdf = os.path.join(self.writeFilePath, i)
+            elif numFiles == 1:
+                # check the version of file
+                fileDown = getNewerVersion(oldFile[0], i)
+                if fileDown != oldFile[0]:
+                    os.remove(os.path.join(self.writeFilePath, oldFile[0]))
+                    file_hdf = os.path.join(self.writeFilePath, fileDown)
+            elif numFiles > 1:
+                logging.error("There are to much files for %s" % i)
+            if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
+                self.downloadFile(i, file_hdf, day)
 
     def downloadsAllDay(self, clean=False, allDays=False):
         """Download the single file
