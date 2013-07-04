@@ -19,43 +19,52 @@
 #
 ##################################################################
 
+import sys
 #import modis library
-from pymodis import downmodis, optparse_required
+from pymodis import downmodis, optparse_gui, optparse_required
 
 
 def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
-    parser = optparse_required.OptionParser(usage=usage)
-    #password
-    parser.add_option("-P", "--password", dest="password",
-                      help="password to connect to ftp server ")
-    #username
-    parser.add_option("-U", "--username", dest="user", default="anonymous",
-                      help="username to connect to ftp server [default=%default]")
+    if 1 == len(sys.argv):
+        option_parser_class = optparse_gui.OptionParser
+    else:
+        option_parser_class = optparse_required.OptionParser
+    parser = option_parser_class(usage=usage, description='modis_download')
     #url
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
-                      help="ftp server url [default=%default]", dest="url")
+                      help="http/ftp server url [default=%default]",
+                      dest="url")
+    #password
+    parser.add_option("-P", "--password", dest="password",
+                      help="password to connect only if ftp server")
+    #username
+    parser.add_option("-U", "--username", dest="user", default="anonymous",
+                      help="username to connect only if ftp server " \
+                           "[default=%default]")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
                       help="string of tiles separated from comma " \
-                      + "[default=%default for all tiles]")
+                           "[default=%default for all tiles]")
     #path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
-                      help="directory on the ftp [default=%default]")
+                      help="directory on the http/ftp server " \
+                           "[default=%default]")
     #path to add the url
     parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
-                      help="directory on the ftp [default=%default]")
+                      help="product name as on the http/ftp server " \
+                           "[default=%default]")
     #delta
     parser.add_option("-D", "--delta", dest="delta", default=10,
                       help="delta of day from the first day " \
-                      + "[default=%default]")
+                           "[default=%default]")
     #first day
     parser.add_option("-f", "--firstday", dest="today", default=None,
                       metavar="FIRST_DAY", help="the day to start download " \
-                      + "[default=%default is for today]; if you want change" \
-                      " data you must use this format YYYY-MM-DD")
+                              "[default=%default is for today]; if you want " \
+                              "change data you must use this format YYYY-MM-DD")
     #last day
     parser.add_option("-e", "--endday", dest="enday", default=None,
                       metavar="LAST_DAY", help="the day to stop download " \
@@ -100,7 +109,7 @@ def main():
     #set modis object
     modisOgg = downmodis.downModis(url=options.url, user=options.user,
                password=options.password, destinationFolder=args[0],
-               tiles=options.tiles, path=options.path, product=options.prod,
+               tiles=options.tiles, path=options.path, product=options.prod, 
                today=options.today, enddate=options.enday, jpg=options.jpg,
                delta=int(options.delta), debug=options.debug)
     #connect to ftp
