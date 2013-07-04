@@ -59,12 +59,12 @@ def main():
                       + "[default=%default]")
     #first day
     parser.add_option("-f", "--firstday", dest="today", default=None,
-                      metavar="LAST_DAY", help="the day to start download " \
+                      metavar="FIRST_DAY", help="the day to start download " \
                       + "[default=%default is for today]; if you want change" \
                       " data you must use this format YYYY-MM-DD")
     #first day
     parser.add_option("-e", "--endday", dest="enday", default=None,
-                      metavar="FIRST_DAY", help="the day to start download " \
+                      metavar="LAST_DAY", help="the day to stop download " \
                       + "[default=%default]; if you want change" \
                       " data you must use this format YYYY-MM-DD")
     #debug
