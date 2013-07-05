@@ -288,9 +288,13 @@ class downModis:
     def closeFTP(self):
         """ Close ftp connection """
         self.ftp.quit()
-        self.filelist.close()
+        self.closeFilelist()
         if self.debug == True:
             logging.debug("Close connection %s" % self.url)
+
+    def closeFilelist(self):
+        """ Function to close the file where write the downloaded files """
+        self.filelist.close()
 
     def setDirectoryIn(self, day):
         """ Enter in the directory of the day """
@@ -319,6 +323,8 @@ class downModis:
             # set enday variable to data
         if self.enday != None:
             self.enday = str2date(self.enday)
+        if self.today < self.enday:
+            raise IOError("The first day should be newer then end date")
 
     def getListDays(self):
         """Return a list of all selected days"""
@@ -330,10 +336,10 @@ class downModis:
             if d <= today_s:
                 today_index = i
                 break
-            else:
-                logging.error("No data available for requested days")
-                import sys
-                sys.exit()
+#            else:
+#                logging.error("No data available for requested days")
+#                import sys
+#                sys.exit()
         days = self.dirData[today_index:][:self.delta]
         # this is useful for 8/16 days data, delta could download more images
         # that you want
@@ -493,6 +499,7 @@ class downModis:
             orig_size = http.headers['content-length']
             filSave.write(http.read())
             filSave.close()
+            self.filelist.write("%s\n" % filDown)
             if self.debug == True:
                 logging.debug("File %s downloaded" % filDown)
         #if it have an error it try to download again the file
@@ -583,16 +590,7 @@ class downModis:
         filDown = name of the file to download
 
         filSave = name of the file to write
-
-        day = the day in format YYYY.MM.DD
         """
-        if self.urltype == 'http':
-            self._downloadsAllDayHTTP(clean, allDays)
-        elif self.urltype == 'ftp':
-            self._downloadFileFTP(clean, allDays)
-
-    def _downloadsAllDayHTTP(self, clean=False, allDays=False):
-        """ Downloads all the tiles considered from HTTP server"""
         #return the days to download
         if clean:
             self.removeEmptyFiles()
@@ -602,6 +600,14 @@ class downModis:
             days = self.getListDays()
         if self.debug == True:
             logging.debug("The number of days to download is: %i" % len(days))
+        if self.urltype == 'http':
+            self._downloadsAllDayHTTP(days)
+        elif self.urltype == 'ftp':
+            self._downloadFileFTP(days)
+
+    def _downloadsAllDayHTTP(self, days):
+        """ Downloads all the tiles considered from HTTP server"""
+
         #for each day
         for day in days:
             #obtain list of all files
@@ -610,21 +616,13 @@ class downModis:
             listFilesDown = self.checkDataExist(listAllFiles)
             #download files for a day
             self.dayDownload(day, listFilesDown)
+        self.closeFilelist()
         if self.debug == True:
             logging.debug("Download terminated")
         return 0
 
-    def _downloadsAllDayFTP(self, clean=False, allDays=False):
+    def _downloadsAllDayFTP(self, days):
         """ Downloads all the tiles considered from FTP server"""
-        #return the days to download
-        if clean:
-            self.removeEmptyFiles()
-        if allDays:
-            days = self.getAllDays()
-        else:
-            days = self.getListDays()
-        if self.debug == True:
-            logging.debug("The number of days to download is: %i" % len(days))
         #for each day
         for day in days:
             #enter in the directory of day
