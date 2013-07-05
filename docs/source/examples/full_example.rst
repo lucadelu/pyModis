@@ -16,17 +16,9 @@ Downloading data
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
-.. only:: html
-
   ::
 
-    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04
-
-.. only:: latex
-
-  ::
-
-    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 
+    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 /tmp
 
 .. warning::
 

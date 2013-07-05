@@ -11,14 +11,15 @@ It offers bulk-download for user selected time ranges, mosaicking of MODIS tiles
 and the reprojection from Sinusoidal to other projections, convert HDF format to other formats.
 
 ``pyModis`` library was developed to replace old bash scripts developed by Markus
-Neteler to download MODIS data from NASA FTP/HTTP server. It is very useful for
+Neteler to download MODIS data from NASA FTP server. It is very useful for
 `GIS and Remote Sensing Platform`_ of `Fondazione Edmund Mach`_ to update 
 its large collection of MODIS data.
 
 It has several features:
 
   - it is very useful for downloading large numbers of MODIS HDF/XML files
-    and for using this in a cron job for automated continuous updating
+    and for using this in a cron job for automated continuous updating; it
+    support FTP and HTTP NASA repository
 
   - it can parse the XML file to obtain information about the HDF files
 
