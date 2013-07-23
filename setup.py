@@ -33,7 +33,7 @@ def read(fname):
 
 setup(
   name='pyModis',
-  version='0.8.0',
+  version='0.7.1',
   py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
               'pymodis.parsemodis', 'pymodis.optparse_required'],
   #packages = ['pymodis'],
