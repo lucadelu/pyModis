@@ -28,20 +28,24 @@ It has several features:
   - it can create a mosaic of several tiles using `MODIS Reprojection Tool`_ and can
     create the xml metadata file with the information of all tiles used in mosaic
 
+  .. please fix it
+
+  - analyze quality ......
+
 .. only:: html
 
    Contents:
 
 .. toctree::
    :maxdepth: 2
-   
+
    info
    scripts/software
-   examples/full_example   
+   examples/full_example
    pymodis/modules
 
 We acknowledge the `Fondazione Edmund Mach`_ for promoting the development of 
-free and open source software.   
+free and open source software.
 
 .. Indices and tables
    ==================

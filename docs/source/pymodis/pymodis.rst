@@ -24,3 +24,11 @@ pyModis Package
     :members:
     :undoc-members:
     :show-inheritance:
+
+:mod:`qualitymodis` module: a class for the extraction and transformation of MODIS quality layers to specific information
+------------------------------------------------------------------------------------------------------------------------------------------
+
+.. automodule:: pymodis.qualitymodis
+    :members:
+    :undoc-members:
+    :show-inheritance:

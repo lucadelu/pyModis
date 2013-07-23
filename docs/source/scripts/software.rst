@@ -15,6 +15,7 @@ Currently the tools are 5:
   * :doc:`modis_multiparse`
   * :doc:`modis_mosaic`
   * :doc:`modis_convert`
+  * :doc:`modis_quality`
 
   .. raw:: latex
 
@@ -28,4 +29,5 @@ Currently the tools are 5:
    modis_multiparse
    modis_mosaic
    modis_convert
+   modis_quality
 
