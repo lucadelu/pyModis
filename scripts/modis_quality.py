@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # script to extract specific information from MODIS Quality Masks
 #
-#  (c) Copyright Luca Delucchi 2010
-#  Authors: Luca Delucchi, Ingmar Nitze
-#  Email: luca dot delucchi at iasma dot it
-#  Email: initze at ucc dot ie	
+#  (c) Copyright Ingmar Nitze 2013
+#  Authors: Ingmar Nitze, Luca Delucchi
+#  Email: initze at ucc dot ie
+#  Email: luca dot delucchi at iasma dot it	
 #
 ##################################################################
 #

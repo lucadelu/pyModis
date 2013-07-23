@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #  class to convert/process modis data
 #
-#  (c) Copyright Luca Delucchi 2010
-#  Authors: Luca Delucchi, Ingmar Nitze
-#  Email: luca dot delucchi at iasma dot it
+#  (c) Copyright Ingmar Nitze 2013
+#  Authors: Ingmar Nitze, Luca Delucchi
 #  Email: initze at ucc dot ie
+#  Email: luca dot delucchi at iasma dot it
 #
 ##################################################################
 #
@@ -45,8 +45,6 @@ class QualityModis():
 		self.infile = infile
 		self.outfile = outfile
 		self.qType = qType
-		# future
-		#self.outfile = outfile
 		
 	def loadData(self):
 		"""loads the input file to the object"""
@@ -55,12 +53,10 @@ class QualityModis():
 		
 	def setProductType(self):
 		"""reads productType from Metadata of hdf file"""
-		#self.productType = self.infile.split('.')[0]
 		self.productType = self.ds.GetMetadata()['SHORTNAME']
 	
 	def setProductGroup(self):
 		"""reads productType from Metadata of hdf file"""
-		#self.productType = self.infile.split('.')[0]
 		self.productGroup = self.productType[3:5]
 	
 	def setDSversion(self):
@@ -101,11 +97,9 @@ class QualityModis():
 		
 		[1] Solano, R. et al., 2010. MODIS Vegetation Indices (MOD13) C5 Users Guide. 
 		
-		Python Function written by:
-		Ingmar Nitze, University College Cork, initze@ucc.ie / ingmarnitze@gmail.com, 06/2012
 		"""
 		if type in ['VIQuality', '1', None]:
-			return np.binary_repr(modisQaValue, 16)[-2:]#[viQuality, viUsefulness, aerosolQuantity, adjacentCloudDetected, atmosphericBRDFCorr, mixedClouds, landWaterMask, iceSnow, shadow]
+			return np.binary_repr(modisQaValue, 16)[-2:]
 		elif type in ['VIUsefulness', '2', None]:
 			return np.binary_repr(modisQaValue, 16)[-6:-2]
 		elif type in ['aerosolQuantity', '3', None]:
