@@ -76,8 +76,8 @@ or one of the tools distributed with ``pyModis``.
 How to report a bug or enhancement
 ------------------------------------
 
-If you find any problems in ``pyModis`` library or you want suggest enhancements
-you can report it using the `issues tracker of GitHub <https://github.com/lucadelu/pyModis/issues>`_.
+If you find any problems in ``pyModis`` library or you **want suggest enhancements**
+you can report them using the `issues tracker of GitHub <https://github.com/lucadelu/pyModis/issues>`_.
 
 How to compile documentation
 ------------------------------
