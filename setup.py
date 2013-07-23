@@ -19,7 +19,11 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
-from distutils.core import setup
+
+try:
+    from setuptools import setup
+except:
+    from distutils.core import setup
 import os
 
 
@@ -29,7 +33,7 @@ def read(fname):
 
 setup(
   name='pyModis',
-  version='0.7.0',
+  version='0.8.0',
   py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
               'pymodis.parsemodis', 'pymodis.optparse_required',
               'pymodis.optparse_gui', 'pymodis.qualitymodis'],
@@ -42,6 +46,7 @@ setup(
   url='http://pymodis.fem-environment.eu',
   description='Python library for MODIS data',
   long_description=read('README'),
+  install_requires=['GDAL', 'numpy'],
   license='GNU GPL 2 or later',
   platforms=['Any'],
   classifiers=[
