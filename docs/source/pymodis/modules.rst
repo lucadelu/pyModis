@@ -7,9 +7,23 @@ It can easily used in your application to download, analyze and
 convert MODIS data, it is already used by GRASS GIS in r.in.modis
 addons tools.
 
-It is compose by three module:
+It is compose by four module:
+
+.. only:: latex
+
+  * :doc:`downmodis`
+  * :doc:`parsemodis`
+  * :doc:`convertmodis`
+  * :doc:`qualitymodis`
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position
 
 .. toctree::
    :maxdepth: 4
 
-   pymodis
+   downmodis
+   parsemodis
+   convertmodis
+   qualitymodis
