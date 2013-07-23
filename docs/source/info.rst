@@ -4,8 +4,12 @@ About pyModis
 Requirements
 -------------
 
-The only required software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
-to convert or mosaic MODIS HDF files. 
+Some Python library are used from some modules, the required are: GDAL, numpy, wxPython.
+The libraries will be checked and if they are absent on your computer they will be
+downloaded during the installation.
+
+The `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
+software is used to convert or mosaic MODIS HDF files.
 
 For *download* or *parse* HDF files only standard Python modules are used 
 by ``pyModis`` library and tools.
@@ -69,14 +73,14 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
-How to report a bug
---------------------
+How to report a bug or enhancement
+------------------------------------
 
-If you find any problems in ``pyModis`` library you can report it using
-the `issues tracker of github <https://github.com/lucadelu/pyModis/issues>`_.
+If you find any problems in ``pyModis`` library or you want suggest enhancements
+you can report it using the `issues tracker of GitHub <https://github.com/lucadelu/pyModis/issues>`_.
 
 How to compile documentation
------------------------------
+------------------------------
 
 This documentation has been made with `Sphinx <http://sphinx.pocoo.org>`_, so you
 need to install it to compile the original files to obtain different
