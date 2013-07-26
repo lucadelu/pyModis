@@ -21,7 +21,7 @@
 
 import sys
 #import modis library
-from pymodis import downmodis, optparse_gui, optparse_required
+from pymodis import downmodis, optparse_required
 
 
 def main():
