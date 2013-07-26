@@ -29,10 +29,15 @@ from osgeo import gdal, gdal_array
 
 VALIDTYPES = {'13' : map(str,range(1,10)), '11' : map(str,range(1,6))}
 
+
+QAindices = {QAGrp1 : (8, [[-2, None],[-6, -2],[-8, -6],[-9, -8],[-10, -9],[-11, -10],[-14, -11],[-15, -14], [-16, -15]]),\\ # MOD13
+			 QAGrp2 : (7, [[-2, None],[-3, -2],[-4, -3],[-6, -4],[-8, -6]],\\
+			 QAGrp3 : (7, [[-3, None],[-6, -3],[-7, -6]])
+ 
 class QualityModis():
 	"""A Class for the extraction and transformation of MODIS 
 	quality layers to specific information"""
-	def __init__(self, infile, outfile, qType = None):
+	def __init__(self, infile, outfile, qType = None, qaLayer = None):
 		"""Initialization function :
 
 		   infile = the full path to the hdf file
@@ -45,6 +50,7 @@ class QualityModis():
 		self.infile = infile
 		self.outfile = outfile
 		self.qType = qType
+		self.qaLayer = qaLayer
 		
 	def loadData(self):
 		"""loads the input file to the object"""
@@ -62,7 +68,10 @@ class QualityModis():
 	def setDSversion(self):
 		""""""
 		self.productType = self.ds.GetMetadata()['VERSIONID']
+	
+	def getQAIndex(self):
 		
+	
 	def loadQaArray(self):
 		"""loads the QA layer to the object"""
 		self.qaArray = gdal_array.LoadFile(self.ds.GetSubDatasets()[2][0])
@@ -119,19 +128,43 @@ class QualityModis():
 		else:
 			print "This type is not supported"
 
-	def qualityConvertMOD11(self, modisQaValue, type = '1'):
+	def qualityConvertMOD11(self, modisQaValue, productType, type = '1', layer = '1'):
 		"""This function returns binary values for MOD11 products"""
-		if type in ['MandatoryQAFlag', '1', None]:
-			return np.binary_repr(modisQaValue, 8)[-2:]
-		elif type in ['DataQualityFlag', '2', None]:
-			return np.binary_repr(modisQaValue, 8)[-4:-2]
-		elif type in ['EmissivityErrorFlag', '3', None]:
-			return np.binary_repr(modisQaValue, 8)[-6:-4]
-		elif type in ['LSTErrorFlag', '4', None]:
-			return np.binary_repr(modisQaValue, 8)[:-6]
+		if productType in ['MOD11C1','MOD11C2','MOD11C3', 'MYD11C1','MYD11C2','MYD11C3']:
+			if layer in ['1','2']:
+				if type in ['1']:
+					return np.binary_repr(modisQaValue, 7)[-2:]
+				elif type in ['2']:
+					return np.binary_repr(modisQaValue, 7)[-3]
+				elif type in ['3']:
+					return np.binary_repr(modisQaValue, 7)[-4]
+				elif type in ['4']:
+					return np.binary_repr(modisQaValue, 7)[-6:-4]
+				elif type in ['5']:
+					return np.binary_repr(modisQaValue, 7)[-8:-6]
+				else:
+					"This type is not supported"
+			if layer in ['3']:
+				if type in ['1']:
+					return np.binary_repr(modisQaValue, 7)[-3:]
+				elif type in ['2']:
+					return np.binary_repr(modisQaValue, 7)[-6:-3]
+				elif type in ['3']:
+					return np.binary_repr(modisQaValue, 7)[-7]			
+		"""		
+		#Version4
 		else:
-			print "This type is not supported"
-		
+			if type in ['MandatoryQAFlag', '1', None]:
+				return np.binary_repr(modisQaValue, 8)[-2:]
+			elif type in ['DataQualityFlag', '2', None]:
+				return np.binary_repr(modisQaValue, 8)[-4:-2]
+			elif type in ['EmissivityErrorFlag', '3', None]:
+				return np.binary_repr(modisQaValue, 8)[-6:-4]
+			elif type in ['LSTErrorFlag', '4', None]:
+				return np.binary_repr(modisQaValue, 8)[:-6]
+			else:
+				print "This type is not supported"
+		"""
 	def run(self):
 		"""Function defines the entire process"""
 		self.loadData()
