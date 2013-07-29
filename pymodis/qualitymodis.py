@@ -29,15 +29,14 @@ from osgeo import gdal, gdal_array
 
 VALIDTYPES = {'13' : map(str,range(1,10)), '11' : map(str,range(1,6))}
 
-
-QAindices = {QAGrp1 : (8, [[-2, None],[-6, -2],[-8, -6],[-9, -8],[-10, -9],[-11, -10],[-14, -11],[-15, -14], [-16, -15]]),\\ # MOD13
-			 QAGrp2 : (7, [[-2, None],[-3, -2],[-4, -3],[-6, -4],[-8, -6]],\\
-			 QAGrp3 : (7, [[-3, None],[-6, -3],[-7, -6]])
+QAindices = {'QAGrp1' : (16, [[-2, None],[-6, -2],[-8, -6],[-9, -8],[-10, -9],[-11, -10],[-14, -11],[-15, -14], [-16, -15]]),\
+			 'QAGrp2' : (7, [[-2, None],[-3, -2],[-4, -3],[-6, -4],[-8, -6]]),\
+			 'QAGrp3' : (7, [[-3, None],[-6, -3],[-7, -6]])}
  
 class QualityModis():
 	"""A Class for the extraction and transformation of MODIS 
 	quality layers to specific information"""
-	def __init__(self, infile, outfile, qType = None, qaLayer = None):
+	def __init__(self, infile, outfile, qType = None, qLayer = None):
 		"""Initialization function :
 
 		   infile = the full path to the hdf file
@@ -50,7 +49,8 @@ class QualityModis():
 		self.infile = infile
 		self.outfile = outfile
 		self.qType = qType
-		self.qaLayer = qaLayer
+		self.qLayer = qLayer
+		self.qaGroup = None
 		
 	def loadData(self):
 		"""loads the input file to the object"""
@@ -67,12 +67,21 @@ class QualityModis():
 	
 	def setDSversion(self):
 		""""""
-		self.productType = self.ds.GetMetadata()['VERSIONID']
+		self.modisVersion = self.ds.GetMetadata()['VERSIONID']
 	
-	def getQAIndex(self):
-		
+
+	def setQAGroup(self):
+		if self.modisVersion == '5':
+			if self.productGroup == '13':
+				self.qaGroup = 'QAGrp1'
+			elif self.productGroup == '11' and self.qLayer in ['1', '2']:
+				self.qaGroup = 'QAGrp2'
+			elif self.productGroup == '11' and self.qLayer in ['3']:
+				self.qaGroup = 'QAGrp3'
+		else:
+			print "Product version", self.modisVersion, "is currently not supported!"
 	
-	def loadQaArray(self):
+	def loadQAArray(self):
 		"""loads the QA layer to the object"""
 		self.qaArray = gdal_array.LoadFile(self.ds.GetSubDatasets()[2][0])
 	
@@ -86,7 +95,10 @@ class QualityModis():
 		outds.GetRasterBand(1).WriteArray(self.qaOut)
 		outds = None
 		qaDS = None
-			
+	
+	def qualityConvert(self, modisQaValue):
+		return int(np.binary_repr(modisQaValue, QAindices[self.qaGroup][0])[QAindices[self.qaGroup][1][int(self.qType)-1][0]:QAindices[self.qaGroup][1][int(self.qType)-1][1]], 2)
+	
 	def qualityConvertMOD13(self, modisQaValue, type = '1'):
 		"""
 		This function returns binary values for MOD13 products according to [1]
@@ -107,6 +119,8 @@ class QualityModis():
 		[1] Solano, R. et al., 2010. MODIS Vegetation Indices (MOD13) C5 Users Guide. 
 		
 		"""
+
+		
 		if type in ['VIQuality', '1', None]:
 			return np.binary_repr(modisQaValue, 16)[-2:]
 		elif type in ['VIUsefulness', '2', None]:
@@ -172,17 +186,20 @@ class QualityModis():
 		self.setProductGroup()
 		print self.productGroup
 		self.setDSversion()
-		self.loadQaArray()
+		self.loadQAArray()
+		self.setQAGroup()
+		print self.qaGroup
 		self.nrows, self.ncols = self.qaArray.shape
 		print "type:", self.qType
 		self.qaOut = np.zeros_like(self.qaArray, dtype = np.int8)
 		print "Conversion started !"
-		
-		if self.productGroup == '13' and self.qType in VALIDTYPES[self.productGroup]:
+		if self.productGroup in ['11', '13'] and self.qType in VALIDTYPES[self.productGroup] and self.qaGroup != None:
 			for val in np.unique(self.qaArray):
 				ind = np.where(self.qaArray == val)
-				self.qaOut[ind] = int(self.qualityConvertMOD13(self.qaArray[ind][0], self.qType),2)
+				self.qaOut[ind] = self.qualityConvert(self.qaArray[ind][0])
+			self.exportData()
+			print "Export finished!"
 		else:
 			print "This MODIS type is currently not supported."
-		self.exportData()
-		print "Export finished!"
+		
+		
