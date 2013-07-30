@@ -72,17 +72,25 @@ or one of the tools distributed with ``pyModis``.
 Install on Windows
 ^^^^^^^^^^^^^^^^^^^^^
 
-The simple way to install ``pyModis`` on Windows is to install latest Python 2.7 from http://python.org/download/
+The simple way to install ``pyModis`` on Windows is to install latest Python 2.7
+from http://python.org/download/
 
 Now you have to modify the "Path" environment variable using *powershell* running ::
 
     [Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
 
-Download and install the last version of Distribute for Windows from http://python-distribute.org/distribute_setup.py
+Download and install the last version of Distribute for Windows from
+http://python-distribute.org/distribute_setup.py
 
-At this point you have to move to standard command line (*cmd*) and install *pip* using *easy_install* ::
+At this point you have to move to standard command line (*cmd*) and install *pip*
+using *easy_install* ::
 
     easy_install pip
+
+Now install `numpy <http://www.numpy.org>`_ library using *easy_install* because
+installation from pip is broken (this is required only for version >= 0.7.1) ::
+
+    easy_install numpy
 
 Finally install ``pyModis`` using *pip* ::
 
