@@ -69,6 +69,26 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
+Install on Windows
+^^^^^^^^^^^^^^^^^^^^^
+
+The simple way to install pyModis on Windows is to install latest Python 2.7 from http://python.org/download/
+
+Now you have to modify the "Path" environment variable using *powershell* running ::
+
+    [Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
+
+Download and install the last version of Distribute for Windows from http://python-distribute.org/distribute_setup.py
+
+At this point you can install pip using easy_install ::
+
+    easy_install pip
+    
+Finally install pyModis using pip ::
+
+    pip install pyModis
+
+
 How to report a bug
 --------------------
 
