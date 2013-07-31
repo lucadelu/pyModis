@@ -28,7 +28,7 @@ command as administrator
 
   pip install pyModis
 
-If you need to update you ``pyModis`` version you have to run
+If you need to update your ``pyModis`` version you have to run
 
 ::
 
@@ -43,7 +43,7 @@ With ``pip`` it is also really simple to remove the library
 Compile from source
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Installing ``pyModis`` is very simple. First you need to download ``pyModis``
+Compile ``pyModis`` is very simple. First you need to download ``pyModis``
 source code from `github repository <https://github.com/lucadelu/pyModis>`_.
 
 You can use `git <http://git-scm.com/>`_ to download the latest code 
@@ -73,6 +73,34 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
+Install on Windows
+^^^^^^^^^^^^^^^^^^^^^
+
+The simple way to install ``pyModis`` on Windows is to install latest Python 2.7
+from http://python.org/download/
+
+Now you have to modify the "Path" environment variable using *powershell* running ::
+
+    [Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
+
+Download and install the last version of Distribute for Windows from
+http://python-distribute.org/distribute_setup.py
+
+At this point you have to move to standard command line (*cmd*) and install *pip*
+using *easy_install* ::
+
+    easy_install pip
+
+Now install `numpy <http://www.numpy.org>`_ library using *easy_install* because
+installation from pip is broken (this is required only for version >= 0.7.1) ::
+
+    easy_install numpy
+
+Finally install ``pyModis`` using *pip* ::
+
+    pip install pyModis
+
+
 How to report a bug or enhancement
 ------------------------------------
 
@@ -89,7 +117,7 @@ output formats.
 Please enter the ``docs`` folder of ``pyModis`` source and run ::
 
     make <target>
-    
+
 with one of the following target to obtain the desired output:
 
   - **html**: to make standalone HTML files
@@ -120,14 +148,14 @@ after the HTML, so you need to launch::
 
   make latexpdf
   make html
-  
+
 If PDF file is missing no link will be added
-  
+
 Ohloh statistics
 -----------------
-  
+
 .. only:: html 
-  
+
   .. raw:: html
 
       <table align="center">
@@ -148,7 +176,7 @@ Ohloh statistics
 	  </td>
 	</tr>
       </table>
-      
+
 .. only:: latex
 
   For more information about ``pyModis`` please visit the 
