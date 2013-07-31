@@ -7,3 +7,8 @@
  * update INSTALL
 - version 0.7.0 2013-07-05 -- update repository
  * add support for http NASA repository
+ * fix bug with modis_download.py and no tiles
+ * update documentation
+- version 0.7.1 2013-07-30 -- fix problems
+ * fix modis_download.py script
+ * add documentation how to install on Windows

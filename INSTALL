@@ -80,3 +80,27 @@ instead with this one, you must check the installation
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     ImportError: No module named pymodis
+
+Windows
+^^^^^^^^^
+
+The simple way to install pyModis on Windows is to install latest Python 2.7 from http://python.org/download/
+
+Now you have to modify the "Path" environment variable using Powershell running
+
+    [Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
+
+Download and install the last version of Distribute for Windows from http://python-distribute.org/distribute_setup.py
+
+At this point you can install pip using easy_install
+
+    easy_install pip
+
+Now install `numpy <http://www.numpy.org>`_ library using *easy_install* because installation from pip is broken (this is required only for version >= 0.7.1)
+
+    easy_install numpy
+
+Finally install pyModis using pip
+
+    pip install pyModis
+
