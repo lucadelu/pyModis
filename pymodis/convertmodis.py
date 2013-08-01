@@ -216,7 +216,7 @@ class processModis:
         return os.path.join(self.mrtpathbin,'swath2grid')
     elif sys.platform.count('win32') != -1:
       if os.path.exists(os.path.join(self.mrtpathbin,'swath2grid.exe')):
-        return os.path.join(self.mrtpath,'swath2grid.exe')
+        return os.path.join(self.mrtpathbin,'swath2grid.exe')
 
   def run(self):
     """Exec the convertion process"""
