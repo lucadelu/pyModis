@@ -12,3 +12,5 @@
 - version 0.7.1 2013-07-30 -- fix problems
  * fix modis_download.py script
  * add documentation how to install on Windows
+- version 0.7.2 2013-08-01 -- fix convertmodis.py for windows
+ * fix path to executable in convertmodis.py
