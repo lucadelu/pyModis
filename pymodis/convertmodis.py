@@ -72,7 +72,7 @@ class convertModis:
         return os.path.join(self.mrtpathbin,'resample')
     elif sys.platform.count('win32') != -1:
       if os.path.exists(os.path.join(self.mrtpathbin,'resample.exe')):
-        return os.path.join(self.mrtpath,'resample.exe')
+        return os.path.join(self.mrtpathbin, 'resample.exe')
 
   def run(self):
     """Exec the convertion process"""
