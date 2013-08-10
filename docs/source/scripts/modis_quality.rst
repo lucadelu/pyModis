@@ -28,6 +28,10 @@ Extract shadow mask from MOD13 product ::
 	
 	modis_quality.py -t 9 input_file.hdf destination_file.tif
 	
+Extract Emissitivity error flag of Nighttime LSTE quality control from MOD11C1 product ::
+
+	modis_quality.py -t 4 -l 2 infile.hdf outfile.tif
+	
 .. only:: latex
 
   .. raw:: latex
