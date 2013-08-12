@@ -125,7 +125,8 @@ class downModis:
                 enddate=None,
                 delta=10,
                 jpg=False,
-                debug=False
+                debug=False,
+                timeout=30
               ):
         """Initialization function :
 
@@ -163,6 +164,7 @@ class downModis:
 
             debug = set True if you want to obtain debug information
 
+            timeout = Timeout value for http server
         """
 
         # url modis
@@ -221,6 +223,7 @@ class downModis:
         logging.basicConfig(filename=log_filename, level=logging.DEBUG, \
         format=log_format)
         self.nconnection = 0
+        self.timeout = timeout
 
     def removeEmptyFiles(self):
         """Check if some file has size ugual 0"""
@@ -249,7 +252,8 @@ class downModis:
         """
         self.nconnection += 1
         try:
-            http = urllib2.urlopen(urljoin(self.url, self.path))
+            http = urllib2.urlopen(urljoin(self.url, self.path),
+                                   timeout=self.timeout)
             self.dirData = modisHtmlParser(http).get_dates()
             self.dirData.reverse()
         except (EOFError, urllib2.URLError), e:
