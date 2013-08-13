@@ -17,6 +17,8 @@ This however means that there is any problem
 
 You can download Python from http://www.python.org/download/releases/
 
+It also require Python package of GDAL library
+
 INSTALL
 ========
 
