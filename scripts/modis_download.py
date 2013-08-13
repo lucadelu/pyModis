@@ -28,10 +28,7 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
-    if 1 == len(sys.argv):
-        option_parser_class = optparse_gui.OptionParser
-    else:
-        option_parser_class = optparse_required.OptionParser
+    option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_download')
     #url
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
