@@ -30,6 +30,14 @@ import urllib2
 from HTMLParser import HTMLParser
 import re
 
+try:
+    import osgeo.gdal as gdal
+except ImportError:
+    try:
+        import gdal
+    except ImportError:
+        raise('Python GDAL library did not find, please install it')
+
 
 def urljoin(*args):
     """
@@ -224,6 +232,10 @@ class downModis:
         format=log_format)
         self.nconnection = 0
         self.timeout = timeout
+        gdal.UseExceptions()
+        gdalDriver = gdal.GetDriverByName('HDF4')
+        if not gdalDriver:
+            raise IOError("GDAL has no support for HDF4, please update GDAL")
 
     def removeEmptyFiles(self):
         """Check if some file has size ugual 0"""
@@ -477,6 +489,18 @@ class downModis:
             listOfDifferent = list(set(fileInPath) - set(listNewFile))
         return listOfDifferent
 
+    def checkFile(self, filHdf):
+        """Check using GDAL to be sure that download was fine
+
+        filHdf = name of the HDF file to check
+        """
+        try:
+            gdal.Open(filHdf)
+            return 0
+        except (RuntimeError), e:
+            logging.error(e)
+            return 1
+
     def downloadFile(self, filDown, filHdf, day):
         """Download the single file
 
@@ -506,9 +530,6 @@ class downModis:
             orig_size = http.headers['content-length']
             filSave.write(http.read())
             filSave.close()
-            self.filelist.write("%s\n" % filDown)
-            if self.debug == True:
-                logging.debug("File %s downloaded" % filDown)
         #if it have an error it try to download again the file
         except (EOFError), e:
             logging.error("Cannot download %s, the error was '%s'. Retry.." % (
@@ -518,7 +539,20 @@ class downModis:
             self._downloadFileHTTP(filDown, filHdf, day)
         transf_size = os.path.getsize(filSave.name)
         if int(orig_size) == int(transf_size):
-            return 0
+            if filHdf.find('.xml') == -1:
+                if self.checkFile(filHdf):
+                    os.remove(filSave.name)
+                    self._downloadFileHTTP(filDown, filHdf, day)
+                else:
+                    self.filelist.write("%s\n" % filDown)
+                    if self.debug == True:
+                        logging.debug("File %s downloaded correctly" % filDown)
+                    return 0
+            else:
+                self.filelist.write("%s\n" % filDown)
+                if self.debug == True:
+                    logging.debug("File %s downloaded correctly" % filDown)
+                return 0
         else:
             logging.warning("Different size for file %s - original data: %s,"\
                             " downloaded: %s" % (filDown, orig_size,
