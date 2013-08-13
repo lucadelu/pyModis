@@ -14,3 +14,7 @@
  * add documentation how to install on Windows
 - version 0.7.2 2013-08-01 -- fix convertmodis.py for windows
  * fix path to executable in convertmodis.py
+- version 0.7.3
+ * fix functions to download data
+ * add timeout to http urlopen
+ * add GDAL to check integrity of downloaded files
