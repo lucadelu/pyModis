@@ -39,7 +39,7 @@ setup(
   #packages = ['pymodis'],
   scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
            'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
-           'scripts/modis_convert.py'],
+           'scripts/modis_convert.py', 'scripts/modis_download_from_list.py'],
   author='Luca Delucchi',
   author_email='luca.delucchi@fmach.it',
   url='http://pymodis.fem-environment.eu',

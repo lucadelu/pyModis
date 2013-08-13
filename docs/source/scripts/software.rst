@@ -11,6 +11,7 @@ Currently the tools are 5:
 .. only:: latex
 
   * :doc:`modis_download`
+  * :doc:`modis_download_from_list`
   * :doc:`modis_parse`
   * :doc:`modis_multiparse`
   * :doc:`modis_mosaic`
@@ -24,6 +25,7 @@ Currently the tools are 5:
    :maxdepth: 1
 
    modis_download
+   modis_download_from_list
    modis_parse
    modis_multiparse
    modis_mosaic
