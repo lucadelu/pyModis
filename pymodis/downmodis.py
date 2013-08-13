@@ -327,9 +327,9 @@ class downModis:
             # set enday variable to data
         if self.enday != None:
             self.enday = str2date(self.enday)
-        if self.today < self.enday:
-            raise IOError("The first day should be newer then end date")
         if self.today and self.enday:
+            if self.today < self.enday:
+                raise IOError("The first day should be newer then end date")
             D = self.today - self.enday
             self.delta = D.days
 
@@ -482,7 +482,7 @@ class downModis:
 
         filDown = name of the file to download
 
-        filSave = name of the file to write
+        filHdf = name of the file to write
 
         day = the day in format YYYY.MM.DD
         """
@@ -610,7 +610,7 @@ class downModis:
         if self.urltype == 'http':
             self._downloadsAllDayHTTP(days)
         elif self.urltype == 'ftp':
-            self._downloadFileFTP(days)
+            self._downloadAllDayFTP(days)
 
     def _downloadsAllDayHTTP(self, days):
         """ Downloads all the tiles considered from HTTP server"""
