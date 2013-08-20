@@ -500,6 +500,9 @@ class downModis:
             listOfDifferent = list(set(listNewFile) - set(fileInPath))
         elif move == 1:
             listOfDifferent = list(set(fileInPath) - set(listNewFile))
+        if self.debug == True:
+                logging.debug("The number of file to download after check of" \
+                              "existing file is: %i" % len(listOfDifferent))
         return listOfDifferent
 
     def checkFile(self, filHdf):
@@ -638,6 +641,8 @@ class downModis:
             elif numFiles > 1:
                 logging.error("There are to much files for %s" % i)
             if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
+                if self.debug == True:
+                    logging.debug("Start to download file %s" % i)
                 self.downloadFile(i, file_hdf, day)
 
     def downloadsAllDay(self, clean=False, allDays=False):
