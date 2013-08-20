@@ -66,7 +66,7 @@ class QualityModis():
 	quality layers to specific information"""
 
 
-	def __init__(self, infile, outfile, qType = None, qLayer = None):
+	def __init__(self, infile, outfile, qType = None, qLayer = None, pType = None):
 		"""Initialization function :
 
 		   infile = the full path to the hdf file
@@ -81,6 +81,7 @@ class QualityModis():
 		self.qType = qType
 		self.qLayer = qLayer
 		self.qaGroup = None
+		self.pType = pType
 
 		
 	def loadData(self):
@@ -91,25 +92,23 @@ class QualityModis():
 	
 	def setProductType(self):
 		"""read productType from Metadata of hdf file"""
-		self.productType = self.ds.GetMetadata()['SHORTNAME']
-	 
+		if self.pType == None:
+			self.productType = self.ds.GetMetadata()['SHORTNAME']
+		else:
+			self.productType = self.pType
 	
 	def setProductGroup(self):
 		"""read productGroup from Metadata of hdf file"""
 		self.productGroup = self.productType[3:5]
-	
-	
-	def setDSversion(self):
-		"""read Dataversion from input data"""
-		self.modisVersion = self.ds.GetMetadata()['VERSIONID']
-	
+
 
 	def setQAGroup(self):
 		"""set QA dataset group type"""
 		if self.productType in PRODUCTPROPS.keys():
 			self.qaGroup = PRODUCTPROPS[self.productType][1][int(self.qLayer)-1]
 		else:
-			print "Product version", self.modisVersion, "is currently not supported!"
+			#print "Product version", self.modisVersion, "is currently not supported!" #used for later version support
+			print "Product version is currently not supported!"
 
 			
 	def setQALayer(self):
@@ -146,7 +145,7 @@ class QualityModis():
 		self.loadData()
 		self.setProductType()
 		self.setProductGroup()
-		self.setDSversion()
+		#self.setDSversion()
 		self.setQAGroup()
 		self.setQALayer()
 		self.loadQAArray()
