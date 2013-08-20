@@ -270,6 +270,7 @@ class downModis:
             self.dirData.reverse()
         except (EOFError, urllib2.URLError), e:
             logging.error('Error in connection: %s' % e)
+            self.closeHTTP(http)
             if self.nconnection <= ncon:
                 self._connectHTTP()
 
@@ -304,6 +305,16 @@ class downModis:
     def closeFTP(self):
         """ Close ftp connection """
         self.ftp.quit()
+        self.closeFilelist()
+        if self.debug == True:
+            logging.debug("Close connection %s" % self.url)
+
+    def closeHTTP(self, http):
+        """ Close http connection
+
+            http = the http concention object created by urlib2.open         
+        """
+        http.close()
         self.closeFilelist()
         if self.debug == True:
             logging.debug("Close connection %s" % self.url)
@@ -404,7 +415,8 @@ class downModis:
             url = urljoin(self.url, self.path, day)
             if self.debug == True:
                 logging.debug("The url is: %s" % url)
-            http = modisHtmlParser(urllib2.urlopen(url))
+            conn = urllib2.urlopen(url)
+            http = modisHtmlParser(conn)
             # download also jpeg
             if self.jpeg:
                 # finallist is ugual to all file with jpeg file
@@ -421,6 +433,7 @@ class downModis:
                 logging.debug("The number of file to download is: %i" % len(finalList))
             return finalList
         except (socket.error), e:
+            self.closeHTTP(conn)
             logging.error("Error %s when try to receive list of files" % e)
             self._getFilesListHTTP(day)
 
@@ -536,12 +549,14 @@ class downModis:
                           filDown, e))
             filSave.close()
             os.remove(filSave.name)
+            self.closeHTTP(http)
             self._downloadFileHTTP(filDown, filHdf, day)
         transf_size = os.path.getsize(filSave.name)
         if int(orig_size) == int(transf_size):
             if filHdf.find('.xml') == -1:
                 if self.checkFile(filHdf):
                     os.remove(filSave.name)
+                    self.closeHTTP(http)
                     self._downloadFileHTTP(filDown, filHdf, day)
                 else:
                     self.filelist.write("%s\n" % filDown)
