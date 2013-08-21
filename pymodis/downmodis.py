@@ -271,6 +271,11 @@ class downModis:
         try:
             http = urllib2.urlopen(urljoin(self.url, self.path),
                                    timeout=self.timeout)
+        except:
+            logging.error('Error in connection: %s' % e)
+            if self.nconnection <= ncon:
+                self._connectHTTP()
+        try:
             self.dirData = modisHtmlParser(http).get_dates()
             self.dirData.reverse()
         except (EOFError, urllib2.URLError), e:
