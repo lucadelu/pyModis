@@ -8,7 +8,8 @@ Welcome to pyModis
 
 ``pyModis`` is a Free and Open Source Python based library to work with MODIS data.
 It offers bulk-download for user selected time ranges, mosaicking of MODIS tiles,
-and the reprojection from Sinusoidal to other projections, convert HDF format to other formats.
+and the reprojection from Sinusoidal to other projections, convert HDF format to other formats
+and the extraction of data quality information.
 
 ``pyModis`` library was developed to replace old bash scripts developed by Markus
 Neteler to download MODIS data from NASA FTP server. It is very useful for
@@ -27,10 +28,9 @@ It has several features:
 
   - it can create a mosaic of several tiles using `MODIS Reprojection Tool`_ and can
     create the xml metadata file with the information of all tiles used in mosaic
-
-  .. please fix it
-
-  - analyze quality ......
+	
+  - it can extract specific information from bit-encoded MODIS quality assesment layers
+	of different product types
 
 .. only:: html
 
