@@ -30,16 +30,29 @@ def main():
 
     option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_quality')
-    #type
+    
+	# type				  
     parser.add_option("-t", "--type", dest="type", default="1",
-                      help="Quality type either as number or name (e.g. 1 or VIQuality [default=%default]")
+					  help="Quality type either as number or name (e.g. 1 or VIQuality for MOD13 products)" \
+						   "[default=%default]")
+	
+	# quality layer				  
+    parser.add_option("-l", "--qualitylayer", dest="layer", default="1",
+					  help="Quality layer of the dataset, dependent on the used MODIS product. (e.g. 1 or QC_Day for the Daytime QC Layer of MOD11)" \
+						   "[default=%default]")
+
+	# quality layer				  
+    parser.add_option("-p", "--producttype", dest="product", default="MOD13Q1",
+					  help="Quality layer of the dataset, dependent on the used MODIS product. (e.g. 1 or QC_Day for the Daytime QC Layer of MOD11)" \
+						   "[default=%default]")
+						   
     #return options and argument
     (options, args) = parser.parse_args()
     #test if args[0] it is set
     if len(args) != 2:
         parser.error("You have to pass the destination folder for HDF file")
     #set modis object
-    modisQuality = qualitymodis.QualityModis(args[0], args[1], qType = options.type)
+    modisQuality = qualitymodis.QualityModis(args[0], args[1], qType = options.type, qLayer = options.layer, pType = options.product)
     #run 
     modisQuality.run()
 
