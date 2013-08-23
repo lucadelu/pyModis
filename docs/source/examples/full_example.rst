@@ -72,3 +72,14 @@ projection, to GeoTIFF with several projection. You have to use :doc:`../scripts
 
     modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/ 
 		     -o /tmp/finalfile.tif -g 250 /tmp/outputfile.hdf
+			 
+Extract Quality Information
+---------------
+
+If necessary, you can extract specific quality type from the chosen quality layer.
+In this particular case, we extract the Mandatory QA flag of the daytime temperature.
+You have to use :doc:`../scripts/modis_quality`
+
+::
+
+  modis_quality.py -p MOD11A1 -l 1 -t 1 /tmp/outputfile.hdf /tmp/mod11a1_daytime_qaflag.tif
