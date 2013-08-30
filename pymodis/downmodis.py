@@ -272,7 +272,7 @@ class downModis:
             http = urllib2.urlopen(urljoin(self.url, self.path),
                                    timeout=self.timeout)
         except:
-            logging.error('Error in connection: %s' % e)
+            logging.error('Error in HTTP connection')
             if self.nconnection <= ncon:
                 self._connectHTTP()
         try:
