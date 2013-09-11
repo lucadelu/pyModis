@@ -28,9 +28,9 @@ It has several features:
 
   - it can create a mosaic of several tiles using `MODIS Reprojection Tool`_ and can
     create the xml metadata file with the information of all tiles used in mosaic
-	
+
   - it can extract specific information from bit-encoded MODIS quality assesment layers
-	of different product types
+    of different product types
 
 .. only:: html
 
