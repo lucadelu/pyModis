@@ -19,7 +19,7 @@ __revision__ = '$Id$'
 
 #for required options
 strREQUIRED = 'required'
-
+TEXTCTRL_SIZE = (400, -1)
 
 def checkLabel(option):
     label = option.dest.capitalize()
@@ -45,8 +45,11 @@ class OptparseDialog(wx.Dialog):
             size=wx.DefaultSize,
             style=wx.DEFAULT_DIALOG_STYLE,
             ):
-#        self.SetIcon(wx.Icon("/home/lucadelu/github/pyModis/pyModis_icon.png"),
-#                     wx.BITMAP_TYPE_PNG)
+#        modis_png = wx.Bitmap("/home/lucadelu/github/pyModis/pyModis.png",
+#                                wx.BITMAP_TYPE_PNG)
+#        modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.png',
+#                             wx.BITMAP_TYPE_XBM)
+#        self.SetIcon(modis_icon)
         provider = wx.SimpleHelpProvider()
         wx.HelpProvider_Set(provider)
 
@@ -97,6 +100,7 @@ class OptparseDialog(wx.Dialog):
                     ctrl = wx.ComboBox(
                         self, -1, choices=option.choices,
                         value=option.default,
+                        size=TEXTCTRL_SIZE,
                         style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SORT
                     )
                 elif option.type in ['file', 'output']:
@@ -111,6 +115,7 @@ class OptparseDialog(wx.Dialog):
                                   buttonText='Browse',
                                   startDirectory=os.getcwd(),
                                   fileMode=fmode,
+                                  size=TEXTCTRL_SIZE
                                   )
                 elif option.type == 'directory':
                     ctrl = filebrowse.DirBrowseButton(self, id=wx.ID_ANY,
@@ -118,20 +123,21 @@ class OptparseDialog(wx.Dialog):
                                   dialogTitle='Choose output file',
                                   buttonText='Browse',
                                   startDirectory=os.getcwd(),
+                                  size=TEXTCTRL_SIZE
                                   )
                 else:
                     if 'MULTILINE' in option.help:
-                        ctrl = wx.TextCtrl(self, -1, "", size=(300, 100),
+                        ctrl = wx.TextCtrl(self, -1, "", size=(400, 100),
                                            style=wx.TE_MULTILINE |
                                                  wx.TE_PROCESS_ENTER)
                     else:
-                        ctrl = wx.TextCtrl(self, -1, "", size=(300, -1))
+                        ctrl = wx.TextCtrl(self, -1, "", size=TEXTCTRL_SIZE)
 
                     if (option.default != optparse.NO_DEFAULT) and \
                        (option.default is not None):
                         ctrl.Value = unicode(option.default)
 
-                box.Add(ctrl, 1, wx.ALIGN_CENTRE | wx.ALL, 5)
+                box.Add(ctrl, 1, wx.ALIGN_RIGHT | wx.ALL, 5)
 
             elif option.action in ('store_true', 'store_false'):
                 ctrl = wx.CheckBox(self, -1, checkLabel(option),
@@ -221,7 +227,8 @@ class OptparseDialog(wx.Dialog):
               dialogTitle=self.htext,
               buttonText='Browse',
               startDirectory=os.getcwd(),
-              changeCallback = self.OnText
+              changeCallback=self.OnText,
+              size=TEXTCTRL_SIZE
               )
         elif self.typecont in ['file', 'mfile']:
             self.arg_ctrl = filebrowse.FileBrowseButton(self, id=wx.ID_ANY,
@@ -231,9 +238,10 @@ class OptparseDialog(wx.Dialog):
                           buttonText='Browse',
                           startDirectory=os.getcwd(),
                           fileMode=wx.OPEN,
-                          changeCallback = self.OnText
+                          changeCallback=self.OnText,
+                          size=TEXTCTRL_SIZE
                           )
-        sizer.Add(item=self.arg_ctrl, flag=wx.ALIGN_LEFT | wx.ALL, border=5)
+        sizer.Add(item=self.arg_ctrl, flag=wx.ALIGN_RIGHT | wx.ALL, border=5)
         return sizer
 
     def OnText(self, event):
