@@ -39,7 +39,7 @@ def main():
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
-    parser = option_parser_class(usage=usage, description='modis_convert')
+    parser = option_parser_class(usage=usage, description='modis_mosaic')
     #spatial extent
     #mrt path
     parser.add_option("-m", "--mrt", dest="mrt_path", required=True,
