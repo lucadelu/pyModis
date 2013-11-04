@@ -21,6 +21,7 @@ __revision__ = '$Id$'
 strREQUIRED = 'required'
 TEXTCTRL_SIZE = (400, -1)
 
+
 def checkLabel(option):
     label = option.dest.capitalize()
     label = label.replace('_', ' ')
@@ -45,10 +46,9 @@ class OptparseDialog(wx.Dialog):
             size=wx.DefaultSize,
             style=wx.DEFAULT_DIALOG_STYLE,
             ):
-#        modis_png = wx.Bitmap("/home/lucadelu/github/pyModis/pyModis.png",
-#                                wx.BITMAP_TYPE_PNG)
-#        modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.png',
-#                             wx.BITMAP_TYPE_XBM)
+
+        modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.ico',
+                             wx.BITMAP_TYPE_ICO)
 #        self.SetIcon(modis_icon)
         provider = wx.SimpleHelpProvider()
         wx.HelpProvider_Set(provider)
@@ -210,17 +210,10 @@ class OptparseDialog(wx.Dialog):
             self.htext = 'Test'
         label = wx.StaticText(self, -1, ltext)
         label.SetHelpText(self.htext)
-#        self.args_ctrl = wx.TextCtrl(parent=self, id=wx.ID_ANY, value='',
-#                                     size=(100, -1), style=0)
-#        bbrowse = wx.Button(parent=self, id=wx.ID_ANY, label='Browse',
-#                            size=(-1, -1))
+
         sizer.Add(item=label, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL |
                   wx.ALL, border=5)
-#        sizer.Add(item=self.args_ctrl, flag=wx.ALIGN_LEFT |
-#                  wx.ALIGN_CENTRE_VERTICAL | wx.ALL, border=5)
-#        sizer.Add(item=bbrowse, flag=wx.ALIGN_LEFT | wx.ALL, border=5)
-#        bbrowse.Bind(wx.EVT_BUTTON, self.OnBrowse)
-#        self.args_ctrl.Bind(wx.EVT_TEXT, self.OnText)
+
         if self.typecont == 'dir':
             self.arg_ctrl = filebrowse.DirBrowseButton(self, id=wx.ID_ANY,
               labelText='',
