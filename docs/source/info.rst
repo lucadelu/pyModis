@@ -7,8 +7,8 @@ Requirements
 The only required software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
 to convert or mosaic MODIS HDF files. 
 
-For *download* it required **Python GDAL package**,  instead for *parse* HDF
-files only standard Python modules are used by ``pyModis`` library and tools.
+For *download* it required **Python GDAL and Numpy packages**,  instead for *parse*
+HDF files only standard Python modules are used by ``pyModis`` library and tools.
 
 How to install pyModis
 -----------------------
@@ -95,6 +95,15 @@ installation from pip is broken (this is required only for version >= 0.7.1) ::
 Finally install ``pyModis`` using *pip* ::
 
     pip install pyModis
+
+Troubleshooting
+^^^^^^^^^^^^^^^^^^^
+
+Problem installing dependencies with pip
+"""""""""""""""""""""""""""""""""""""""""""
+Sometimes *pip* return error when it try to install Python GDAL or Numpy.
+You can solve this problem installing Python GDAL or Numpy using the
+version of your operating system.
 
 
 How to report a bug
