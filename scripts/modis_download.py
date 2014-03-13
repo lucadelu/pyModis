@@ -46,7 +46,7 @@ def main():
                            "[default=%default]")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
-                      help="string of tiles separated from comma " \
+                      help="string of tiles separated with comma " \
                            "[default=%default for all tiles]")
     #path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
@@ -83,12 +83,12 @@ def main():
                       "delta=1 [default=%default]")
     #all days
     parser.add_option("-A", dest="alldays", action="store_true", default=False,
-                      help="download all days, it usefull for first download "\
+                      help="download all days, it useful for initial download "\
                       "of a product. It overwrite the 'firstday' and 'endday'"\
                       " options [default=%default]")
     #remove file with size = 0
     parser.add_option("-r", dest="empty", action="store_true", default=False,
-                      help="remove files with size ugual to zero from " \
+                      help="remove empty files (size equal to zero) from " \
                       "'destination_folder'  [default=%default]")
     #parser.add_option("-A", dest="alldays", action="store_true", default=True,
                       #help="download all days from the first")
@@ -102,7 +102,7 @@ def main():
     (options, args) = parser.parse_args()
     #test if args[0] it is set
     if len(args) == 0:
-        parser.error("You have to pass the destination folder for HDF file")
+        parser.error("You have to define the destination folder for HDF file")
     #check if oneday option it is set
     if options.oneday:
         options.delta = 1
@@ -118,7 +118,7 @@ def main():
         #download data
         modisOgg.downloadsAllDay(clean=options.empty, allDays=options.alldays)
     else:
-        parser.error("Some problem with connection occur")
+        parser.error("A problem with the connection occured")
 
 #add options
 if __name__ == "__main__":
