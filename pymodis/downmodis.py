@@ -36,7 +36,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise('Python GDAL library did not find, please install it')
+        raise('Python GDAL library not found, please install python-gdal')
 
 
 def urljoin(*args):
@@ -140,39 +140,39 @@ class downModis:
 
             destinationFolder = where the files will be stored
 
-            password = the password, should be your email address to use to
-                       connect to FTP server.
-                       Not use this variable if the server is HTPP
+            password = the password, it should be your email address to
+                       connect to a FTP server.
+                       Do not use this variable if the server is a HTTP server
 
-            password = the user, by  default is anonymous, to use to connect
-                       to FTP server.
-                       Not use this variable if the server is HTPP
+            user = the user name, by default 'anonymous', used to connect
+                       to a FTP server.
+                       Do not use this variable if the server is a HTTP server
 
-            url = the url where download the MODIS data, it can be FTP or
-                  HTTP and it have to start with http:// or ftp://
+            url = the url from where to download the MODIS data, it can be FTP or
+                  HTTP and it has to start with http:// or ftp://
 
             path = the directory where the data that you want to download are
-                   stored on the ftp server
+                   stored on the FTP server
 
-            product = the code of product to download, che code should be
-                      ugual to the one of the url
+            product = the code of product to download, the code should be
+                      idential to the one of the url
 
-            tiles = a list of tiles to download, None == all tiles
+            tiles = a list of tiles to be downloaded, None == all tiles
 
             today = the day to start downloading; in order to pass a date
                     different from today use the format YYYY-MM-DD
 
-            enddate = the day to finish downloading; in order to pass a date
+            enddate = the day to end downloading; in order to pass a date
                       use the format YYYY-MM-DD
 
             delta = timelag i.e. the number of days starting from today
                     backwards
 
-            jpeg = set True if you want to download also the jpg file
+            jpeg = set to True if you want to download also the JPG overview file
 
-            debug = set True if you want to obtain debug information
+            debug = set to True if you want to obtain debug information
 
-            timeout = Timeout value for http server
+            timeout = Timeout value for HTTP server
         """
 
         # url modis
@@ -235,10 +235,10 @@ class downModis:
         gdal.UseExceptions()
         gdalDriver = gdal.GetDriverByName('HDF4')
         if not gdalDriver:
-            raise IOError("GDAL has no support for HDF4, please update GDAL")
+            raise IOError("GDAL installation has no support for HDF4, please update GDAL")
 
     def removeEmptyFiles(self):
-        """Check if some file has size ugual 0"""
+        """Check if some file has size equal to 0"""
         year = str(date.today().year)
         pref = self.product.split('.')[0]
         files = glob.glob1(self.writeFilePath, '%s.A%s*' % (pref, year))
@@ -250,7 +250,7 @@ class downModis:
     def connect(self, ncon=20):
         """Connect to the server and fill the dirData variable
 
-           ncon = number maximum of test to connection at the server
+           ncon = maximum number of attempts to connect to the HTTP server before failing
         """
         if self.urltype == 'ftp':
             self._connectFTP(ncon)
@@ -258,9 +258,9 @@ class downModis:
             self._connectHTTP(ncon)
 
     def _connectHTTP(self, ncon=20):
-        """ Connect to http server, create a list of directories for all days
+        """ Connect to HTTP server, create a list of directories for all days
 
-            ncon = number maximum of test to connection at the ftp server
+            ncon = maximum number of attempts to connect to the HTTP server before failing
         """
         self.nconnection += 1
         try:
@@ -277,7 +277,7 @@ class downModis:
         """ Set connection to ftp server, move to path where data are stored
             and create a list of directories for all days
 
-            ncon = number maximum of test to connection at the ftp server
+            ncon = maximum number of attempts to connect to the FTP server before failing
 
         """
         self.nconnection += 1
@@ -381,8 +381,8 @@ class downModis:
         return self.dirData
 
     def getFilesList(self, day=None):
-        """ Create a list of files to download, it is possible choose to
-            download also the jpeg files or only the hdf files
+        """ Creates a list of files to download, it is possible to choose to
+            download also the JPG overview files or only the HDF files
 
             day = the date of data
 
@@ -393,8 +393,8 @@ class downModis:
             return self._getFilesListFTP()
 
     def _getFilesListHTTP(self, day):
-        """ Create a list of files to download from http server, it is possible
-            choose to download also the jpeg files or only the hdf files
+        """ Creates a list of files to download from http server, it is possible
+            to choose to download also the JPG overview files or only the HDF files
 
             day = the date of data
 
@@ -425,8 +425,8 @@ class downModis:
             self._getFilesListHTTP(day)
 
     def _getFilesListFTP(self):
-        """ Create a list of files to download from ftp server, it is possible
-            choose to download also the jpeg files or only the hdf files
+        """ Create a list of files to download from FTP server, it is possible
+            choose to download also the JPG overview files or only the HDF files
         """
         def cicle_file(jpeg=False):
             """Check the type of file"""
@@ -465,7 +465,7 @@ class downModis:
                 logging.debug("The number of file to download is: %i" % len(finalList))
             return finalList
         except (ftplib.error_reply, socket.error), e:
-            logging.error("Error %s when try to receive list of files" % e)
+            logging.error("Error %s when trying to receive list of files" % e)
             self._getFilesListFTP()
 
     def checkDataExist(self, listNewFile, move=0):
@@ -490,7 +490,7 @@ class downModis:
         return listOfDifferent
 
     def checkFile(self, filHdf):
-        """Check using GDAL to be sure that download was fine
+        """Check by using GDAL to be sure that the download went ok
 
         filHdf = name of the HDF file to check
         """
@@ -506,7 +506,7 @@ class downModis:
 
         filDown = name of the file to download
 
-        filHdf = name of the file to write
+        filHdf = name of the file to write to
 
         day = the day in format YYYY.MM.DD
         """
@@ -520,7 +520,7 @@ class downModis:
 
         filDown = name of the file to download
 
-        filSave = name of the file to write
+        filSave = name of the file to write to
 
         day = the day in format YYYY.MM.DD
         """
@@ -532,7 +532,7 @@ class downModis:
             filSave.close()
         #if it have an error it try to download again the file
         except (EOFError), e:
-            logging.error("Cannot download %s, the error was '%s'. Retry.." % (
+            logging.error("Cannot download %s, the error was '%s'. Retrying..." % (
                           filDown, e))
             filSave.close()
             os.remove(filSave.name)
@@ -565,7 +565,7 @@ class downModis:
 
            filDown = name of the file to download
 
-           filSave = name of the file to write
+           filSave = name of the file to write to
         """
         filSave = open(filHdf, "wb")
         try:
@@ -575,7 +575,7 @@ class downModis:
                 logging.debug("File %s downloaded" % filDown)
         #if it have an error it try to download again the file
         except (ftplib.error_reply, socket.error, ftplib.error_temp, EOFError), e:
-            logging.error("Cannot download %s, the error was '%s'. Retry.." % (
+            logging.error("Cannot download %s, the error was '%s'. Retrying..." % (
                           filDown, e))
             filSave.close()
             os.remove(filSave.name)
@@ -621,7 +621,7 @@ class downModis:
                     os.remove(os.path.join(self.writeFilePath, oldFile[0]))
                     file_hdf = os.path.join(self.writeFilePath, fileDown)
             elif numFiles > 1:
-                logging.error("There are to much files for %s" % i)
+                logging.error("There are to many files for %s" % i)
             if numFiles == 0 or (numFiles == 1 and fileDown != oldFile[0]):
                 self.downloadFile(i, file_hdf, day)
 
@@ -630,7 +630,7 @@ class downModis:
 
         filDown = name of the file to download
 
-        filSave = name of the file to write
+        filSave = name of the file to write to
         """
         #return the days to download
         if clean:
