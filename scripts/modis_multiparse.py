@@ -52,7 +52,7 @@ def main():
     (options, args) = parser.parse_args()
     #create modis object
     if len(args) < 2:
-        parser.error("You have to pass the name of HDF files")
+        parser.error("You have to define the name of HDF files")
     modisOgg = parsemodis.parseModisMulti(args)
 
     if options.bound:
@@ -62,7 +62,7 @@ def main():
         modisOgg.writexml(options.output)
         print "%s write correctly" % options.output
     else:
-        parser.error("You have to chose at least an option")
+        parser.error("You have to choose at least one option")
 
 #add options
 if __name__ == "__main__":
