@@ -71,9 +71,9 @@ class QualityModis():
 
 		   infile = the full path to the hdf file
 
-		   outfile = the full path to the paramater file
+		   outfile = the full path to the parameter file
 
-		   mrtpath = the full path to mrt directory where inside you have bin and
+		   mrtpath = the full path to mrt directory which contain the bin and
 		   data directories
 		"""
 		self.infile = infile
