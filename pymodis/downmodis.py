@@ -404,7 +404,7 @@ class downModis:
             url = urljoin(self.url, self.path, day)
             if self.debug == True:
                 logging.debug("The url is: %s" % url)
-            http = modisHtmlParser(urllib2.urlopen(url))
+            http = modisHtmlParser(urllib2.urlopen(url, timeout=self.timeout))
             # download also jpeg
             if self.jpeg:
                 # finallist is ugual to all file with jpeg file
@@ -526,7 +526,7 @@ class downModis:
         """
         filSave = open(filHdf, "wb")
         try:
-            http = urllib2.urlopen(urljoin(self.url, self.path, day, filDown))
+            http = urllib2.urlopen(urljoin(self.url, self.path, day, filDown), timeout=self.timeout)
             orig_size = http.headers['content-length']
             filSave.write(http.read())
             filSave.close()
