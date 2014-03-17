@@ -259,7 +259,8 @@ class downModis:
     def connect(self, ncon=20):
         """Connect to the server and fill the dirData variable
 
-           ncon = maximum number of attempts to connect to the HTTP server before failing
+           ncon = maximum number of attempts to connect to the HTTP server
+                  before failing
         """
         if self.urltype == 'ftp':
             self._connectFTP(ncon)
@@ -269,7 +270,8 @@ class downModis:
     def _connectHTTP(self, ncon=20):
         """ Connect to HTTP server, create a list of directories for all days
 
-            ncon = maximum number of attempts to connect to the HTTP server before failing
+            ncon = maximum number of attempts to connect to the HTTP server
+                   before failing
         """
         self.nconnection += 1
         try:
@@ -291,7 +293,8 @@ class downModis:
         """ Set connection to ftp server, move to path where data are stored
             and create a list of directories for all days
 
-            ncon = maximum number of attempts to connect to the FTP server before failing
+            ncon = maximum number of attempts to connect to the FTP server
+                   before failing
 
         """
         self.nconnection += 1
@@ -407,8 +410,9 @@ class downModis:
             return self._getFilesListFTP()
 
     def _getFilesListHTTP(self, day):
-        """ Creates a list of files to download from http server, it is possible
-            to choose to download also the JPG overview files or only the HDF files
+        """ Creates a list of files to download from http server, it is
+            possible to choose to download also the JPG overview files or
+            only the HDF files
 
             day = the date of data
 
@@ -420,10 +424,10 @@ class downModis:
                 logging.debug("The url is: %s" % url)
             try:
                 http = modisHtmlParser(requests.get(url,
-                                       timeout=self.timeout)).content)
+                                       timeout=self.timeout).content)
             except:
                 http = modisHtmlParser(urllib2.urlopen(url,
-                                       timeout=self.timeout)).read())
+                                       timeout=self.timeout).read())
             # download also jpeg
             if self.jpeg:
                 # finallist is ugual to all file with jpeg file
