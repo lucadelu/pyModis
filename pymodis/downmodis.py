@@ -26,7 +26,10 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
-import urllib2
+try:
+    import requests
+except:
+    import urllib2
 from HTMLParser import HTMLParser
 import re
 
@@ -78,11 +81,12 @@ class modisHtmlParser(HTMLParser):
     """A class to parse HTML"""
     def __init__(self, fh):
         """
-        {fh} must be an input stream returned by open() or urllib2.urlopen()
+        {fh} must be astring returned by requests.content or
+             urllib2.urlopen().read()
         """
         HTMLParser.__init__(self)
         self.fileids = []
-        self.feed(fh.read())
+        self.feed(fh)
 
     def handle_starttag(self, tag, attrs):
         if tag == 'a':
@@ -264,12 +268,17 @@ class downModis:
         """
         self.nconnection += 1
         try:
-            http = urllib2.urlopen(urljoin(self.url, self.path),
-                                   timeout=self.timeout)
-            self.dirData = modisHtmlParser(http).get_dates()
+            try:
+                http = requests.get(urljoin(self.url, self.path),
+                                    timeout=self.timeout)
+                self.dirData = modisHtmlParser(http.content).get_dates()
+            except:
+                http = urllib2.urlopen(urljoin(self.url, self.path),
+                                       timeout=self.timeout)
+                self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
-        except (EOFError, urllib2.URLError), e:
-            logging.error('Error in connection: %s' % e)
+        except:
+            logging.error('Error in connection')
             if self.nconnection <= ncon:
                 self._connectHTTP()
 
@@ -404,7 +413,10 @@ class downModis:
             url = urljoin(self.url, self.path, day)
             if self.debug == True:
                 logging.debug("The url is: %s" % url)
-            http = modisHtmlParser(urllib2.urlopen(url))
+            try:
+                http = modisHtmlParser(requests.get(url).content)
+            except:
+                http = modisHtmlParser(urllib2.urlopen(url).read())
             # download also jpeg
             if self.jpeg:
                 # finallist is ugual to all file with jpeg file
@@ -526,14 +538,19 @@ class downModis:
         """
         filSave = open(filHdf, "wb")
         try:
-            http = urllib2.urlopen(urljoin(self.url, self.path, day, filDown))
-            orig_size = http.headers['content-length']
-            filSave.write(http.read())
+            try:
+                http = requests.get(urljoin(self.url, self.path, day, filDown))
+                orig_size = http.headers['content-length']
+                filSave.write(http.content)
+            except:
+                http = urllib2.urlopen(urljoin(self.url, self.path, day,
+                                               filDown))
+                orig_size = http.headers['content-length']
+                filSave.write(http.read())
             filSave.close()
         #if it have an error it try to download again the file
-        except (EOFError), e:
-            logging.error("Cannot download %s, the error was '%s'. Retry.." % (
-                          filDown, e))
+        except:
+            logging.error("Cannot download %s. Retry.." % filDown)
             filSave.close()
             os.remove(filSave.name)
             self._downloadFileHTTP(filDown, filHdf, day)
