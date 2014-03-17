@@ -86,9 +86,9 @@ def main():
     (options, args) = parser.parse_args()
     #check the argument
     if len(args) > 1:
-        parser.error("You have to pass the name of HDF file.")
+        parser.error("You have to define the name of HDF file.")
     if not os.path.isfile(args[0]):
-        parser.error("You have to pass the name of HDF file.")
+        parser.error("You have to define the name of HDF file.")
 
     if string.find(options.subset, '(') == -1 or string.find(options.subset, ')') == -1:
         parser.error('ERROR: The spectral string should be similar to: "( 1 0 )"')

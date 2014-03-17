@@ -35,19 +35,19 @@ class convertModis:
 
        confile = the full path to the paramater file
 
-       mrtpath = the full path to mrt directory where inside you have bin and
+       mrtpath = the full path to mrt directory which contains the bin and
        data directories
     """
     # check if the hdf file exists
     if os.path.exists(hdfname):
       self.name = hdfname
     else:
-      raise IOError('%s not exists' % hdfname)
+      raise IOError('%s does not exist' % hdfname)
     # check if confile exists
     if os.path.exists(confile):
       self.conf = confile
     else:
-      raise IOError('%s not exists' % confile)
+      raise IOError('%s does not exist' % confile)
     # check if mrtpath and subdirectories exists and set environment variables
     if os.path.exists(mrtpath):
       if os.path.exists(os.path.join(mrtpath,'bin')):
@@ -55,14 +55,14 @@ class convertModis:
         os.environ['PATH'] = "%s:%s" % (os.environ['PATH'],os.path.join(mrtpath,
                                                                         'data'))
       else:
-        raise IOError('The path %s not exists' % os.path.join(mrtpath,'bin'))
+        raise IOError('The path %s does not exist' % os.path.join(mrtpath,'bin'))
       if os.path.exists(os.path.join(mrtpath,'data')):
         self.mrtpathdata = os.path.join(mrtpath,'data')
         os.environ['MRTDATADIR'] = os.path.join(mrtpath,'data')
       else:
-        raise IOError('The path %s not exists' % os.path.join(mrtpath,'data'))
+        raise IOError('The path %s does not exist' % os.path.join(mrtpath,'data'))
     else:
-      raise IOError('The path %s not exists' % mrtpath)
+      raise IOError('The path %s does not exist' % mrtpath)
 
   def executable(self):
     """Return the executable of resample MRT software
@@ -79,11 +79,11 @@ class convertModis:
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):
-      raise IOError('The path %s not exists, could be an erroneus path or '\
+      raise IOError('The path %s does not exist: it could be an erroneus path or '\
                     + 'software') % execut
     else:
       subprocess.call([execut,'-p',self.conf])
-    return "The hdf file %s was converted" % self.name
+    return "The hdf file %s was converted successfully" % self.name
 
 
 class createMosaic:
@@ -112,14 +112,14 @@ class createMosaic:
         os.environ['PATH'] = "%s:%s" % (os.environ['PATH'],os.path.join(mrtpath,
                                                                         'data'))
       else:
-        raise IOError('The path %s not exists' % os.path.join(mrtpath,'bin'))
+        raise IOError('The path %s does not exist' % os.path.join(mrtpath,'bin'))
       if os.path.exists(os.path.join(mrtpath,'data')):
         self.mrtpathdata = os.path.join(mrtpath,'data')
         os.environ['MRTDATADIR'] = os.path.join(mrtpath,'data')
       else:
-        raise IOError('The path %s not exists' % os.path.join(mrtpath,'data'))
+        raise IOError('The path %s does not exist' % os.path.join(mrtpath,'data'))
     else:
-      raise IOError('The path %s not exists' % mrtpath)
+      raise IOError('The path %s does not exist' % mrtpath)
     self.out = os.path.join(self.basepath, outprefix + '.hdf')
     self.outxml = self.out + '.xml'
     self.subset = subset
@@ -130,7 +130,7 @@ class createMosaic:
     listHDF = []
     for i in self.HDFfiles:
       if i.find(self.basepath) == -1 and i.find('.hdf.xml') == -1:
-        print "Attection maybe you have the not full path in the HDF file list"
+        print "Attention: maybe you do not have the full path in the HDF file list"
         listHDF.append(os.path.join(self.basepath,i.strip()))
         self.tmplistfiles.write("%s\n" % os.path.join(self.basepath,i.strip()))
       elif i.find('.hdf.xml') == -1:
@@ -156,7 +156,7 @@ class createMosaic:
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):
-      raise IOError('The path %s not exists, could be an erroneus path or '\
+      raise IOError('The path %s does not exist, it could be an erroneus path or '\
                     + 'software') % execut
     else:
       self.write_mosaic_xml()
@@ -166,7 +166,7 @@ class createMosaic:
       else:
         subprocess.call([execut,'-i',self.tmplistfiles.name,'-o',self.out],
                         stderr = subprocess.STDOUT)
-    return "The mosaic file %s is created" % self.out
+    return "The mosaic file %s has been created" % self.out
 
 
 class processModis:
@@ -179,19 +179,19 @@ class processModis:
     """Initialization function :
        hdfname = the full path to the hdf file
        confile = the full path to the paramater file
-       mrtpath = the full path to mrt directory where inside you have bin and 
+       mrtpath = the full path to mrt directory which contains the bin and 
                  data directories
     """
     # check if the hdf file exists
     if os.path.exists(hdfname):
       self.name = hdfname
     else:
-      raise IOError('%s not exists' % hdfname)
+      raise IOError('%s does not exist' % hdfname)
     # check if confile exists
     if os.path.exists(confile):
       self.conf = confile
     else:
-      raise IOError('%s not exists' % confile)
+      raise IOError('%s does not exist' % confile)
     # check if mrtpath and subdirectories exists and set environment variables
     if os.path.exists(mrtpath):
       if os.path.exists(os.path.join(mrtpath,'bin')):
@@ -199,14 +199,14 @@ class processModis:
         os.environ['PATH'] = "%s:%s" % (os.environ['PATH'],os.path.join(mrtpath,
                                                                         'data'))
       else:
-        raise IOError('The path %s not exists' % os.path.join(mrtpath,'bin'))
+        raise IOError('The path %s does not exist' % os.path.join(mrtpath,'bin'))
       if os.path.exists(os.path.join(mrtpath,'data')):
         self.mrtpathdata = os.path.join(mrtpath,'data')
         os.environ['MRTDATADIR'] = os.path.join(mrtpath,'data')
       else:
-        raise IOError('The path %s not exists' % os.path.join(mrtpath,'data'))
+        raise IOError('The path %s does not exist' % os.path.join(mrtpath,'data'))
     else:
-      raise IOError('The path %s not exists' % mrtpath)
+      raise IOError('The path %s does not exist' % mrtpath)
 
   def executable(self):
     """Return the executable of resample MRT software
@@ -223,8 +223,8 @@ class processModis:
     import subprocess
     execut = self.executable()
     if not os.path.exists(execut):
-      raise IOError('The path %s not exists, could be an erroneus path or '\
+      raise IOError('The path %s does not exist, it could be an erroneus path or '\
                     + 'software') % execut
     else:
       subprocess.call([execut,'-pf=%s' % self.conf])
-    return "The hdf file %s was converted" % self.name
+    return "The hdf file %s has been converted" % self.name

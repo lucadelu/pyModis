@@ -25,7 +25,7 @@ from types import ListType
 #import modis library
 from pymodis import parsemodis, optparse_gui, optparse_required
 
-ERROR = "You have to pass the name of HDF file"
+ERROR = "You have to define the name of HDF file"
 
 
 def readDict(dic):

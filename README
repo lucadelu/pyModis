@@ -1,11 +1,11 @@
 Welcome in pyModis library
 ******************************
 
-*Thank you for downlaoding pyModis*
+*Thank you for downloading pyModis*
 
-**pyModis is a python library to download and process Modis data from NASA ftp**
+**pyModis is a Python library to download and process MODIS data from NASA server**
 
-Copyright Luca Delucchi - 2010-2013
+Copyright Luca Delucchi - 2010-2014
 
 License
 ===========
@@ -15,19 +15,19 @@ pyModis is licensed under the terms of **GNU GPL 2**. Read COPYING for more info
 Install
 ===========
 
-How to compile or install pyModis see INSTALL file.
+For how to compile or install pyModis see INSTALL file.
 
 Executables
 ================
 
 Some executables are distributed with the library:
 
-  * **modis_download** it's useful to download MODIS data
-  * **modis_parse** can parse the XML file of MODIS data and return some variables
-  * **modis_multiparse** can parse the XML file of several MODIS data and return the bounding box or it can write the XML file with the information of all
-    tiles considered
-  * **modis_mosaic** create the mosaic of server MODIS tiles
-  * **modis_convert** convert MODIS data from HDF format and Sinusoidal projection to other formats and projections
+  * **modis_download** downloads MODIS data
+  * **modis_parse** parses the XML file of MODIS data and return some variables
+  * **modis_multiparse** parses the XML file of multiple MODIS data and returns the bounding box or writes the XML file with the information of all
+    selected tiles
+  * **modis_mosaic** creates the mosaic of multiple MODIS tiles
+  * **modis_convert** converts MODIS data from HDF format and Sinusoidal projection to other formats and projections
 
 
 Other info

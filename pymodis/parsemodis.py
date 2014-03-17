@@ -38,7 +38,7 @@ SPHERE_LIST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
 
 
 class parseModis:
-  """Class to parse MODIS xml files, it also can create the parameter
+  """Class to parse MODIS xml files, it can also create the parameter
      configuration file for resampling MODIS DATA with the MRT software or
      convertmodis Module
   """
@@ -53,13 +53,13 @@ class parseModis:
       # hdf name
       self.hdfname = filename
     else:
-      raise IOError('%s not exists' % filename)
+      raise IOError('%s does not exist' % filename)
 
     if os.path.exists(self.hdfname + '.xml'):
       # xml hdf name
       self.xmlname = self.hdfname + '.xml'
     else:
-      raise IOError('%s not exists' % self.hdfname + '.xml')
+      raise IOError('%s does not exist' % self.hdfname + '.xml')
 
     # tif name for the output file for resample MRT software
     self.tifname = self.hdfname.replace('.hdf', '.tif')
@@ -253,9 +253,9 @@ class parseModis:
                   bound=None
                   ):
     """Create the parameter file to use with resample MRT software to create
-    tif file
+    tif (geotiff) file
 
-        spectral = the spectral subset to be used, look the product table to
+        spectral = the spectral subset to be used, see the product table to
         understand the layer that you want use. For example:
 
             - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI
@@ -265,10 +265,10 @@ class parseModis:
 
         res = the resolution for the output file, it must be set in the map
         unit of output projection system. The software will use the
-        original resolution of input file if res it isn't set
+        original resolution of input file if res not set
 
-        output = the output name, if it doesn't set will use the prefix name
-        of input hdf file
+        output = the output name, if not set if not set the prefix name
+        of input hdf file will be used
 
         utm = the UTM zone if projection system is UTM
 
@@ -377,7 +377,7 @@ class parseModis:
                   bound=None
                   ):
     """Create the parameter file to use with resample MRT software to create
-       tif file
+       tif (geotiff) file
 
         sds = Name of band/s (Science Data Set) to resample
 
@@ -385,10 +385,10 @@ class parseModis:
 
         res = the resolution for the output file, it must be set in the map
         unit of output projection system. The software will use the
-        original resolution of input file if res it isn't set
+        original resolution of input file if res not set
 
-        output = the output name, if it doesn't set will use the prefix name
-        of input hdf file
+        output = the output name, if not set the prefix name
+        of input hdf file will be used
 
         sphere = Output sphere number. Valid options are:
             - 0=Clarke 1866

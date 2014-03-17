@@ -27,7 +27,7 @@ from types import ListType
 #import modis library
 from pymodis import convertmodis, optparse_gui, optparse_required
 
-ERROR = "You have to pass the name of a file containing HDF files." \
+ERROR = "You have to define the name of a text file containing HDF files." \
         " (One HDF file for line)"
 
 
@@ -49,7 +49,7 @@ def main():
                       help="the name of output mosaic", metavar="OUTPUT_FILE")
     #write into file
     parser.add_option("-s", "--subset", dest="subset",
-                      help="a subset of product's layers. The string should" \
+                      help="a subset of product layers. The string should" \
                       " be similar to: 1 0 [default: all layers]")
 
     (options, args) = parser.parse_args()
@@ -67,7 +67,7 @@ def main():
             sys.exit()
 
     if not os.path.isfile(args[0]):
-        parser.error("You have to pass the name of a file containing HDF " \
+        parser.error("You have to define the name of a text file containing HDF " \
                      "files. (One HDF file for line)")
 
     #check is a subset it is set

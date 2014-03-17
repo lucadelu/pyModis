@@ -50,7 +50,7 @@ def main():
     (options, args) = parser.parse_args()
     #test if args[0] it is set
     if len(args) != 2:
-        parser.error("You have to pass the destination folder for HDF file")
+        parser.error("You have to define the destination folder for HDF file")
     #set modis object
     modisQuality = qualitymodis.QualityModis(args[0], args[1], qType = options.type, qLayer = options.layer, pType = options.product)
     #run 
