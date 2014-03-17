@@ -11,13 +11,13 @@ A result like this and you have Python istalled
     Type "help", "copyright", "credits" or "license" for more information.
     >>>
 
-This however means that there is any problem
+The next error however means that there is a problem:
 
     bash: python: command not found
 
 You can download Python from http://www.python.org/download/releases/
 
-It also require Python package of GDAL library
+It also requires the Python package of GDAL library (commonly named "python-gdal")
 
 INSTALL
 ========
@@ -86,7 +86,7 @@ instead with this one, you must check the installation
 Windows
 ^^^^^^^^^
 
-The simple way to install pyModis on Windows is to install latest Python 2.7 from http://python.org/download/
+The most simple way to install pyModis on Windows is to install latest Python 2.7 from http://python.org/download/
 
 Now you have to modify the "Path" environment variable using Powershell running
 
