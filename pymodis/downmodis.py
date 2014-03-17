@@ -236,6 +236,11 @@ class downModis:
         format=log_format)
         self.nconnection = 0
         self.timeout = timeout
+        self.fileInPath = []
+        # add all files in the directory where we will save new modis data
+        for f in os.listdir(self.writeFilePath):
+            if os.path.isfile(os.path.join(self.writeFilePath, f)):
+                self.fileInPath.append(f)
         gdal.UseExceptions()
         gdalDriver = gdal.GetDriverByName('HDF4')
         if not gdalDriver:
@@ -490,17 +495,12 @@ class downModis:
             move = it is useful to know if a function is called from download
                    or move function
         """
-        fileInPath = []
-        # add all files in the directory where we will save new modis data
-        for f in os.listdir(self.writeFilePath):
-            if os.path.isfile(os.path.join(self.writeFilePath, f)):
-                fileInPath.append(f)
         # different return if this method is used from downloadsAllDay() or
         # moveFile()
         if move == 0:
-            listOfDifferent = list(set(listNewFile) - set(fileInPath))
+            listOfDifferent = list(set(listNewFile) - set(self.fileInPath))
         elif move == 1:
-            listOfDifferent = list(set(fileInPath) - set(listNewFile))
+            listOfDifferent = list(set(self.fileInPath) - set(listNewFile))
         return listOfDifferent
 
     def checkFile(self, filHdf):
