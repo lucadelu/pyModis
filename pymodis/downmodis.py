@@ -543,6 +543,7 @@ class downModis:
         day = the day in format YYYY.MM.DD
         """
         filSave = open(filHdf, "wb")
+        orig_size = None
         try:
             try:
                 http = requests.get(urljoin(self.url, self.path, day, filDown))
@@ -561,7 +562,7 @@ class downModis:
             os.remove(filSave.name)
             self._downloadFileHTTP(filDown, filHdf, day)
         transf_size = os.path.getsize(filSave.name)
-        if int(orig_size) == int(transf_size):
+        if orig_size and int(orig_size) == int(transf_size):
             if filHdf.find('.xml') == -1:
                 if self.checkFile(filHdf):
                     os.remove(filSave.name)
@@ -577,9 +578,14 @@ class downModis:
                     logging.debug("File %s downloaded correctly" % filDown)
                 return 0
         else:
-            logging.warning("Different size for file %s - original data: %s,"\
-                            " downloaded: %s" % (filDown, orig_size,
-                                                 transf_size))
+            if not orig_size:
+                logging.warning("Different size for file %s - original data:"\
+                                " None, downloaded: %s" % (filDown, 
+                                                           transf_size))
+            else:
+                logging.warning("Different size for file %s - original data:"\
+                                " %s, downloaded: %s" % (filDown, orig_size,
+                                                         transf_size))
             os.remove(filSave.name)
             self._downloadFileHTTP(filDown, filHdf, day)
 
