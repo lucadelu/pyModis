@@ -10,6 +10,10 @@ to convert or mosaic MODIS HDF files.
 For *download* it required **Python GDAL and Numpy packages**,  instead for *parse*
 HDF files only standard Python modules are used by ``pyModis`` library and tools.
 
+For better results downloading MODIS tiles with ``pyModis`` library you should
+install `resquests <http://docs.python-requests.org/en/latest/>`_ library.
+This is not necessary but highly suggested.
+
 How to install pyModis
 -----------------------
 
