@@ -29,7 +29,9 @@ import ftplib
 try:
     import requests
 except:
-    import urllib2
+    pass
+
+import urllib2
 from HTMLParser import HTMLParser
 import re
 
