@@ -1,4 +1,4 @@
-Source: pyModis
+Source: pymodis
 Section: python
 Priority: optional
 Maintainer: Angelos Tzotsos <gcpp.kalxas@gmail.com>
