@@ -9,5 +9,5 @@ Homepage: http://pymodis.fem-environment.eu/
 
 Package: python-pymodis
 Architecture: all
-Depends: ${misc:Depends}, debconf, python (>=2.5), python-numpy
+Depends: ${misc:Depends}, debconf, python (>=2.5), python-numpy, python-gdal
 Description: Python library for MODIS data
