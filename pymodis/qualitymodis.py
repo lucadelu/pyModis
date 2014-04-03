@@ -24,7 +24,14 @@ from datetime import *
 import os
 import sys
 import numpy as np
-from osgeo import gdal, gdal_array
+
+try:
+    import osgeo.gdal as gdal
+except ImportError:
+    try:
+        import gdal
+    except ImportError:
+        raise('Python GDAL library not found, please install python-gdal')
 
 
 VALIDTYPES = {'13' : map(str,range(1,10)), '11' : map(str,range(1,6))}
