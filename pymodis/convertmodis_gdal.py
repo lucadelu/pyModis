@@ -140,7 +140,6 @@ class convertModisGDAL:
             self.dst_gt = tmp_ds.GetGeoTransform()
         else:
             bbox = self._boundingBox(tmp_ds)
-            import pdb; pdb.set_trace()
             self.dst_xsize = self._calculateRes(bbox[0][0], bbox[1][0],
                                                 self.resolution)
             self.dst_ysize = self._calculateRes(bbox[0][1], bbox[1][1],
