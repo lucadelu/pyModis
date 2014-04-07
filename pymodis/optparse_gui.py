@@ -78,7 +78,6 @@ class OptparseDialog(wx.Dialog):
                   wx.TOP, 5)
 
         self.browse_option_map = {}
-
         # Add controls for all the options
         for option in optParser.option_list:
             if option.dest is None:
@@ -193,7 +192,7 @@ class OptparseDialog(wx.Dialog):
             ltext = 'File HDF [%s]' % strREQUIRED
             self.htext = 'Select HDF file'
             self.typecont = 'file'
-        elif name == 'modis_download.py':
+        elif name == 'modis_download.py' or name == 'modis_download_from_list.py':
             ltext = 'Destination Folder [%s]' % strREQUIRED
             self.htext = 'Select directory where save MODIS files'
             self.typecont = 'dir'

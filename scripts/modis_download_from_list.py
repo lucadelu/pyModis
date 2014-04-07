@@ -35,7 +35,7 @@ def main():
     parser = option_parser_class(usage=usage,
                                  description='modis_download_from_list')
     #file
-    parser.add_option("-f", "--file", dest="file",
+    parser.add_option("-f", "--file", dest="file", type='file',
                       help="Input file containing data to download")
     #url
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
@@ -65,8 +65,7 @@ def main():
                       help="download also the jpeg overview files [default=%default]")
     #return options and argument
     (options, args) = parser.parse_args()
-    #test if args[0] it is set
-    if len(args) == 0:
+    if len(args) > 1:
         parser.error("You have to define the destination folder for HDF file")
 
     f = open(options.file)
