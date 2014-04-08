@@ -23,8 +23,10 @@ TEXTCTRL_SIZE = (400, -1)
 
 
 def checkLabel(option):
-    label = option.dest.capitalize()
+    label = option.dest
     label = label.replace('_', ' ')
+    label = label.replace('--', '')
+    label = label.capitalize()
     if option.required == True:
         return "%s [%s]" % (label, strREQUIRED)
     else:
@@ -79,12 +81,15 @@ class OptparseDialog(wx.Dialog):
 
         self.browse_option_map = {}
         # Add controls for all the options
-        for option in optParser.option_list:
+        for option in optParser.list_of_option:
             if option.dest is None:
                 continue
 
             if option.help is None:
                 option.help = u''
+
+            if checkLabel(option) == 'Formats':
+                continue
 
             box = wx.BoxSizer(wx.HORIZONTAL)
             if 'store' == option.action:
@@ -94,10 +99,11 @@ class OptparseDialog(wx.Dialog):
                 box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
 
                 if 'choice' == option.type:
+                    choices = list(set(option.choices))
                     if optparse.NO_DEFAULT == option.default:
-                        option.default = option.choices[0]
+                        option.default = choices[0]
                     ctrl = wx.ComboBox(
-                        self, -1, choices=option.choices,
+                        self, -1, choices=choices,
                         value=option.default,
                         size=TEXTCTRL_SIZE,
                         style=wx.CB_DROPDOWN | wx.CB_READONLY | wx.CB_SORT
@@ -142,14 +148,19 @@ class OptparseDialog(wx.Dialog):
                 ctrl = wx.CheckBox(self, -1, checkLabel(option),
                                    size=(300, -1))
                 box.Add(ctrl, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+            elif option.action == 'group_name':
+                label = wx.StaticText(self, -1, checkLabel(option))
+                font = wx.Font(12, wx.DECORATIVE, wx.NORMAL, wx.BOLD)
+                label.SetFont(font)
+                box.Add(label, 0, wx.ALIGN_CENTRE | wx.ALL, 5)
+                ctrl = None
             else:
                 raise NotImplementedError('Unknown option action: %s' % \
                                           repr(option.action))
-
-            ctrl.SetHelpText(option.help.replace(' [default=%default]', ''))
+            if ctrl:
+                ctrl.SetHelpText(option.help.replace(' [default=%default]', ''))
+                self.option_controls[option] = ctrl
             sizer.Add(box, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-
-            self.option_controls[option] = ctrl
 
         line = wx.StaticLine(self, -1, size=(20, -1), style=wx.LI_HORIZONTAL)
         sizer.Add(line, 0,
@@ -274,8 +285,9 @@ class UserCancelledError(Exception):
 
 class Option(optparse.Option):
     SUPER = optparse.Option
-    TYPES = SUPER.TYPES + ('file', 'output', 'directory')
-
+    TYPES = SUPER.TYPES + ('file', 'output', 'directory', 'group_name')
+    ACTIONS = SUPER.ACTIONS + ('group_name',)
+    TYPED_ACTIONS = SUPER.TYPED_ACTIONS + ('group_name',)
     #for required options
     ATTRS = optparse.Option.ATTRS + [strREQUIRED]
 
@@ -303,7 +315,15 @@ class OptionParser(optparse.OptionParser):
         '''
         # preprocess command line arguments and set to defaults
         option_values, args = self.SUPER.parse_args(self, args, values)
-        for option in self.option_list:
+        self.list_of_option = self.option_list
+        for group in self.option_groups:
+            title = "--{n}".format(n=group.title.replace(" ", "_"))
+            o = Option(title, type='group_name', dest=title,
+                                metavar=title, help=title, action='group_name')
+            self.list_of_option.append(o)
+            for option in group.option_list:
+                self.list_of_option.append(option)
+        for option in self.list_of_option:
             if option.dest and hasattr(option_values, option.dest):
                 default = getattr(option_values, option.dest)
                 if default is not None:
