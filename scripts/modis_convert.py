@@ -74,7 +74,7 @@ def main():
                       metavar="RESAMPLING_TYPE", default='NEAREST_NEIGHBOR',
                       type='choice', choices=RESAM_CHOICE)
     #options only for GDAL
-    groupG.add_option("-f", "--output-format", dest="out_form",
+    groupG.add_option("-f", "--output-format", dest="output_format",
                       metavar="OUTPUT_FORMAT", default="GTiff",
                       help="output format supported by GDAL [default=%default]")
     groupG.add_option("-e", "--epsg", dest="epsg", metavar="EPSG",
@@ -143,7 +143,7 @@ def main():
                                                          options.output,
                                                          options.subset,
                                                          options.resolution,
-                                                         options.out_form,
+                                                         options.output_format,
                                                          options.epsg,
                                                          options.wkt,
                                                          options.resampling,
