@@ -69,8 +69,7 @@ def getResampling(r):
 
 
 class convertModisGDAL:
-    """A class to convert modis data from hdf to tif using resample
-       (from MRT tools)
+    """A class to convert modis data from hdf to GDAL formats using GDAL
     """
     def __init__(self, hdfname, prefix, subset, res, outformat="GTiff",
                  epsg=None, wkt=None, resampl='NEAREST_NEIGHBOR'):

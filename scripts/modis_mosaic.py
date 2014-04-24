@@ -25,7 +25,7 @@ import sys
 import string
 from types import ListType
 #import modis library
-from pymodis import convertmodis, optparse_gui, optparse_required
+from pymodis import convertmodis, optparse_gui, optparse_required, gdal_merge
 
 ERROR = "You have to define the name of a text file containing HDF files." \
         " (One HDF file for line)"
@@ -40,19 +40,37 @@ def main():
     else:
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_mosaic')
+    groupR = OptionGroup(parser, 'Required options')
+    groupG = OptionGroup(parser, 'Options for GDAL')
+    groupM = OptionGroup(parser, 'Options for MRT')    
     #spatial extent
-    #mrt path
-    parser.add_option("-m", "--mrt", dest="mrt_path", required=True,
-                      help="the path to MRT software", metavar="MRT_PATH",
-                      type='directory')
-    parser.add_option("-o", "--output", dest="output", required=True,
+    groupR.add_option("-o", "--output", dest="output", required=True,
                       help="the name of output mosaic", metavar="OUTPUT_FILE")
     #write into file
-    parser.add_option("-s", "--subset", dest="subset",
+    groupR.add_option("-s", "--subset", dest="subset",
                       help="a subset of product layers. The string should" \
                       " be similar to: 1 0 [default: all layers]")
-
+    #options only for GDAL
+    groupG.add_option("-f", "--output-format", dest="output_format",
+                      metavar="OUTPUT_FORMAT", default="GTiff",
+                      help="output format supported by GDAL [default=%default]")
+    groupG.add_option("-e", "--epsg", dest="epsg", metavar="EPSG",
+                      help="EPSG code for the output")
+    groupG.add_option("-w", "--wkt_file", dest="wkt", metavar="WKT",
+                      help="file or string containing projection definition" \
+                      " in WKT format")
+    groupG.add_option("-g", "--grain", dest="resolution",
+                      type="int", help="the spatial resolution of output file")
+    groupG.add_option("--formats", dest="formats", action="store_true",
+                      help="print supported GDAL formats")
+    #mrt path
+    groupM.add_option("-m", "--mrt", dest="mrt_path", required=True,
+                      help="the path to MRT software", metavar="MRT_PATH",
+                      type='directory')
     (options, args) = parser.parse_args()
+    parser.add_option_group(groupR)
+    parser.add_option_group(groupG)
+    parser.add_option_group(groupM)
 
     #check the number of tiles
     if not args:
@@ -76,11 +94,16 @@ def main():
     else:
         if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
             parser.error('ERROR: The spectral string should be similar to: "1 0"')
-
-    modisOgg = convertmodis.createMosaic(args[0], options.output,
-                                         options.mrt_path,  options.subset)
+    if options.mrt_path:
+        modisOgg = convertmodis.createMosaic(args[0], options.output,
+                                             options.mrt_path,  options.subset)
+    else:
+        modisOgg = gdal_merge.
     modisOgg.run()
 
 #add options
 if __name__ == "__main__":
-    main()
+    gdal.AllRegister()
+    argv = gdal.GeneralCmdLineProcessor(sys.argv)
+    if argv != None:
+        main()
