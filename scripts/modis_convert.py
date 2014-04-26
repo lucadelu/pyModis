@@ -63,7 +63,7 @@ def main():
     groupR.add_option("-o", "--output", dest="output", required=True,
                       help="the prefix of output file", metavar="OUTPUT_FILE")
     groupR.add_option("-g", "--grain", dest="resolution", required=True,
-                      type="int", help="the spatial resolution of output file")
+                      type="float", help="the spatial resolution of output file")
     help_resampl = "the method of resampling."
     help_resampl += " -- mrt methods: %s" % parsemodis.RESAM_LIST
     help_resampl += " -- gdal methods: %s" % convertmodis_gdal.RESAM_GDAL
