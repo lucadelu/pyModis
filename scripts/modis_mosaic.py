@@ -25,7 +25,15 @@ import sys
 import string
 from types import ListType
 #import modis library
-from pymodis import convertmodis, optparse_gui, optparse_required, gdal_merge
+from pymodis import convertmodis, optparse_gui, optparse_required
+from optparse import OptionGroup
+try:
+    import osgeo.gdal as gdal
+except ImportError:
+    try:
+        import gdal
+    except ImportError:
+        raise('Python GDAL library not found, please install python-gdal')
 
 ERROR = "You have to define the name of a text file containing HDF files." \
         " (One HDF file for line)"
@@ -67,11 +75,10 @@ def main():
     groupM.add_option("-m", "--mrt", dest="mrt_path", required=True,
                       help="the path to MRT software", metavar="MRT_PATH",
                       type='directory')
-    (options, args) = parser.parse_args()
     parser.add_option_group(groupR)
     parser.add_option_group(groupG)
     parser.add_option_group(groupM)
-
+    (options, args) = parser.parse_args()
     #check the number of tiles
     if not args:
         print ERROR
@@ -97,8 +104,8 @@ def main():
     if options.mrt_path:
         modisOgg = convertmodis.createMosaic(args[0], options.output,
                                              options.mrt_path,  options.subset)
-    else:
-        modisOgg = gdal_merge.
+#    else:
+#        modisOgg = gdal_merge.
     modisOgg.run()
 
 #add options
