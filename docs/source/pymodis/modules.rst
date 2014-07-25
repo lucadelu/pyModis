@@ -14,7 +14,9 @@ It is compose by four module:
   * :doc:`downmodis`
   * :doc:`parsemodis`
   * :doc:`convertmodis`
+  * :doc:`convertmodis_gdal`
   * :doc:`qualitymodis`
+  * :doc:`optparse`
 
   .. raw:: latex
 
@@ -26,4 +28,6 @@ It is compose by four module:
    downmodis
    parsemodis
    convertmodis
+   convertmodis_gdal
    qualitymodis
+   optparse
