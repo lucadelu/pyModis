@@ -667,7 +667,7 @@ class downModis:
         if self.urltype == 'http':
             self._downloadsAllDayHTTP(days)
         elif self.urltype == 'ftp':
-            self._downloadAllDayFTP(days)
+            self._downloadsAllDayFTP(days)
 
     def _downloadsAllDayHTTP(self, days):
         """ Downloads all the tiles considered from HTTP server"""
