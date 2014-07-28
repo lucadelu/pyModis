@@ -4,7 +4,7 @@
 #  (c) Copyright Ingmar Nitze 2013
 #  Authors: Ingmar Nitze, Luca Delucchi
 #  Email: initze at ucc dot ie
-#  Email: luca dot delucchi at iasma dot it	
+#  Email: luca dot delucchi at iasma dot it
 #
 ##################################################################
 #
@@ -21,14 +21,20 @@
 ##################################################################
 
 import sys
-from pymodis import optparse_required, qualitymodis, optparse_gui
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import optparse_required
+from pymodis import qualitymodis
 
 
 def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] input_file destination_file"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
@@ -37,22 +43,24 @@ def main():
 
     # type
     parser.add_option("-t", "--type", dest="type", default="1",
-                      help="Quality type either as number or name (e.g. 1 " \
-                       "or VIQuality for MOD13 products) [default=%default]")
+                      help="Quality type either as number or name (e.g. 1 or "
+                           "VIQuality for MOD13 products) [default=%default]")
     # quality layer
     parser.add_option("-l", "--qualitylayer", dest="layer", default="1",
-                      help="Quality layer of the dataset, dependent on the " \
-                       "used MODIS product. (e.g. 1 or QC_Day for the " \
-                       "Daytime QC Layer of MOD11) [default=%default]")
+                      help="Quality layer of the dataset, dependent on the "
+                           "used MODIS product. (e.g. 1 or QC_Day for the "
+                           "Daytime QC Layer of MOD11) [default=%default]")
 
     # quality layer
     parser.add_option("-p", "--producttype", dest="product", default="MOD13Q1",
-                      help="Quality layer of the dataset, dependent on the " \
-                      "used MODIS product. (e.g. 1 or QC_Day for the Daytime" \
-                      " QC Layer of MOD11) [default=%default]")
+                      help="Quality layer of the dataset, dependent on the "
+                           "used MODIS product. (e.g. 1 or QC_Day for the "
+                           "Daytime QC Layer of MOD11) [default=%default]")
     #return options and argument
     (options, args) = parser.parse_args()
-    #test if args[0] it is set
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if len(args) != 2:
         parser.error("You have to define the destination folder for HDF file")
     #set modis object

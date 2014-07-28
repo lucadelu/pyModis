@@ -20,7 +20,13 @@
 ##################################################################
 
 from datetime import date
-from pymodis import downmodis, optparse_required, optparse_gui
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import downmodis
+from pymodis import optparse_required
 import sys
 
 
@@ -28,7 +34,7 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
@@ -46,25 +52,29 @@ def main():
                       help="password to connect only if ftp server")
     #username
     parser.add_option("-U", "--username", dest="user", default="anonymous",
-                      help="username to connect only if ftp server " \
+                      help="username to connect only if ftp server "
                            "[default=%default]")
     #path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
-                      help="directory on the http/ftp server " \
+                      help="directory on the http/ftp server "
                            "[default=%default]")
     #path to add the url
     parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
-                      help="product name as on the http/ftp server " \
+                      help="product name as on the http/ftp server "
                            "[default=%default]")
     #debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
-                      help="this is useful for debugging the " \
-                      "download [default=%default]")
+                      help="this is useful for debugging the "
+                           "download [default=%default]")
     #jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=False,
-                      help="download also the jpeg overview files [default=%default]")
+                      help="download also the jpeg overview files "
+                           "[default=%default]")
     #return options and argument
     (options, args) = parser.parse_args()
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if len(args) > 1:
         parser.error("You have to define the destination folder for HDF file")
 

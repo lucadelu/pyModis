@@ -25,7 +25,13 @@ import sys
 import string
 from types import ListType
 #import modis library
-from pymodis import convertmodis, optparse_gui, optparse_required
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import convertmodis
+from pymodis import optparse_required
 from optparse import OptionGroup
 try:
     import osgeo.gdal as gdal
@@ -43,21 +49,21 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] hdflist_file"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_mosaic')
     groupR = OptionGroup(parser, 'Required options')
     groupG = OptionGroup(parser, 'Options for GDAL')
-    groupM = OptionGroup(parser, 'Options for MRT')    
+    groupM = OptionGroup(parser, 'Options for MRT')
     #spatial extent
     groupR.add_option("-o", "--output", dest="output", required=True,
                       help="the name of output mosaic", metavar="OUTPUT_FILE")
     #write into file
     groupR.add_option("-s", "--subset", dest="subset",
-                      help="a subset of product layers. The string should" \
-                      " be similar to: 1 0 [default: all layers]")
+                      help="a subset of product layers. The string should"
+                           " be similar to: 1 0 [default: all layers]")
     #options only for GDAL
     groupG.add_option("-f", "--output-format", dest="output_format",
                       metavar="OUTPUT_FORMAT", default="GTiff",
@@ -65,8 +71,8 @@ def main():
     groupG.add_option("-e", "--epsg", dest="epsg", metavar="EPSG",
                       help="EPSG code for the output")
     groupG.add_option("-w", "--wkt_file", dest="wkt", metavar="WKT",
-                      help="file or string containing projection definition" \
-                      " in WKT format")
+                      help="file or string containing projection definition"
+                           " in WKT format")
     groupG.add_option("-g", "--grain", dest="resolution",
                       type="int", help="the spatial resolution of output file")
     groupG.add_option("--formats", dest="formats", action="store_true",
@@ -80,6 +86,9 @@ def main():
     parser.add_option_group(groupM)
     (options, args) = parser.parse_args()
     #check the number of tiles
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if not args:
         print ERROR
         sys.exit()
@@ -92,8 +101,8 @@ def main():
             sys.exit()
 
     if not os.path.isfile(args[0]):
-        parser.error("You have to define the name of a text file containing HDF " \
-                     "files. (One HDF file for line)")
+        parser.error("You have to define the name of a text file containing "
+                     "HDF files. (One HDF file for line)")
 
     #check is a subset it is set
     if not options.subset:

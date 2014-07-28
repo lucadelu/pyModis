@@ -23,7 +23,13 @@
 import sys
 from types import ListType
 #import modis library
-from pymodis import parsemodis, optparse_gui, optparse_required
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import parsemodis
+from pymodis import optparse_required
 
 ERROR = "You have to define the name of HDF file"
 
@@ -40,7 +46,7 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] hdf_file"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
@@ -82,6 +88,9 @@ def main():
 
     #return options and argument
     (options, args) = parser.parse_args()
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if not args:
         print ERROR
         sys.exit()

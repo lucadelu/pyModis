@@ -22,7 +22,13 @@
 #import system library
 import sys
 #import modis library
-from pymodis import parsemodis, optparse_gui, optparse_required
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import parsemodis
+from pymodis import optparse_required
 
 
 def readDict(dic):
@@ -37,7 +43,7 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] hdf_files_list"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
@@ -51,6 +57,9 @@ def main():
 
     (options, args) = parser.parse_args()
     #create modis object
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if len(args) < 2:
         parser.error("You have to define the name of HDF files")
     modisOgg = parsemodis.parseModisMulti(args)

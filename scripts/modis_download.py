@@ -21,14 +21,20 @@
 
 import sys
 #import modis library
-from pymodis import downmodis, optparse_gui, optparse_required
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import optparse_required
+from pymodis import downmodis
 
 
 def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] destination_folder"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
@@ -42,54 +48,54 @@ def main():
                       help="password to connect only if ftp server")
     #username
     parser.add_option("-U", "--username", dest="user", default="anonymous",
-                      help="username to connect only if ftp server " \
+                      help="username to connect only if ftp server "
                            "[default=%default]")
     #tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
-                      help="string of tiles separated with comma " \
+                      help="string of tiles separated with comma "
                            "[default=%default for all tiles]")
     #path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
-                      help="directory on the http/ftp server " \
+                      help="directory on the http/ftp server "
                            "[default=%default]")
     #path to add the url
     parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
-                      help="product name as on the http/ftp server " \
+                      help="product name as on the http/ftp server "
                            "[default=%default]")
     #delta
     parser.add_option("-D", "--delta", dest="delta", default=10,
-                      help="delta of day from the first day " \
+                      help="delta of day from the first day "
                            "[default=%default]")
     #first day
     parser.add_option("-f", "--firstday", dest="today", default=None,
-                      metavar="FIRST_DAY", help="the day to start download " \
-                              "[default=%default is for today]; if you want " \
-                              "change data you must use this format YYYY-MM-DD")
+                      help="the day to start download [default=%default is for"
+                           " today]; if you want change data you must use "
+                           "this format YYYY-MM-DD", metavar="FIRST_DAY")
     #last day
     parser.add_option("-e", "--endday", dest="enday", default=None,
-                      metavar="LAST_DAY", help="the day to stop download " \
-                      + "[default=%default]; if you want change" \
+                      metavar="LAST_DAY", help="the day to stop download "
+                      + "[default=%default]; if you want change"
                       " data you must use this format YYYY-MM-DD")
     #debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
-                      help="this is useful for debugging the " \
-                      "download [default=%default]")
+                      help="this is useful for debugging the "
+                           "download [default=%default]")
     #jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=False,
                       help="download also the jpeg files [default=%default]")
     #only one day
     parser.add_option("-O", dest="oneday", action="store_true", default=False,
-                      help="download only one day, it set " \
-                      "delta=1 [default=%default]")
+                      help="download only one day, it set "
+                           "delta=1 [default=%default]")
     #all days
     parser.add_option("-A", dest="alldays", action="store_true", default=False,
-                      help="download all days, it useful for initial download "\
-                      "of a product. It overwrite the 'firstday' and 'endday'"\
-                      " options [default=%default]")
+                      help="download all days, it useful for initial download"
+                           " of a product. It overwrite the 'firstday' and "
+                           "'endday' options [default=%default]")
     #remove file with size = 0
     parser.add_option("-r", dest="empty", action="store_true", default=False,
-                      help="remove empty files (size equal to zero) from " \
-                      "'destination_folder'  [default=%default]")
+                      help="remove empty files (size equal to zero) from "
+                           "'destination_folder'  [default=%default]")
     #parser.add_option("-A", dest="alldays", action="store_true", default=True,
                       #help="download all days from the first")
 
@@ -101,6 +107,9 @@ def main():
     #return options and argument
     (options, args) = parser.parse_args()
     #test if args[0] it is set
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if len(args) == 0:
         parser.error("You have to define the destination folder for HDF file")
     #check if oneday option it is set
@@ -108,10 +117,13 @@ def main():
         options.delta = 1
     #set modis object
     modisOgg = downmodis.downModis(url=options.url, user=options.user,
-               password=options.password, destinationFolder=args[0],
-               tiles=options.tiles, path=options.path, product=options.prod, 
-               today=options.today, enddate=options.enday, jpg=options.jpg,
-               delta=int(options.delta), debug=options.debug)
+                                   password=options.password,
+                                   destinationFolder=args[0],
+                                   tiles=options.tiles, path=options.path,
+                                   product=options.prod, today=options.today,
+                                   enddate=options.enday, jpg=options.jpg,
+                                   delta=int(options.delta),
+                                   debug=options.debug)
     #connect to ftp
     modisOgg.connect()
     if modisOgg.nconnection <= 20:

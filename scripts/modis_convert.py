@@ -24,7 +24,12 @@ import os
 import sys
 import string
 #import modis library
-from pymodis import optparse_gui, optparse_required
+try:
+    from pymodis import optparse_gui
+    wxpython = True
+except:
+    wxpython = False
+from pymodis import optparse_required
 from pymodis import parsemodis
 from pymodis import convertmodis_gdal
 from optparse import OptionGroup
@@ -48,7 +53,7 @@ def main():
     """Main function"""
     #usage
     usage = "usage: %prog [options] hdf_file"
-    if 1 == len(sys.argv):
+    if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
@@ -58,7 +63,7 @@ def main():
     groupM = OptionGroup(parser, 'Options for MRT')
     #options required by both methos
     groupR.add_option("-s", "--subset", dest="subset", required=True,
-                      help="a subset of product's layers. The string should "\
+                      help="a subset of product's layers. The string should "
                       "be similar to: ( 1 0 )")
     groupR.add_option("-o", "--output", dest="output", required=True,
                       help="the prefix of output file", metavar="OUTPUT_FILE")
@@ -80,8 +85,8 @@ def main():
     groupG.add_option("-e", "--epsg", dest="epsg", metavar="EPSG",
                       help="EPSG code for the output")
     groupG.add_option("-w", "--wkt_file", dest="wkt", metavar="WKT",
-                      help="file or string containing projection definition" \
-                      " in WKT format")
+                      help="file or string containing projection definition"
+                           " in WKT format")
     groupG.add_option("--formats", dest="formats", action="store_true",
                       help="print supported GDAL formats")
     #options only for MRT
@@ -100,12 +105,12 @@ def main():
                       help=help_pt + " [default=%default]")
     groupM.add_option("-p", "--proj_parameters", dest="projection_parameter",
                       metavar="PROJECTION_PARAMETERS",
-                      default='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0' \
+                      default='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0'
                       ' 0.0 0.0 0.0 0.0 )',
-                      help="a list of projection parameters, for more info "\
-                      "check the 'Appendix C' of MODIS reprojection tool user"\
-                      "'s manual https://lpdaac.usgs.gov/content/download" \
-                      "/4831/22895/file/mrt41_usermanual_032811.pdf "\
+                      help="a list of projection parameters, for more info "
+                      "check the 'Appendix C' of MODIS reprojection tool user"
+                      "'s manual https://lpdaac.usgs.gov/content/download"
+                      "/4831/22895/file/mrt41_usermanual_032811.pdf "
                       "[default=%default]")
     groupM.add_option("-u", "--utm", dest="utm_zone", metavar="UTM_ZONE",
                       help="the UTM zone if projection system is UTM")
@@ -115,6 +120,9 @@ def main():
     #return options and argument
     (options, args) = parser.parse_args()
     #check the argument
+    if len(args) == 0 and not wxpython:
+        parser.print_help()
+        sys.exit(1)
     if len(args) > 1:
         parser.error("You have to define the name of HDF file.")
     if not os.path.isfile(args[0]):
@@ -154,5 +162,5 @@ def main():
 if __name__ == "__main__":
     gdal.AllRegister()
     argv = gdal.GeneralCmdLineProcessor(sys.argv)
-    if argv != None:
+    if argv is not None:
         main()

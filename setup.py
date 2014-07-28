@@ -48,7 +48,8 @@ setup(
     url='http://pymodis.fem-environment.eu',
     description='Python library for MODIS data',
     long_description=read('README'),
-    install_requires=['GDAL', 'numpy', 'wxPython-common'],
+    install_requires=['GDAL', 'numpy'],
+    extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',
     platforms=['Any'],
     classifiers=[
