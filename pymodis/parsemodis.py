@@ -470,10 +470,10 @@ class parseModis:
                 raise IOError('bound variable is a dictionary with the ' \
                         'following keys: max_lat, min_lat, min_lon, max_lon')
         # Order:  UL: N W  - LR: S E
-        conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = %f %f\n" % (bound['min_lon],
+        conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = %f %f\n" % (bound['min_lon'],
                                                               bound['max_lat']))
         conFile.write("OUTPUT_SPACE_LOWER_RIGHT_CORNER (LONG LAT) = %f %f\n" % (bound['max_lon'],
-                                                              bound['min_lat]))
+                                                              bound['min_lat']))
         conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
         conFile.write("OUTPUT_FILE_FORMAT = GEOTIFF_FMT\n")
         # if resample is in resam_list set it otherwise return an error
