@@ -118,7 +118,7 @@ class convertModisGDAL:
             geo_pts_x.append(x2)
             geo_pts_y.append(y2)
         return ((min(geo_pts_x), min(geo_pts_y)), (max(geo_pts_x),
-                 max(geo_pts_y)))
+                                                   max(geo_pts_y)))
 
     def _calculateRes(self, mi, ma, res):
         """Calculate the number of pixel from extent and resolution
@@ -291,6 +291,7 @@ class file_info:
         self.xsize = fh.RasterXSize
         self.ysize = fh.RasterYSize
         self.band_type = fh.GetRasterBand(1).DataType
+        self.block_size = fh.GetRasterBand(1).GetBlockSize()
         self.projection = fh.GetProjection()
         self.geotransform = fh.GetGeoTransform()
         self.ulx = self.geotransform[0]
@@ -385,10 +386,9 @@ class file_info:
 
 class createMosaicGDAL:
     """A class to mosaic modis data from hdf to GDAL formats using GDAL"""
-    def __init__(self, hdfnames, output, subset, res, outformat="HDF4Image"):
+    def __init__(self, hdfnames, subset, res, outformat="HDF4Image"):
         # Open source dataset
         self.in_names = hdfnames
-        self.output_pref = output
         self.resolution = res
         self.subset = subset.replace('(', '').replace(')', '').strip().split()
         self.driver = gdal.GetDriverByName(outformat)
@@ -404,9 +404,10 @@ class createMosaicGDAL:
                           ' Imagine).' % format)
         self._initLayers()
         self._getUsedLayers()
+        self._names_to_fileinfos()
 
     def _initLayers(self):
-        """Set up the variable self.layers as dictionary for each choosen 
+        """Set up the variable self.layers as dictionary for each choosen
         subset"""
         src_ds = gdal.Open(self.in_names[0])
         layers = src_ds.GetSubDatasets()
@@ -444,19 +445,8 @@ class createMosaicGDAL:
                     self.file_infos[k].append(fi)
         self.file_infos
 
-    def write_mosaic_xml(self):
-        """Write the XML metadata file for MODIS mosaic"""
-        from parsemodis import parseModisMulti
-        import os
-        listHDF = []
-        for i in self.in_names:
-            listHDF.append(os.path.realpath(i.strip()))
-        pmm = parseModisMulti(listHDF)
-        pmm.writexml("%s.xml" % self.output_pref)
-
-    def run(self):
-        """Execute the mosaik  """
-        self._names_to_fileinfos()
+    def _calculateNewSize(self):
+        """Return the new size of output raster"""
         values = self.file_infos.values()
         l1 = values[0][0]
         ulx = l1.ulx
@@ -470,13 +460,29 @@ class createMosaicGDAL:
             lry = min(lry, fi.lry)
         psize_x = l1.geotransform[1]
         psize_y = l1.geotransform[5]
-        band_type = l1.band_type
+
         geotransform = [ulx, psize_x, 0, uly, 0, psize_y]
         xsize = int((lrx - ulx) / geotransform[1] + 0.5)
         ysize = int((lry - uly) / geotransform[5] + 0.5)
-        #t_fh = self.driver.Create(self.output_pref, xsize, ysize, 1, band_type)
+        return xsize, ysize, geotransform
+
+    def write_mosaic_xml(self, output_pref):
+        """Write the XML metadata file for MODIS mosaic"""
+        from parsemodis import parseModisMulti
+        import os
+        listHDF = []
+        for i in self.in_names:
+            listHDF.append(os.path.realpath(i.strip()))
+        pmm = parseModisMulti(listHDF)
+        pmm.writexml("%s.xml" % self.output_pref)
+
+    def run(self, output):
+        """Execute the mosaik  """
+        values = self.file_infos.values()
+        l1 = values[0][0]
+        xsize, ysize, geotransform = self._calculateNewSize()
         t_fh = self.driver.Create(self.output_pref, xsize, ysize,
-                                  len(self.file_infos.keys()), band_type)
+                                  len(self.file_infos.keys()), l1.band_type)
         if t_fh is None:
             raise IOError('Not possibile to create dataset %s' % self.output_pref)
             return
@@ -486,8 +492,6 @@ class createMosaicGDAL:
         i = 1
         for names in self.file_infos.values():
             fill = None
-#            if i > 1:
-#                t_fh.AddBand(names[0].band_type)
             if names[0].fill_value:
                 fill = float(names[0].fill_value)
                 t_fh.GetRasterBand(i).SetNoDataValue(fill)
@@ -495,5 +499,103 @@ class createMosaicGDAL:
             for n in names:
                 n.copy_into(t_fh, 1, i, fill)
             i = i + 1
-        self.write_mosaic_xml()
+        self.write_mosaic_xml(output)
         t_fh = None
+
+    def _calculateOffset(self, fileinfo, geotransform):
+        """Return the offset between main origin and the origin of current
+        file
+
+        :param fileinfo: a file_info object
+        :param geotransform: the geotransform parameters to keep x and y origin
+        """
+        x = abs(int((geotransform[0] - fileinfo.ulx) / geotransform[1]))
+        y = abs(int((geotransform[3] - fileinfo.uly) / geotransform[5]))
+        return x, y
+
+    def write_vrt(self, output, separate=True):
+        """Write VRT file
+
+        :param str output: the prefix of output file
+        :param bool separate: True to write a VRT file for each band, False to
+                              write an unique file
+        """
+
+        def write_complex(outfile, f, geot):
+            """Write a complex source to VRT file"""
+            out.write('\t\t<ComplexSource>\n')
+            out.write('\t\t\t<SourceFilename relativeToVRT="0">{name}'
+                      '</SourceFilename>\n'.format(name=f.filename.replace('"',
+                                                                           '')))
+            out.write('\t\t\t<SourceBand>1</SourceBand>\n')
+            out.write('\t\t\t<SourceProperties RasterXSize="{x}" '
+                      'RasterYSize="{y}" DataType="{typ}" '
+                      'BlockXSize="{bx}" BlockYSize="{by}" />'
+                      '\n'.format(x=f.xsize, y=f.ysize,
+                                  typ=f.band_type, bx=f.block_size[0],
+                                  by=f.block_size[1]))
+            out.write('\t\t\t<SrcRect xOff="0" yOff="0" xSize="{x}" '
+                      'ySize="{y}" />\n'.format(x=f.xsize, y=f.ysize))
+            xoff, yoff = self._calculateOffset(f, geot)
+            out.write('\t\t\t<DstRect xOff="{xoff}" yOff="{yoff}" '
+                      'xSize="{x}" ySize="{y}" />'
+                      '\n'.format(xoff=xoff, yoff=yoff, x=f.xsize,
+                                  y=f.ysize))
+            if l1.fill_value:
+                out.write('\t\t\t<NODATA>{va}</NODATA>'
+                          '\n'.format(va=f.fill_value))
+            out.write('\t\t</ComplexSource>\n')
+
+        xsize, ysize, geot = self._calculateNewSize()
+        if separate:
+            for k in self.file_infos.keys():
+                l1 = self.file_infos[k][0]
+                out = open("{pref}_{band}.vrt".format(pref=output, band=k),
+                           'w')
+                out.write('<VRTDataset rasterXSize="{x}" rasterYSize="{y}">'
+                          '\n'.format(x=xsize, y=ysize))
+                out.write('\t<SRS>{proj}</SRS>\n'.format(proj=l1.projection))
+                out.write('\t<GeoTransform>{geo0}, {geo1}, {geo2}, {geo3},'
+                          ' {geo4}, {geo5}</GeoTransform>'
+                          '\n'.format(geo0=geot[0], geo1=geot[1], geo2=geot[2],
+                                      geo3=geot[3], geo4=geot[4],
+                                      geo5=geot[5]))
+                gtype = gdal.GetDataTypeName(l1.band_type)
+                out.write('\t<VRTRasterBand dataType="{typ}" band="1"'
+                          '>\n'.format(typ=gtype))
+                if l1.fill_value:
+                    out.write('\t\t<NoDataValue>{val}</NoDataValue'
+                              '>\n'.format(val=l1.fill_value))
+                out.write('<ColorInterp>Gray</ColorInterp>\n')
+                for f in self.file_infos[k]:
+                    write_complex(out, f, geot)
+                out.write('\t</VRTRasterBand>\n')
+                out.write('</VRTDataset>\n')
+                out.close()
+        else:
+            values = self.file_infos.values()
+            l1 = values[0][0]
+            band = 1  # the number of band
+            out = open("{pref}.vrt".format(pref=output), 'w')
+            out.write('<VRTDataset rasterXSize="{x}" rasterYSize="{y}">'
+                      '\n'.format(x=xsize, y=ysize))
+            out.write('\t<SRS>{proj}</SRS>\n'.format(proj=l1.projection))
+            out.write('\t<GeoTransform>{geo0}, {geo1}, {geo2}, {geo3},'
+                      ' {geo4}, {geo5}</GeoTransform>\n'.format(geo0=geot[0],
+                      geo1=geot[1], geo2=geot[2], geo3=geot[3], geo4=geot[4],
+                      geo5=geot[5]))
+            for k in self.file_infos.keys():
+                l1 = self.file_infos[k][0]
+                out.write('\t<VRTRasterBand dataType="{typ}" band="{n}"'
+                          '>\n'.format(typ=gdal.GetDataTypeName(l1.band_type),
+                                       n=band))
+                if l1.fill_value:
+                    out.write('\t\t<NoDataValue>{val}</NoDataValue>\n'.format(
+                              val=l1.fill_value))
+                out.write('\t\t<ColorInterp>Gray</ColorInterp>\n')
+                for f in self.file_infos[k]:
+                    write_complex(out, f, geot)
+                out.write('\t</VRTRasterBand>\n')
+                band += 1
+            out.write('</VRTDataset>\n')
+            out.close()
