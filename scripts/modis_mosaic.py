@@ -19,18 +19,17 @@
 #
 ##################################################################
 
-#import system library
 import os
 import sys
 import string
 from types import ListType
-#import modis library
 try:
     from pymodis import optparse_gui
     wxpython = True
 except:
     wxpython = False
 from pymodis import convertmodis
+from pymodis import convertmodis_gdal
 from pymodis import optparse_required
 from optparse import OptionGroup
 try:
@@ -47,7 +46,7 @@ ERROR = "You have to define the name of a text file containing HDF files." \
 
 def main():
     """Main function"""
-    #usage
+    # usage
     usage = "usage: %prog [options] hdflist_file"
     if 1 == len(sys.argv) and wxpython:
         option_parser_class = optparse_gui.OptionParser
@@ -57,27 +56,26 @@ def main():
     groupR = OptionGroup(parser, 'Required options')
     groupG = OptionGroup(parser, 'Options for GDAL')
     groupM = OptionGroup(parser, 'Options for MRT')
-    #spatial extent
+    # output
     groupR.add_option("-o", "--output", dest="output", required=True,
-                      help="the name of output mosaic", metavar="OUTPUT_FILE")
-    #write into file
+                      help="the name or prefix (for VRT) of output mosaic",
+                      metavar="OUTPUT_FILE")
+    # subset
     groupR.add_option("-s", "--subset", dest="subset",
                       help="a subset of product layers. The string should"
                            " be similar to: 1 0 [default: all layers]")
-    #options only for GDAL
+    # options for set VRT
+    groupR.add_option("-v", "--vrt", dest="vrt", action="store_true",
+                      default=False, help="Create a GDAL VRT file. No other "
+                                          "options have to been set")
+    # options only for GDAL
     groupG.add_option("-f", "--output-format", dest="output_format",
                       metavar="OUTPUT_FORMAT", default="GTiff",
-                      help="output format supported by GDAL [default=%default]")
-    groupG.add_option("-e", "--epsg", dest="epsg", metavar="EPSG",
-                      help="EPSG code for the output")
-    groupG.add_option("-w", "--wkt_file", dest="wkt", metavar="WKT",
-                      help="file or string containing projection definition"
-                           " in WKT format")
-    groupG.add_option("-g", "--grain", dest="resolution",
+                      help="output format supported: GTiff, HDF4Image"
+                           " [default=%default]")
+    groupG.add_option("-g", "--grain", dest="grain",
                       type="int", help="the spatial resolution of output file")
-    groupG.add_option("--formats", dest="formats", action="store_true",
-                      help="print supported GDAL formats")
-    #mrt path
+    # mrt path
     groupM.add_option("-m", "--mrt", dest="mrt_path", required=True,
                       help="the path to MRT software", metavar="MRT_PATH",
                       type='directory')
@@ -85,7 +83,7 @@ def main():
     parser.add_option_group(groupG)
     parser.add_option_group(groupM)
     (options, args) = parser.parse_args()
-    #check the number of tiles
+    # check the number of tiles
     if len(args) == 0 and not wxpython:
         parser.print_help()
         sys.exit(1)
@@ -104,22 +102,40 @@ def main():
         parser.error("You have to define the name of a text file containing "
                      "HDF files. (One HDF file for line)")
 
-    #check is a subset it is set
+    # check is a subset it is set
     if not options.subset:
         options.subset = False
     else:
         if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
-            parser.error('ERROR: The spectral string should be similar to: "1 0"')
+            parser.error('ERROR: The spectral string should be similar to: '
+                         '"1 0" without "(" and ")"')
+    if not options.grain and options.vrt:
+        options.grain = False
+    elif not options.grain and options.vrt:
+        parser.error("You have to define the resolution of output file. Please"
+                     " set -g/--grain option")
     if options.mrt_path:
         modisOgg = convertmodis.createMosaic(args[0], options.output,
                                              options.mrt_path,  options.subset)
-#    else:
-#        modisOgg = gdal_merge.
-    modisOgg.run()
+        modisOgg.run()
+    else:
+        tiles = []
+        with open(args[0]) as f:
+            for l in f:
+                name = os.path.splitext(l.strip())[0]
+                if '.hdf' not in name:
+                    tiles.append(l.strip())
+        print tiles
+        modisOgg = convertmodis_gdal.createMosaicGDAL(tiles, options.subset,
+                                                      options.grain,
+                                                      options.output_format)
+        if options.vrt:
+            modisOgg.write_vrt(options.output)
+        else:
+            modisOgg.run(options.output)
 
-#add options
 if __name__ == "__main__":
     gdal.AllRegister()
     argv = gdal.GeneralCmdLineProcessor(sys.argv)
-    if argv != None:
+    if argv is not None:
         main()
