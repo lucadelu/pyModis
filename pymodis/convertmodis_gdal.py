@@ -24,6 +24,7 @@
 #
 ##################################################################
 
+from types import ListType
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -73,7 +74,7 @@ class convertModisGDAL:
     """A class to convert modis data from hdf to GDAL formats using GDAL
     """
     def __init__(self, hdfname, prefix, subset, res, outformat="GTiff",
-                 epsg=None, wkt=None, resampl='NEAREST_NEIGHBOR'):
+                 epsg=None, wkt=None, resampl='NEAREST_NEIGHBOR', vrt=False):
         # Open source dataset
         self.in_name = hdfname
         self.src_ds = gdal.Open(self.in_name)
@@ -99,6 +100,7 @@ class convertModisGDAL:
         self.resampling = getResampling(resampl)
         self.subset = subset.replace('(', '').replace(')', '').strip().split()
         self.driver = gdal.GetDriverByName(outformat)
+        self.vrt = vrt
         if self.driver is None:
             raise IOError('Format driver %s not found, pick a supported '
                           'driver.' % outformat)
@@ -129,10 +131,10 @@ class convertModisGDAL:
         """
         return int(round((ma - mi) / res))
 
-    def _createWarped(self):
+    def _createWarped(self, raster):
         """Create a warped VRT file to fetch default values for target raster
         dimensions and geotransform"""
-        src = gdal.Open(self.layers[0][0])
+        src = gdal.Open(raster)
         tmp_ds = gdal.AutoCreateWarpedVRT(src, sinusoidal_wkt,
                                           self.dst_wkt, self.resampling,
                                           self.error_threshold)
@@ -160,7 +162,6 @@ class convertModisGDAL:
         return 0
 
     def _progressCallback(self, pct, message, user_data):
-        #print(pct)
         return 1  # 1 to continue, 0 to stop
 
     def _reprojectOne(self, l):
@@ -176,8 +177,12 @@ class convertModisGDAL:
         else:
             fill_value = None
         datatype = band.DataType
-        l_name = l[1].split(' ')[1]
-        out_name = "{pref}_{lay}.tif".format(pref=self.output_pref, lay=l_name)
+        try:
+            l_name = l.split(':')[-1]
+            out_name = "{pref}_{lay}.tif".format(pref=self.output_pref,
+                                                 lay=l_name)
+        except:
+            out_name = "{pref}.tif".format(pref=self.output_pref)
         try:
             dst_ds = self.driver.Create(out_name, self.dst_xsize,
                                         self.dst_ysize, 1, datatype)
@@ -196,25 +201,37 @@ class convertModisGDAL:
             gdal.ReprojectImage(l_src_ds, dst_ds, sinusoidal_wkt, self.dst_wkt,
                                 self.resampling, 0, self.error_threshold, cbk,
                                 cbk_user_data)
-            print "Layer %s reprojected" % l[0]
+            print "Layer %s reprojected" % l
         except:
-            raise IOError('Not possibile to reproject dataset %s' % l[0])
+            raise IOError('Not possibile to reproject dataset %s' % l)
             return 0
         dst_ds.SetMetadata(meta)
         dst_ds = None
         l_src_ds = None
         return 0
 
+    def run_vrt_separated(self):
+        """Reproject VRT created by createMosaicGDAL, funzion write_vrt with
+        sepatated=True
+        """
+        self._createWarped(self.in_name)
+        self._reprojectOne(self.in_name)
+        print "Dataset '{name}' reprojected".format(name=self.in_name)
+
     def run(self):
         """Reproject all the subset of choosen layer"""
-        self._createWarped()
-        n = 0
-        for i in self.subset:
-            print i
-            if i == '1':
-                self._reprojectOne(self.layers[n][0])
-            n = n + 1
-        print "All layer for dataset %s reprojected" % self.in_name
+        if self.vrt:
+            self.run_vrt_separated()
+            return
+        else:
+            self._createWarped(self.layers[0][0])
+            n = 0
+            for i in self.subset:
+                print i
+                if i == '1':
+                    self._reprojectOne(self.layers[n][0])
+                n = n + 1
+            print "All layer for dataset '%s' reprojected" % self.in_name
 
 
 # =============================================================================
@@ -409,7 +426,10 @@ class createMosaicGDAL:
     def _initLayers(self):
         """Set up the variable self.layers as dictionary for each choosen
         subset"""
-        src_ds = gdal.Open(self.in_names[0])
+        if type(self.in_names) == ListType:
+            src_ds = gdal.Open(self.in_names[0])
+        else:
+            raise IOError("The input value should be a list of HDF files")
         layers = src_ds.GetSubDatasets()
         self.layers = {}
         n = 0
@@ -434,7 +454,8 @@ class createMosaicGDAL:
     def _names_to_fileinfos(self):
         """Translate a list of GDAL filenames, into file_info objects.
         Returns a list of file_info objects. There may be less file_info
-        objects than names if some of the names could not be opened as GDAL files.
+        objects than names if some of the names could not be opened as GDAL
+        files.
         """
         self.file_infos = {}
         for k, v in self.layers.iteritems():
@@ -525,8 +546,7 @@ class createMosaicGDAL:
             """Write a complex source to VRT file"""
             out.write('\t\t<ComplexSource>\n')
             out.write('\t\t\t<SourceFilename relativeToVRT="0">{name}'
-                      '</SourceFilename>\n'.format(name=f.filename.replace('"',
-                                                                           '')))
+                      '</SourceFilename>\n'.format(name=f.filename.replace('"', '')))
             out.write('\t\t\t<SourceBand>1</SourceBand>\n')
             out.write('\t\t\t<SourceProperties RasterXSize="{x}" '
                       'RasterYSize="{y}" DataType="{typ}" '
