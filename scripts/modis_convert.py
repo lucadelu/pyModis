@@ -87,6 +87,8 @@ def main():
     groupG.add_option("-w", "--wkt_file", dest="wkt", metavar="WKT",
                       help="file or string containing projection definition"
                            " in WKT format")
+    groupG.add_option("-v", "--vrt", dest="vrt", action="store_true",
+                      default=False, help="Read from a GDAL VRT file.")
     groupG.add_option("--formats", dest="formats", action="store_true",
                       help="print supported GDAL formats")
     #options only for MRT
@@ -155,7 +157,7 @@ def main():
                                                          options.epsg,
                                                          options.wkt,
                                                          options.resampling,
-                                                         )
+                                                         options.vrt)
     modisConver.run()
 
 #add options
