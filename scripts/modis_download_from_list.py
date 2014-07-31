@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# script to download massive MODIS data from a list of file
+# Script to download massive MODIS data from a text file containing a list of
+# MODIS file name
 #
 #  (c) Copyright Luca Delucchi 2013
 #  Authors: Luca Delucchi
@@ -18,13 +19,14 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
-
+"""Script to download massive MODIS data from a text file containing a list of
+MODIS file name"""
 from datetime import date
 try:
     from pymodis import optparse_gui
-    wxpython = True
-except:
-    wxpython = False
+    WXPYTHON = True
+except ImportError:
+    WXPYTHON = False
 from pymodis import downmodis
 from pymodis import optparse_required
 import sys
@@ -32,47 +34,47 @@ import sys
 
 def main():
     """Main function"""
-    #usage
+    # usage
     usage = "usage: %prog [options] destination_folder"
-    if 1 == len(sys.argv) and wxpython:
+    if 1 == len(sys.argv) and WXPYTHON:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage,
                                  description='modis_download_from_list')
-    #file
+    # file
     parser.add_option("-f", "--file", dest="file", type='file',
                       help="Input file containing data to download")
-    #url
+    # url
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
                       help="http/ftp server url [default=%default]",
                       dest="url")
-    #password
+    # password
     parser.add_option("-P", "--password", dest="password",
                       help="password to connect only if ftp server")
-    #username
+    # username
     parser.add_option("-U", "--username", dest="user", default="anonymous",
                       help="username to connect only if ftp server "
-                           "[default=%default]")
-    #path to add the path in the server
+                      "[default=%default]")
+    # path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
                       help="directory on the http/ftp server "
-                           "[default=%default]")
-    #path to add the url
+                      "[default=%default]")
+    # path to add the url
     parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
                       help="product name as on the http/ftp server "
-                           "[default=%default]")
-    #debug
+                      "[default=%default]")
+    # debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
                       help="this is useful for debugging the "
-                           "download [default=%default]")
-    #jpg
+                      "download [default=%default]")
+    # jpg
     parser.add_option("-j", action="store_true", dest="jpg", default=False,
                       help="download also the jpeg overview files "
-                           "[default=%default]")
-    #return options and argument
+                      "[default=%default]")
+    # return options and argument
     (options, args) = parser.parse_args()
-    if len(args) == 0 and not wxpython:
+    if len(args) == 0 and not WXPYTHON:
         parser.print_help()
         sys.exit(1)
     if len(args) > 1:
@@ -82,10 +84,9 @@ def main():
 
     lines = [elem for elem in f.readlines()]
 
-    tiles = [elem.split('.')[2] for elem in lines]
+    tiles = [elem.strip().split('.')[2] for elem in lines if elem != '\n']
     tiles = ','.join(sorted(set(tiles)))
-
-    dates = [elem.split('.')[1].replace('A', '') for elem in lines]
+    dates = [elem.split('.')[1].replace('A', '') for elem in lines if elem != '\n']
     dates = sorted(set(dates))
 
     for d in dates:
@@ -112,6 +113,5 @@ def main():
         else:
             modisOgg.closeFTP()
 
-#add options
 if __name__ == "__main__":
     main()

@@ -18,6 +18,9 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
+"""Script to mosaic the input tiles. It is able to use MRT or GDAL as backend
+"""
+from __future__ import print_function
 
 import os
 import sys
@@ -25,9 +28,9 @@ import string
 from types import ListType
 try:
     from pymodis import optparse_gui
-    wxpython = True
-except:
-    wxpython = False
+    WXPYTHON = True
+except ImportError:
+    WXPYTHON = False
 from pymodis import convertmodis
 from pymodis import convertmodis_gdal
 from pymodis import optparse_required
@@ -38,22 +41,22 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise('Python GDAL library not found, please install python-gdal')
+        raise 'Python GDAL library not found, please install python-gdal'
 
-ERROR = "You have to define the name of a text file containing HDF files." \
-        " (One HDF file for line)"
+ERROR = "You have to define the name of a text file containing HDF files" \
+        " (One HDF file for line)."
 
 
 def main():
     """Main function"""
     # usage
     usage = "usage: %prog [options] hdflist_file"
-    if 1 == len(sys.argv) and wxpython:
+    if 1 == len(sys.argv) and WXPYTHON:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_mosaic')
-    groupR = OptionGroup(parser, 'Required options')
+    groupR = OptionGroup(parser, 'General options')
     groupG = OptionGroup(parser, 'Options for GDAL')
     groupM = OptionGroup(parser, 'Options for MRT')
     # output
@@ -63,16 +66,16 @@ def main():
     # subset
     groupR.add_option("-s", "--subset", dest="subset",
                       help="a subset of product layers. The string should"
-                           " be similar to: 1 0 [default: all layers]")
+                      " be similar to: 1 0 [default: all layers]")
     # options for set VRT
     groupR.add_option("-v", "--vrt", dest="vrt", action="store_true",
                       default=False, help="Create a GDAL VRT file. No other "
-                                          "options have to been set")
+                      "GDAL options have to been set")
     # options only for GDAL
     groupG.add_option("-f", "--output-format", dest="output_format",
                       metavar="OUTPUT_FORMAT", default="GTiff",
                       help="output format supported: GTiff, HDF4Image"
-                           " [default=%default]")
+                      " [default=%default]")
     groupG.add_option("-g", "--grain", dest="grain",
                       type="int", help="the spatial resolution of output file")
     # mrt path
@@ -84,18 +87,18 @@ def main():
     parser.add_option_group(groupM)
     (options, args) = parser.parse_args()
     # check the number of tiles
-    if len(args) == 0 and not wxpython:
+    if len(args) == 0 and not WXPYTHON:
         parser.print_help()
         sys.exit(1)
     if not args:
-        print ERROR
+        parser.error(ERROR)
         sys.exit()
     else:
         if type(args) != ListType:
-            print ERROR
+            parser.error(ERROR)
             sys.exit()
         elif len(args) > 1:
-            print ERROR
+            parser.error(ERROR)
             sys.exit()
 
     if not os.path.isfile(args[0]):
@@ -116,7 +119,7 @@ def main():
                      " set -g/--grain option")
     if options.mrt_path:
         modisOgg = convertmodis.createMosaic(args[0], options.output,
-                                             options.mrt_path,  options.subset)
+                                             options.mrt_path, options.subset)
         modisOgg.run()
     else:
         tiles = []
@@ -125,9 +128,7 @@ def main():
                 name = os.path.splitext(l.strip())[0]
                 if '.hdf' not in name:
                     tiles.append(l.strip())
-        print tiles
         modisOgg = convertmodis_gdal.createMosaicGDAL(tiles, options.subset,
-                                                      options.grain,
                                                       options.output_format)
         if options.vrt:
             modisOgg.write_vrt(options.output)
