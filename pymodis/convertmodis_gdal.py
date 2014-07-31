@@ -23,7 +23,16 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
+"""Module to convert or mosaic MODIS HDF files using GDAL.
 
+Classes:
+
+* file_info
+* createMosaicGDAL
+* convertModisGDAL
+
+"""
+from __future__ import print_function
 from types import ListType
 try:
     import osgeo.gdal as gdal
@@ -31,7 +40,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise('Python GDAL library not found, please install python-gdal')
+        raise 'Python GDAL library not found, please install python-gdal'
 
 try:
     import osgeo.osr as osr
@@ -39,34 +48,37 @@ except ImportError:
     try:
         import osr
     except ImportError:
-        raise('Python GDAL library not found, please install python-gdal')
+        raise 'Python GDAL library not found, please install python-gdal'
 
 
 RESAM_GDAL = ['AVERAGE', 'BILINEAR', 'CUBIC', 'CUBIC_SPLINE', 'LANCZOS',
               'MODE', 'NEAREST_NEIGHBOR']
-sinusoidal_wkt = 'PROJCS["Sinusoidal_Sanson_Flamsteed",GEOGCS["GCS_Unknown",' \
-                 'DATUM["D_unknown",SPHEROID["Unknown",6371007.181,"inf"]],' \
-                 'PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]' \
-                 ',PROJECTION["Sinusoidal"],PARAMETER["central_meridian",0],' \
-                 'PARAMETER["false_easting",0],PARAMETER["false_northing",0]' \
-                 ',UNIT["Meter",1]]'
+SINU_WKT = 'PROJCS["Sinusoidal_Sanson_Flamsteed",GEOGCS["GCS_Unknown",' \
+           'DATUM["D_unknown",SPHEROID["Unknown",6371007.181,"inf"]],' \
+           'PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]' \
+           ',PROJECTION["Sinusoidal"],PARAMETER["central_meridian",0],' \
+           'PARAMETER["false_easting",0],PARAMETER["false_northing",0]' \
+           ',UNIT["Meter",1]]'
 
 
-def getResampling(r):
-    """Return  the GDAL resampling method"""
-    if r == 'AVERAGE':
+def getResampling(res):
+    """Return the GDAL resampling method
+
+       :param str res: the string of resampling method
+    """
+    if res == 'AVERAGE':
         return gdal.GRA_Average
-    elif r == 'BILINEAR' or r == 'BICUBIC':
+    elif res == 'BILINEAR' or res == 'BICUBIC':
         return gdal.GRA_Bilinear
-    elif r == 'LANCZOS':
+    elif res == 'LANCZOS':
         return gdal.GRA_Lanczos
-    elif r == 'MODE':
+    elif res == 'MODE':
         return gdal.GRA_Mode
-    elif r == 'NEAREST_NEIGHBOR':
+    elif res == 'NEAREST_NEIGHBOR':
         return gdal.GRA_NearestNeighbour
-    elif r == 'CUBIC_CONVOLUTION' or r == 'CUBIC':
+    elif res == 'CUBIC_CONVOLUTION' or res == 'CUBIC':
         return gdal.GRA_Cubic
-    elif r == 'CUBIC_SPLINE':
+    elif res == 'CUBIC_SPLINE':
         return gdal.GRA_CubicSpline
 
 
@@ -75,6 +87,20 @@ class convertModisGDAL:
     """
     def __init__(self, hdfname, prefix, subset, res, outformat="GTiff",
                  epsg=None, wkt=None, resampl='NEAREST_NEIGHBOR', vrt=False):
+        """Function for the initialize the object
+
+           :param str hdfname: name of input data
+           :param str prefix: prefix for output data
+           :param str subset: the subset to consider
+           :param int res: output resolution
+           :param str outformat: output format, it is possible to use all the
+                                 supported GDAL format
+           :param int epsg: the EPSG code for the preojection of output file
+           :param str wkt: the WKT string for the preojection of output file
+           :param str resampl: the resampling method to use
+           :param bool vrt: True to read GDAL VRT file created with
+                            createMosaicGDAL
+        """
         # Open source dataset
         self.in_name = hdfname
         self.src_ds = gdal.Open(self.in_name)
@@ -106,7 +132,12 @@ class convertModisGDAL:
                           'driver.' % outformat)
 
     def _boundingBox(self, src):
-        """Obtain the bounding box of raster in the new coordinate system"""
+        """Obtain the bounding box of raster in the new coordinate system
+
+           :param src: a GDAL dataset object
+
+           :return: a bounding box value in lists
+        """
         src_gtrn = src.GetGeoTransform(can_return_null=True)
 
         src_bbox_cells = ((0., 0.), (0, src.RasterYSize), (src.RasterXSize, 0),
@@ -122,20 +153,25 @@ class convertModisGDAL:
         return ((min(geo_pts_x), min(geo_pts_y)), (max(geo_pts_x),
                                                    max(geo_pts_y)))
 
-    def _calculateRes(self, mi, ma, res):
+    def _calculateRes(self, minn, maxx, res):
         """Calculate the number of pixel from extent and resolution
 
-        mi = minimum value of extent
-        ma = maximum value of extent
-        res = resolution of output raster
+           :param float minn: minimum value of extent
+           :param float maxx: maximum value of extent
+           :param int res: resolution of output raster
+
+           :return: integer number with the number of pixels
         """
-        return int(round((ma - mi) / res))
+        return int(round((maxx - minn) / res))
 
     def _createWarped(self, raster):
         """Create a warped VRT file to fetch default values for target raster
-        dimensions and geotransform"""
+        dimensions and geotransform
+
+        :param str raster: the name of raster, for HDF have to be one subset
+        """
         src = gdal.Open(raster)
-        tmp_ds = gdal.AutoCreateWarpedVRT(src, sinusoidal_wkt,
+        tmp_ds = gdal.AutoCreateWarpedVRT(src, SINU_WKT,
                                           self.dst_wkt, self.resampling,
                                           self.error_threshold)
 
@@ -162,6 +198,7 @@ class convertModisGDAL:
         return 0
 
     def _progressCallback(self, pct, message, user_data):
+        """For the progress status"""
         return 1  # 1 to continue, 0 to stop
 
     def _reprojectOne(self, l):
@@ -198,12 +235,13 @@ class convertModisGDAL:
         # value for last parameter of above self._progressCallback
         cbk_user_data = None
         try:
-            gdal.ReprojectImage(l_src_ds, dst_ds, sinusoidal_wkt, self.dst_wkt,
+            gdal.ReprojectImage(l_src_ds, dst_ds, SINU_WKT, self.dst_wkt,
                                 self.resampling, 0, self.error_threshold, cbk,
                                 cbk_user_data)
-            print "Layer %s reprojected" % l
+            print("Layer {name} reprojected".format(name=l))
         except:
-            raise IOError('Not possibile to reproject dataset %s' % l)
+            raise IOError('Not possibile to reproject dataset '
+                          '{name}'.format(name=l))
             return 0
         dst_ds.SetMetadata(meta)
         dst_ds = None
@@ -216,7 +254,7 @@ class convertModisGDAL:
         """
         self._createWarped(self.in_name)
         self._reprojectOne(self.in_name)
-        print "Dataset '{name}' reprojected".format(name=self.in_name)
+        print("Dataset '{name}' reprojected".format(name=self.in_name))
 
     def run(self):
         """Reproject all the subset of choosen layer"""
@@ -227,11 +265,11 @@ class convertModisGDAL:
             self._createWarped(self.layers[0][0])
             n = 0
             for i in self.subset:
-                print i
                 if i == '1':
                     self._reprojectOne(self.layers[n][0])
                 n = n + 1
-            print "All layer for dataset '%s' reprojected" % self.in_name
+            print("All layer for dataset '{name}' "
+                  "reprojected".format(name=self.in_name))
 
 
 # =============================================================================
@@ -240,7 +278,7 @@ def raster_copy(s_fh, s_xoff, s_yoff, s_xsize, s_ysize, s_band_n,
                 nodata=None):
     """Copy a band of raster into the output file.
 
-        Function copied from gdal_merge.py
+       Function copied from gdal_merge.py
     """
     if nodata is not None:
         return raster_copy_with_nodata(s_fh, s_xoff, s_yoff, s_xsize, s_ysize,
@@ -263,7 +301,7 @@ def raster_copy_with_nodata(s_fh, s_xoff, s_yoff, s_xsize, s_ysize, s_band_n,
                             nodata):
     """Copy a band of raster into the output file with nodata values.
 
-        Function copied from gdal_merge.py
+       Function copied from gdal_merge.py
     """
     try:
         import numpy as Numeric
@@ -289,16 +327,14 @@ class file_info:
     """A class holding information about a GDAL file.
 
        Class copied from gdal_merge.py
+
+       :param str filename: Name of file to read.
+
+       :return: 1 on success or 0 if the file can't be opened.
     """
 
     def init_from_name(self, filename):
-        """
-        Initialize file_info from filename
-
-        filename -- Name of file to read.
-
-        Returns 1 on success or 0 if the file can't be opened.
-        """
+        """Initialize file_info from filename"""
         fh = gdal.Open(filename)
         if fh is None:
             return 0
@@ -331,22 +367,25 @@ class file_info:
         return 1
 
     def copy_into(self, t_fh, s_band=1, t_band=1, nodata_arg=None):
-        """
-        Copy this files image into target file.
+        """Copy this files image into target file.
 
         This method will compute the overlap area of the file_info objects
         file, and the target gdal.Dataset object, and copy the image data
         for the common window area.  It is assumed that the files are in
-        a compatible projection ... no checking or warping is done.  However,
+        a compatible projection. no checking or warping is done.  However,
         if the destination file is a different resolution, or different
         image pixel type, the appropriate resampling and conversions will
         be done (using normal GDAL promotion/demotion rules).
 
-        t_fh -- gdal.Dataset object for the file into which some or all
-        of this file may be copied.
+        :param t_fh: gdal.Dataset object for the file into which some or all
+                     of this file may be copied.
+        :param s_band:
+        :param t_band:
+        :param nodata_arg:
 
-        Returns 1 on success (or if nothing needs to be copied), and zero one
-        failure.
+        :return: 1 on success (or if nothing needs to be copied), and zero one
+                 failure.
+
         """
         t_geotransform = t_fh.GetGeoTransform()
         t_ulx = t_geotransform[0]
@@ -402,19 +441,28 @@ class file_info:
 
 
 class createMosaicGDAL:
-    """A class to mosaic modis data from hdf to GDAL formats using GDAL"""
-    def __init__(self, hdfnames, subset, res, outformat="HDF4Image"):
+    """A class to mosaic modis data from hdf to GDAL formats using GDAL
+
+       :param list hdfnames: a list containing the name of tile to mosaic
+       :param str subset: the subset of layer to consider
+       :param str outformat: the output format to use, this parameter is
+                             not used for the VRT output, supported values
+                             are HDF4Image, GTiff, HFA, and maybe something
+                             else not tested.
+    """
+    def __init__(self, hdfnames, subset, outformat="HDF4Image"):
+        """Function for the initialize the object"""
         # Open source dataset
         self.in_names = hdfnames
-        self.resolution = res
+        # #TODO use resolution into mosaic.
+        # self.resolution = res
         self.subset = subset.replace('(', '').replace(')', '').strip().split()
         self.driver = gdal.GetDriverByName(outformat)
         if self.driver is None:
             raise IOError('Format driver %s not found, pick a supported '
                           'driver.' % outformat)
-            return 0
-        DriverMD = self.driver.GetMetadata()
-        if 'DCAP_CREATE' not in DriverMD:
+        driverMD = self.driver.GetMetadata()
+        if 'DCAP_CREATE' not in driverMD:
             raise IOError('Format driver %s does not support creation and'
                           ' piecewise writing.\nPlease select a format that'
                           ' does, such as GTiff (the default) or HFA (Erdas'
@@ -467,7 +515,10 @@ class createMosaicGDAL:
         self.file_infos
 
     def _calculateNewSize(self):
-        """Return the new size of output raster"""
+        """Return the new size of output raster
+
+           :return: X size, Y size and geotransform parameters
+        """
         values = self.file_infos.values()
         l1 = values[0][0]
         ulx = l1.ulx
@@ -487,25 +538,31 @@ class createMosaicGDAL:
         ysize = int((lry - uly) / geotransform[5] + 0.5)
         return xsize, ysize, geotransform
 
-    def write_mosaic_xml(self, output_pref):
-        """Write the XML metadata file for MODIS mosaic"""
+    def write_mosaic_xml(self, prefix):
+        """Write the XML metadata file for MODIS mosaic
+
+           :param str prefix: the prefix for the XML file containing metadata
+        """
         from parsemodis import parseModisMulti
         import os
         listHDF = []
         for i in self.in_names:
             listHDF.append(os.path.realpath(i.strip()))
         pmm = parseModisMulti(listHDF)
-        pmm.writexml("%s.xml" % self.output_pref)
+        pmm.writexml("%s.xml" % prefix)
 
     def run(self, output):
-        """Execute the mosaik  """
+        """Create the mosaik
+
+           :param str output: the name of output file
+        """
         values = self.file_infos.values()
         l1 = values[0][0]
         xsize, ysize, geotransform = self._calculateNewSize()
-        t_fh = self.driver.Create(self.output_pref, xsize, ysize,
+        t_fh = self.driver.Create(output, xsize, ysize,
                                   len(self.file_infos.keys()), l1.band_type)
         if t_fh is None:
-            raise IOError('Not possibile to create dataset %s' % self.output_pref)
+            raise IOError('Not possibile to create dataset %s' % output)
             return
 
         t_fh.SetGeoTransform(geotransform)

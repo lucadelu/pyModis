@@ -18,12 +18,20 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
+"""parsemodis module contain two classes for parse the MODIS metadata
 
-from datetime import *
+Classes:
+
+* parseModis
+* parseModisMulti
+
+"""
+
+from __future__ import print_function
 import string
 import os
 
-## lists of parameters accepted by resample MRT software
+# lists of parameters accepted by resample MRT software
 # projections
 PROJ_LIST = ['AEA', 'GEO', 'HAM', 'IGH', 'ISIN', 'LA', 'LCC', 'MOL', 'PS',
              'SIN', 'TM', 'UTM', 'MERCAT']
@@ -41,25 +49,24 @@ class parseModis:
     """Class to parse MODIS xml files, it can also create the parameter
        configuration file for resampling MODIS DATA with the MRT software or
        convertmodis Module
+
+       :param str filename: the name of MODIS hdf file
     """
 
     def __init__(self, filename):
-        """Initialization function :
-
-           filename = the name of MODIS hdf file
-        """
+        """Function to initialize the object"""
         from xml.etree import ElementTree
         if os.path.exists(filename):
             # hdf name
             self.hdfname = filename
         else:
-            raise IOError('%s does not exist' % filename)
+            raise IOError('{name} does not exist'.format(name=filename))
 
         if os.path.exists(self.hdfname + '.xml'):
             # xml hdf name
             self.xmlname = self.hdfname + '.xml'
         else:
-            raise IOError('%s does not exist' % self.hdfname + '.xml')
+            raise IOError('{name}.xml does not exist'.format(name=self.hdfname))
 
         # tif name for the output file for resample MRT software
         self.tifname = self.hdfname.replace('.hdf', '.tif')
@@ -75,11 +82,13 @@ class parseModis:
         try:
             for node in self.tree.iter():
                 if node.text.strip() != '':
-                    retString = "%s = %s\n" % (node.tag, node.text)
+                    retString = "{tag} = {val}\n".format(tag=node.tag,
+                                                         val=node.text)
         except:
             for node in self.tree.getiterator():
                 if node.text.strip() != '':
-                    retString = "%s = %s\n" % (node.tag, node.text)
+                    retString = "{tag} = {val}\n".format(tag=node.tag,
+                                                         val=node.text)
         return retString
 
     def getRoot(self):
@@ -247,203 +256,213 @@ class parseModis:
         return value
 
     def confResample(self, spectral, res=None, output=None, datum='WGS84',
-                     resample='NEAREST_NEIGHBOR', projtype='GEO',  utm=None,
-                     projpar='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 )',
-                     bound=None
-                    ):
+                     resample='NEAREST_NEIGHBOR', projtype='GEO', utm=None,
+                     projpar='( 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 '
+                     '0.0 0.0 0.0 0.0 )', bound=None):
         """Create the parameter file to use with resample MRT software to
         create tif (geotiff) file
 
-        spectral = the spectral subset to be used, see the product table to
-        understand the layer that you want use. For example:
+        :param str spectral: the spectral subset to be used, see the product
+                             table to understand the layer that you want use.
+                             For example:
 
-            - NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer NDVI, EVI
-              and QA VI the other layers are not used
-            - LST ( 1 1 0 0 1 1 0 0 0 0 0 0 ) copy only layer daily and
-              nightly temperature and QA
+                             * NDVI ( 1 1 1 0 0 0 0 0 0 0 0 0) copy only layer
+                               NDVI, EVI and QA VI the other layers are not used
+                             * LST ( 1 1 0 0 1 1 0 0 0 0 0 0 ) copy only layer
+                               daily and nightly temperature and QA
 
-        res = the resolution for the output file, it must be set in the map
-        unit of output projection system. The software will use the
-        original resolution of input file if res not set
+        :param int res: the resolution for the output file, it must be set in
+                        the map unit of output projection system. The software
+                        will use the original resolution of input file if res
+                        not set
 
-        output = the output name, if not set if not set the prefix name
-        of input hdf file will be used
+        :param str output: the output name, if not set if not set the prefix
+                           name of input hdf file will be used
 
-        utm = the UTM zone if projection system is UTM
+        :param utm: the UTM zone if projection system is UTM
 
-        resample = the type of resampling, the valid values are:
-            - NN (nearest neighbor)
-            - BI (bilinear)
-            - CC (cubic convolution)
+        :param str resample: the type of resampling, the valid values are:
 
-        projtype = the output projection system, the valid values are:
-            - AEA (Albers Equal Area)
-            - ER (Equirectangular)
-            - GEO (Geographic Latitude/Longitude)
-            - HAM (Hammer)
-            - ISIN (Integerized Sinusoidal)
-            - IGH (Interrupted Goode Homolosine)
-            - LA (Lambert Azimuthal)
-            - LCC (LambertConformal Conic)
-            - MERCAT (Mercator)
-            - MOL (Mollweide)
-            - PS (Polar Stereographic)
-            - SIN (Sinusoidal)
-            - UTM (Universal TransverseMercator)
+                             * NN (nearest neighbor)
+                             * BI (bilinear)
+                             * CC (cubic convolution)
 
-        datum = the datum to use, the valid values are:
-            - NAD27
-            - NAD83
-            - WGS66
-            - WGS76
-            - WGS84
-            - NODATUM
+        :param str projtype: the output projection system, valid values are:
 
-        projpar = a list of projection parameters, for more info check the
-        Appendix C of MODIS reprojection tool user manual
-        https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+                             * AEA (Albers Equal Area)
+                             * ER (Equirectangular)
+                             * GEO (Geographic Latitude/Longitude)
+                             * HAM (Hammer)
+                             * ISIN (Integerized Sinusoidal)
+                             * IGH (Interrupted Goode Homolosine)
+                             * LA (Lambert Azimuthal)
+                             * LCC (LambertConformal Conic)
+                             * MERCAT (Mercator)
+                             * MOL (Mollweide)
+                             * PS (Polar Stereographic)
+                             * SIN (Sinusoidal)
+                             * UTM (Universal TransverseMercator)
 
-        bound = dictionary with the following keys:
-            - max_lat
-            - max_lon
-            - min_lat
-            - min_lon
+        :param str datum: the datum to use, the valid values are:
+
+                          * NAD27
+                          * NAD83
+                          * WGS66
+                          * WGS76
+                          * WGS84
+                          * NODATUM
+
+        :param str projpar: a list of projection parameters, for more info
+                            check the Appendix C of MODIS reprojection tool
+                            user manual https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+
+        :param dict bound: dictionary with the following keys:
+
+                           * max_lat
+                           * max_lon
+                           * min_lat
+                           * min_lon
         """
-        #check if spectral it's write with correct construct ( value )
+        # check if spectral it's write with correct construct ( value )
         if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
-            raise IOError('ERROR: The spectral string should be similar to: ( 1 0 )')
+            raise IOError('ERROR: The spectral string should be similar to: '
+                          '( 1 0 )')
         # output name
         if not output:
             fileout = self.tifname
         else:
             fileout = output
         # the name of the output parameters files for resample MRT software
-        filename = os.path.join(self.path, '%s_mrt_resample.conf' % self.code)
+        filename = os.path.join(self.path, '{cod}_mrt_resample.conf'.format(cod=self.code))
         # if the file already exists it remove it
         if os.path.exists(filename):
             os.remove(filename)
         # open the file
         conFile = open(filename, 'w')
-        conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
-        conFile.write("SPECTRAL_SUBSET = %s\n" % spectral)
+        conFile.write("INPUT_FILENAME = {name}\n".format(name=self.hdfname))
+        conFile.write("SPECTRAL_SUBSET = {spec}\n".format(spec=spectral))
         conFile.write("SPATIAL_SUBSET_TYPE = INPUT_LAT_LONG\n")
         if not bound:
             # return the boundary from the input xml file
             bound = self.retBoundary()
         else:
-            if 'max_lat' not in bound or 'min_lat' not in bound  or \
-            'min_lon' not in bound or 'max_lon' not in bound:
-                raise IOError('bound variable is a dictionary with the ' \
-                          'following keys: max_lat, min_lat, min_lon, max_lon')
+            if 'max_lat' not in bound or 'min_lat' not in bound or \
+               'min_lon' not in bound or 'max_lon' not in bound:
+                raise IOError('bound variable is a dictionary with the '
+                              'following keys: max_lat, min_lat, min_lon,'
+                              ' max_lon')
         # Order:  UL: N W  - LR: S E
-        conFile.write("SPATIAL_SUBSET_UL_CORNER = ( %f %f )\n" % (bound['max_lat'],
-                                                              bound['min_lon']))
-        conFile.write("SPATIAL_SUBSET_LR_CORNER = ( %f %f )\n" % (bound['min_lat'],
-                                                              bound['max_lon']))
-        conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
+        conFile.write("SPATIAL_SUBSET_UL_CORNER = ( {mala} {milo} )"
+                      "\n".format(male=bound['max_lat'], milo=bound['min_lon']))
+        conFile.write("SPATIAL_SUBSET_LR_CORNER = ( {mila} {malo} )"
+                      "\n".format(mila=bound['min_lat'], malo=bound['max_lon']))
+        conFile.write("OUTPUT_FILENAME = {out}\n".format(out=fileout))
         # if resample is in resam_list set it otherwise return an error
         if resample in RESAM_LIST:
-            conFile.write("RESAMPLING_TYPE = %s\n" % resample)
+            conFile.write("RESAMPLING_TYPE = {res}\n".format(res=resample))
         else:
-            raise IOError('The resampling type %s is not supportet.\n' \
-                          'The resampling type supported are %s' % (resample,
-                                                                   RESAM_LIST))
+            raise IOError('The resampling type {res} is not supportet.\n'
+                          'The resampling type supported are '
+                          '{reslist}'.format(res=resample, reslist=RESAM_LIST))
         # if projtype is in proj_list set it otherwise return an error
         if projtype in PROJ_LIST:
-            conFile.write("OUTPUT_PROJECTION_TYPE = %s\n" % projtype)
+            conFile.write("OUTPUT_PROJECTION_TYPE = {typ}\n".format(typ=projtype))
         else:
-            raise IOError('The projection type %s is not supported.\n' \
-                       'The projections supported are %s' % (projtype,
-                                                             PROJ_LIST))
-        conFile.write("OUTPUT_PROJECTION_PARAMETERS = %s\n" % projpar)
+            raise IOError('The projection type {typ} is not supported.\n'
+                          'The projections supported are '
+                          '{proj}'.format(typ=projtype, proj=PROJ_LIST))
+        conFile.write("OUTPUT_PROJECTION_PARAMETERS = {proj}\n".format(proj=projpar))
         # if datum is in datum_list set the parameter otherwise return an error
         if datum in DATUM_LIST:
-            conFile.write("DATUM = %s\n" % datum)
+            conFile.write("DATUM = {dat}\n".format(dat=datum))
         else:
-            raise IOError('The datum %s is not supported.\n' \
-                          'The datum supported are %s' % (datum, DATUM_LIST))
+            raise IOError('The datum {dat} is not supported.\n'
+                          'The datum supported are {datum}'.format(dat=datum,
+                                                                   datum=DATUM_LIST))
         # if utm is not None write the UTM_ZONE parameter in the file
         if utm:
-            conFile.write("UTM_ZONE = %s\n" % utm)
+            conFile.write("UTM_ZONE = {zone}\n".format(zone=utm))
         # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
         if res:
-            conFile.write("OUTPUT_PIXEL_SIZE = %i\n" % res)
+            conFile.write("OUTPUT_PIXEL_SIZE = {pix}\n".format(pix=res))
         conFile.close()
         return filename
 
     def confResample_swath(self, sds, geoloc, res, output=None,
                            sphere='8', resample='NN', projtype='GEO', utm=None,
-                           projpar='0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0',
-                           bound=None
-                          ):
+                           projpar='0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 '
+                           '0.0 0.0 0.0 0.0 0.0', bound=None):
         """Create the parameter file to use with resample MRT software to
            create tif (geotiff) file
 
-        sds = Name of band/s (Science Data Set) to resample
+        :param str sds: Name of band/s (Science Data Set) to resample
+        :param str geoloc: Name geolocation file (example MOD3, MYD3)
+        :param int res: the resolution for the output file, it must be set in
+                        the map unit of output projection system. The software
+                        will use the original resolution of input file if res
+                        not set
 
-        geoloc = Name geolocation file (example MOD3, MYD3)
+        :param str output: the output name, if not set the prefix name of
+                           input hdf file will be used
 
-        res = the resolution for the output file, it must be set in the map
-        unit of output projection system. The software will use the
-        original resolution of input file if res not set
+        :param int sphere: Output sphere number. Valid options are:
 
-        output = the output name, if not set the prefix name
-        of input hdf file will be used
+                           * 0=Clarke 1866
+                           * 1=Clarke 1880
+                           * 2=Bessel
+                           * 3=International 1967
+                           * 4=International 1909
+                           * 5=WGS 72
+                           * 6=Everest
+                           * 7=WGS 66
+                           * 8=GRS1980/WGS 84
+                           * 9=Airy
+                           * 10=Modified Everest
+                           * 11=Modified Airy
+                           * 12=Walbeck
+                           * 13=Southeast Asia
+                           * 14=Australian National
+                           * 15=Krassovsky
+                           * 16=Hough
+                           * 17=Mercury1960
+                           * 18=Modified Mercury1968
+                           * 19=Sphere 19 (Radius 6370997)
+                           * 20=MODIS Sphere (Radius 6371007.181)
 
-        sphere = Output sphere number. Valid options are:
-            - 0=Clarke 1866
-            - 1=Clarke 1880
-            - 2=Bessel
-            - 3=International 1967
-            - 4=International 1909
-            - 5=WGS 72
-            - 6=Everest
-            - 7=WGS 66
-            - 8=GRS1980/WGS 84
-            - 9=Airy
-            - 10=Modified Everest
-            - 11=Modified Airy
-            - 12=Walbeck
-            - 13=Southeast Asia
-            - 14=Australian National
-            - 15=Krassovsky
-            - 16=Hough
-            - 17=Mercury1960
-            - 18=Modified Mercury1968
-            - 19=Sphere 19 (Radius 6370997)
-            - 20=MODIS Sphere (Radius 6371007.181)
+        :param str resample: the type of resampling, the valid values are:
 
-        resample = the type of resampling, the valid values are:
-            - NN (nearest neighbor)
-            - BI (bilinear)
-            - CC (cubic convolution)
+                             * NN (nearest neighbor)
+                             * BI (bilinear)
+                             * CC (cubic convolution)
 
-        projtype = the output projection system, the valid values are:
-            - AEA (Albers Equal Area)
-            - ER (Equirectangular)
-            - GEO (Geographic Latitude/Longitude)
-            - HAM (Hammer)
-            - ISIN (Integerized Sinusoidal)
-            - IGH (Interrupted Goode Homolosine)
-            - LA (Lambert Azimuthal)
-            - LCC (LambertConformal Conic)
-            - MERCAT (Mercator)
-            - MOL (Mollweide)
-            - PS (Polar Stereographic),
-            - SIN ()Sinusoidal)
-            - UTM (Universal TransverseMercator)
+        :param str projtype: the output projection system, valid values are:
 
-        utm = the UTM zone if projection system is UTM
+                             * AEA (Albers Equal Area)
+                             * ER (Equirectangular)
+                             * GEO (Geographic Latitude/Longitude)
+                             * HAM (Hammer)
+                             * ISIN (Integerized Sinusoidal)
+                             * IGH (Interrupted Goode Homolosine)
+                             * LA (Lambert Azimuthal)
+                             * LCC (LambertConformal Conic)
+                             * MERCAT (Mercator)
+                             * MOL (Mollweide)
+                             * PS (Polar Stereographic),
+                             * SIN ()Sinusoidal)
+                             * UTM (Universal TransverseMercator)
 
-        projpar = a list of projection parameters, for more info check
-        the Appendix C of MODIS reprojection tool user manual
-        https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+        :param utm: the UTM zone if projection system is UTM
 
-        bound = dictionary with the following keys:
-            - max_lat
-            - max_lon
-            - min_lat
-            - min_lon
+        :param str projpar: a list of projection parameters, for more info
+                            check the Appendix C of MODIS reprojection tool
+                            user manual https://lpdaac.usgs.gov/content/download/4831/22895/file/mrt41_usermanual_032811.pdf
+
+        :param dict bound: dictionary with the following keys:
+
+                           * max_lat
+                           * max_lon
+                           * min_lat
+                           * min_lon
         """
         # output name
         if not output:
@@ -451,60 +470,67 @@ class parseModis:
         else:
             fileout = output
         # the name of the output parameters files for resample MRT software
-        filename = os.path.join(self.path, '%s_mrt_resample.prm' % self.code)
+        filename = os.path.join(self.path,
+                                '{cod}_mrt_resample.prm'.format(cod=self.code))
         # if the file already exists it remove it
         if os.path.exists(filename):
             os.remove(filename)
         # open the file
         conFile = open(filename, 'w')
-        conFile.write("INPUT_FILENAME = %s\n" % self.hdfname)
-        conFile.write("GEOLOCATION_FILENAME = %s\n" % geoloc)
-        conFile.write("INPUT_SDS_NAME = %s\n" % sds)
+        conFile.write("INPUT_FILENAME = {name}\n".format(name=self.hdfname))
+        conFile.write("GEOLOCATION_FILENAME = {name}\n".format(name=geoloc))
+        conFile.write("INPUT_SDS_NAME = {name}\n".format(name=sds))
         conFile.write("OUTPUT_SPATIAL_SUBSET_TYPE = LAT_LONG\n")
         if not bound:
             # return the boundary from the input xml file
             bound = self.retBoundary()
         else:
-            if 'max_lat' not in bound or 'min_lat' not in bound  or \
-            'min_lon' not in bound or 'max_lon' not in bound:
-                raise IOError('bound variable is a dictionary with the ' \
-                        'following keys: max_lat, min_lat, min_lon, max_lon')
+            if 'max_lat' not in bound or 'min_lat' not in bound or \
+               'min_lon' not in bound or 'max_lon' not in bound:
+                raise IOError('bound variable is a dictionary with the '
+                              'following keys: max_lat, min_lat, min_lon,'
+                              ' max_lon')
         # Order:  UL: N W  - LR: S E
-        conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = %f %f\n" % (bound['min_lon'],
-                                                              bound['max_lat']))
-        conFile.write("OUTPUT_SPACE_LOWER_RIGHT_CORNER (LONG LAT) = %f %f\n" % (bound['max_lon'],
-                                                              bound['min_lat']))
-        conFile.write("OUTPUT_FILENAME = %s\n" % fileout)
+        conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = {milo} "
+                      "{mala}\n".format(male=bound['max_lat'],
+                                        milo=bound['min_lon']))
+        conFile.write("OUTPUT_SPACE_LOWER_RIGHT_CORNER (LONG LAT) = {mila} "
+                      "{malo}\n".format(mila=bound['min_lat'],
+                                        malo=bound['max_lon']))
+        conFile.write("OUTPUT_FILENAME = {name}\n".format(name=fileout))
         conFile.write("OUTPUT_FILE_FORMAT = GEOTIFF_FMT\n")
         # if resample is in resam_list set it otherwise return an error
         if resample in RESAM_LIST_SWATH:
-            conFile.write("KERNEL_TYPE (CC/BI/NN) = %s\n" % resample)
+            conFile.write("KERNEL_TYPE (CC/BI/NN) = {res}"
+                          "\n".format(res=resample))
         else:
-            raise IOError('The resampling type %s is not supportet.\n' \
-                   'The resampling type supported are %s' % (resample,
-                                                             RESAM_LIST_SWATH))
+            raise IOError('The resampling type {typ} is not supportet.\n'
+                          'The resampling type supported are '
+                          '{swa}'.format(typ=resample, swa=RESAM_LIST_SWATH))
         # if projtype is in proj_list set it otherwise return an error
         if projtype in PROJ_LIST:
-            conFile.write("OUTPUT_PROJECTION_NUMBER = %s\n" % projtype)
+            conFile.write("OUTPUT_PROJECTION_NUMBER = {typ}\n".format(typ=projtype))
         else:
-            raise IOError('The projection type %s is not supported.\n' \
-                   'The projections supported are %s' % (projtype, PROJ_LIST))
-        conFile.write("OUTPUT_PROJECTION_PARAMETER = %s\n" % projpar)
+            raise IOError('The projection type {typ} is not supported.\n'
+                          'The projections supported are '
+                          '{proj}'.format(typ=projtype, proj=PROJ_LIST))
+        conFile.write("OUTPUT_PROJECTION_PARAMETER = {prj}\n".format(prj=projpar))
         # if sphere is in sphere_list set it otherwise return an error
         if int(sphere) in SPHERE_LIST:
-            conFile.write("OUTPUT_PROJECTION_SPHERE = %s\n" % sphere)
+            conFile.write("OUTPUT_PROJECTION_SPHERE = {sph}\n".format(sph=sphere))
         else:
-            raise IOError('The sphere %s is not supported.\n' \
-                   'The spheres supported are %s' % (sphere, SPHERE_LIST))
+            raise IOError('The sphere {sph} is not supported.\nThe spheres'
+                          'supported are {sphere}'.format(sph=sphere,
+                                                          sphere=SPHERE_LIST))
         # if utm is not None write the UTM_ZONE parameter in the file
         if utm:
             if utm < '-60' or utm > '60':
                 raise IOError('The valid UTM zone are -60 to 60')
             else:
-                conFile.write("OUTPUT_PROJECTION_ZONE = %s\n" % utm)
+                conFile.write("OUTPUT_PROJECTION_ZONE = {utm}\n".format(utm=utm))
         # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
         if res:
-            conFile.write("OUTPUT_PIXEL_SIZE = %f\n" % res)
+            conFile.write("OUTPUT_PIXEL_SIZE = {res}\n".format(res=res))
         conFile.close()
         return filename
 
@@ -512,10 +538,12 @@ class parseModis:
 class parseModisMulti:
     """A class to obtain some variables for the xml file of several MODIS
        tiles. It can also create the xml file
+
+       :param list hdflist: python list containing the hdf files
     """
 
     def __init__(self, hdflist):
-        """hdflist = python list containing the hdf files"""
+        """Function to initialize the object"""
         from xml.etree import ElementTree
         self.ElementTree = ElementTree
         self.hdflist = hdflist
@@ -533,7 +561,7 @@ class parseModisMulti:
     def _checkval(self, vals):
         """Internal function to return values from list
 
-        vals = list of values
+        :param list vals: list of values
         """
         if vals.count(vals[0]) == self.nfiles:
             return [vals[0]]
@@ -547,7 +575,7 @@ class parseModisMulti:
     def _checkvaldict(self, vals):
         """Internal function to return values from dictionary
 
-        vals = dictionary of values
+        :param dict vals: dictionary of values
         """
         keys = vals[0].keys()
         outvals = {}
@@ -567,7 +595,7 @@ class parseModisMulti:
     def _minval(self, vals):
         """Internal function to return the minimum value
 
-        vals = list of values
+        :param list vals: list of values
         """
         outval = vals[0]
         for i in range(1, len(vals)):
@@ -578,7 +606,7 @@ class parseModisMulti:
     def _maxval(self, vals):
         """Internal function to return the maximum value
 
-        vals = list of values
+        :param list vals: list of values
         """
         outval = vals[0]
         for i in range(1, len(vals)):
@@ -589,9 +617,9 @@ class parseModisMulti:
     def _cicle_values(self, obj, values):
         """Internal function to add values from a dictionary
 
-        obj = element to add values
+        :param obj: element to add values
 
-        values = dictionary containing keys and values
+        :param values: dictionary containing keys and values
         """
         for k, v in values.iteritems():
             elem = self.ElementTree.SubElement(obj, k)
@@ -600,11 +628,9 @@ class parseModisMulti:
     def _addPoint(self, obj, lon, lat):
         """Internal function to add a point in boundary xml tag
 
-        obj = element to add point
-
-        lon = longitude of point
-
-        lat = latitude of point
+        :param obj: element to add point
+        :param lon: longitude of point
+        :param lat: latitude of point
         """
         pt = self.ElementTree.SubElement(obj, 'Point')
         ptlon = self.ElementTree.SubElement(pt, 'PointLongitude')
@@ -615,7 +641,7 @@ class parseModisMulti:
     def valDTD(self, obj):
         """Function to add DTDVersion
 
-        obj = element to add DTDVersion
+        :param obj: element to add DTDVersion
         """
         values = []
         for i in self.parModis:
@@ -627,7 +653,7 @@ class parseModisMulti:
     def valDataCenter(self, obj):
         """Function to add DataCenter
 
-        obj = element to add DataCenter
+        :param obj: element to add DataCenter
         """
         values = []
         for i in self.parModis:
@@ -639,7 +665,7 @@ class parseModisMulti:
     def valGranuleUR(self, obj):
         """Function to add GranuleUR
 
-        obj = element to add GranuleUR
+        :param obj: element to add GranuleUR
         """
         values = []
         for i in self.parModis:
@@ -651,7 +677,7 @@ class parseModisMulti:
     def valDbID(self, obj):
         """Function to add DbID
 
-        obj = element to add DbID
+        :param obj: element to add DbID
         """
         values = []
         for i in self.parModis:
@@ -663,7 +689,7 @@ class parseModisMulti:
     def valInsTime(self, obj):
         """Function to add the minimum of InsertTime
 
-        obj = element to add InsertTime
+        :param obj: element to add InsertTime
         """
         values = []
         for i in self.parModis:
@@ -673,7 +699,7 @@ class parseModisMulti:
     def valCollectionMetaData(self, obj):
         """Function to add CollectionMetaData
 
-        obj = element to add CollectionMetaData
+        :param obj: element to add CollectionMetaData
         """
         values = []
         for i in self.parModis:
@@ -683,7 +709,7 @@ class parseModisMulti:
     def valDataFiles(self, obj):
         """Function to add DataFileContainer
 
-        obj = element to add DataFileContainer
+        :param obj: element to add DataFileContainer
         """
         values = []
         for i in self.parModis:
@@ -695,7 +721,7 @@ class parseModisMulti:
     def valPGEVersion(self, obj):
         """Function to add PGEVersion
 
-        obj = element to add PGEVersion
+        :param obj: element to add PGEVersion
         """
         values = []
         for i in self.parModis:
@@ -707,7 +733,7 @@ class parseModisMulti:
     def valRangeTime(self, obj):
         """Function to add RangeDateTime
 
-        obj = element to add RangeDateTime
+        :param obj: element to add RangeDateTime
         """
         values = []
         for i in self.parModis:
@@ -732,7 +758,7 @@ class parseModisMulti:
     def valMeasuredParameter(self, obj):
         """Function to add ParameterName
 
-        obj = element to add ParameterName
+        :param obj: element to add ParameterName
         """
         valuesQAStats = []
         valuesQAFlags = []
@@ -748,7 +774,7 @@ class parseModisMulti:
     def valInputPointer(self, obj):
         """Function to add InputPointer
 
-        obj = element to add InputPointer
+        :param obj: element to add InputPointer
         """
         for i in self.parModis:
             for v in i.retInputGranule():
@@ -758,7 +784,7 @@ class parseModisMulti:
     def valPlatform(self, obj):
         """Function to add Platform elements
 
-        obj = element to add Platform elements
+        :param obj: element to add Platform elements
         """
         valuesSName = []
         valuesInstr = []
@@ -788,7 +814,7 @@ class parseModisMulti:
     def writexml(self, outputname):
         """Write a xml file for a mosaic
 
-        outputname = the name of xml file
+        :param str outputname: the name of output xml file
         """
         # the root element
         granule = self.ElementTree.Element('GranuleMetaDataFile')
@@ -848,8 +874,8 @@ class parseModisMulti:
         # TODO ADD BrowseProduct
         output = open(outputname, 'w')
         output.write('<?xml version="1.0" encoding="UTF-8"?>')
-        output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.' \
-                     'gsfc.nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/' \
+        output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.'
+                     'gsfc.nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/'
                      'ScienceGranuleMetadata.dtd">')
         output.write(self.ElementTree.tostring(granule))
         output.close()
