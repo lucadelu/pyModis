@@ -216,7 +216,8 @@ class OptparseDialog(wx.Dialog):
         """
         sizer = wx.BoxSizer(wx.HORIZONTAL)
         # check what is the module
-        if name == 'modis_convert.py' or name == 'modis_parse.py':
+        if name == 'modis_convert.py' or name == 'modis_parse.py' or \
+           name == 'modis_quality.py':
             ltext = 'File HDF [%s]' % STREQUIRED
             self.htext = 'Select HDF file'
             self.typecont = 'file'

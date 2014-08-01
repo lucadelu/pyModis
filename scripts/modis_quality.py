@@ -21,56 +21,60 @@
 ##################################################################
 
 import sys
+import os
 try:
     from pymodis import optparse_gui
-    wxpython = True
+    WXPYTHON = True
 except:
-    wxpython = False
+    WXPYTHON = False
 from pymodis import optparse_required
 from pymodis import qualitymodis
 
 
 def main():
     """Main function"""
-    #usage
-    usage = "usage: %prog [options] input_file destination_file"
-    if 1 == len(sys.argv) and wxpython:
+    # usage
+    usage = "usage: %prog [options] input_file"
+    if 1 == len(sys.argv) and WXPYTHON:
         option_parser_class = optparse_gui.OptionParser
     else:
         option_parser_class = optparse_required.OptionParser
 
     parser = option_parser_class(usage=usage, description='modis_quality')
 
+    parser.add_option("-o", "--output", dest="output", required=True,
+                      help="the prefix of output file", metavar="OUTPUT_FILE")
     # type
     parser.add_option("-t", "--type", dest="type", default="1",
-                      help="Quality type either as number or name (e.g. 1 or "
+                      help="quality type either as number or name (e.g. 1 or "
                            "VIQuality for MOD13 products) [default=%default]")
     # quality layer
     parser.add_option("-l", "--qualitylayer", dest="layer", default="1",
-                      help="Quality layer of the dataset, dependent on the "
+                      help="quality layer of the dataset, dependent on the "
                            "used MODIS product. (e.g. 1 or QC_Day for the "
                            "Daytime QC Layer of MOD11) [default=%default]")
 
     # quality layer
     parser.add_option("-p", "--producttype", dest="product", default="MOD13Q1",
-                      help="Quality layer of the dataset, dependent on the "
+                      help="quality layer of the dataset, dependent on the "
                            "used MODIS product. (e.g. 1 or QC_Day for the "
                            "Daytime QC Layer of MOD11) [default=%default]")
-    #return options and argument
+    # return options and argument
     (options, args) = parser.parse_args()
-    if len(args) == 0 and not wxpython:
+    if len(args) == 0 and not WXPYTHON:
         parser.print_help()
         sys.exit(1)
-    if len(args) != 2:
-        parser.error("You have to define the destination folder for HDF file")
-    #set modis object
-    modisQuality = qualitymodis.QualityModis(args[0], args[1],
+    if len(args) > 1:
+        parser.error("You have to define the name of HDF file.")
+    if not os.path.isfile(args[0]):
+        parser.error("You have to define the name of HDF file.")
+    # set modis object
+    modisQuality = qualitymodis.QualityModis(args[0], options.output,
                                              qType=options.type,
                                              qLayer=options.layer,
                                              pType=options.product)
-    #run
+    # run
     modisQuality.run()
 
-#add options
 if __name__ == "__main__":
     main()
