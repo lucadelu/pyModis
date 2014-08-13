@@ -35,3 +35,16 @@ div.related ul li a {
 p.admonition-title {
     background-color: rgba(207, 66, 0, 0.85)
 }
+
+div.highlight {
+    background: #FFFFFF;
+}
+
+img.gui {
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+div.sphinxsidebar {
+    padding-right: 25px!important;
+}

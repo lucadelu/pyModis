@@ -4,11 +4,13 @@ About pyModis
 Requirements
 -------------
 
-The only required software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
-to convert or mosaic MODIS HDF files. 
+``pyModis`` requires **Python GDAL** and **Numpy** packages.
 
-For *download* it required **Python GDAL and Numpy packages**,  instead for *parse*
-HDF files only standard Python modules are used by ``pyModis`` library and tools.
+If you want to use the Graphical User Interface you have to
+install also **wxPython** library.
+
+You can use also software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
+to convert or mosaic MODIS HDF files.
 
 How to install pyModis
 -----------------------
@@ -42,13 +44,13 @@ Compile from source
 Compile ``pyModis`` is very simple. First you need to download ``pyModis``
 source code from `github repository <https://github.com/lucadelu/pyModis>`_.
 
-You can use `git <http://git-scm.com/>`_ to download the latest code 
-(with the whole history and so it contain all the different stable versions, 
+You can use `git <http://git-scm.com/>`_ to download the latest code
+(with the whole history and so it contain all the different stable versions,
 from the last to the first) ::
 
     git clone https://github.com/lucadelu/pyModis.git
 
-or `download the latest stable version <https://github.com/lucadelu/pyModis/tags>`_ 
+or `download the latest stable version <https://github.com/lucadelu/pyModis/tags>`_
 from the repository and decompress it.
 
 Now enter the ``pyModis`` folder and launch as administrator of 
@@ -90,18 +92,25 @@ using *easy_install* ::
 Now install `numpy <http://www.numpy.org>`_ library using *easy_install* because
 installation from pip is broken (this is required only for version >= 0.7.1) ::
 
-    easy_install numpy
+    easy_install numpy GDAL
+
+If you want the Graphical User Interface you have to install also **wxPython** ::
+
+    easy_install WxPython WxPython-Common
 
 Finally install ``pyModis`` using *pip* ::
 
     pip install pyModis
 
+If you want use the GUI you have to `download and install wxPython <http://www.wxpython.org/download.php>`_
+
 Troubleshooting
-^^^^^^^^^^^^^^^^^^^
+------------------
 
 Problem installing dependencies with pip
-"""""""""""""""""""""""""""""""""""""""""""
-Sometimes *pip* return error when it try to install Python GDAL or Numpy.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes *pip* return error when it try to install Python GDAL, Numpy or wxPython.
 You can solve this problem installing Python GDAL or Numpy using the
 version of your operating system.
 
@@ -158,9 +167,9 @@ If PDF file is missing no link will be added
 
 Ohloh statistics
 -----------------
-  
-.. only:: html 
-  
+
+.. only:: html
+
   .. raw:: html
 
       <table align="center">
@@ -175,14 +184,14 @@ Ohloh statistics
 	<tr>
 	  <td align="center">
 	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_languages.js"></script>
-	  </td>	
+	  </td>
 	  <td align="center">
 	    <script type="text/javascript" src="http://www.ohloh.net/p/486825/widgets/project_cocomo.js"></script>
 	  </td>
 	</tr>
       </table>
-      
+
 .. only:: latex
 
-  For more information about ``pyModis`` please visit the 
+  For more information about ``pyModis`` please visit the
   `pyModis Ohloh page <http://www.ohloh.net/p/pyModis>`_
