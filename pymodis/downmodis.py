@@ -23,8 +23,14 @@ It support both FTP and HTTP repositories
 
 Classes:
 
-* modisHtmlParser
-* downModis
+* :class:`modisHtmlParser`
+* :class:`downModis`
+
+Functions:
+
+* :func:`urljoin`
+* :func:`getNewerVersion`
+* :func:`str2date`
 
 """
 from __future__ import print_function

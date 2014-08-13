@@ -23,13 +23,20 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
-"""Module to convert or mosaic MODIS HDF files using GDAL.
+"""Convert MODIS HDF file using GDAL Python bindings. It can create GeoTiff
+file (or other GDAL supported formats) or HDF mosaic file for several tiles.
 
 Classes:
 
-* file_info
-* createMosaicGDAL
-* convertModisGDAL
+* :class:`file_info`
+* :class:`createMosaicGDAL`
+* :class:`convertModisGDAL`
+
+Functions:
+
+* :func:`getResampling`
+* :func:`raster_copy`
+* :func:`raster_copy_with_nodata`
 
 """
 from __future__ import print_function

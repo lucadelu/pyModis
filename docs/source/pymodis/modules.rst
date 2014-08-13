@@ -3,11 +3,13 @@ pyModis Library
 
 ``pyModis`` library it is a Python library to work with MODIS data.
 
-It can easily used in your application to download, analyze and
-convert MODIS data, it is already used by GRASS GIS in r.in.modis
-addons tools.
+It can easily used in your application to download, analyze,
+convert and check the quality of MODIS data.
 
-It is compose by four module:
+``pyModis`` can be used in other free and open source software,
+it is already present in GRASS GIS used by r.in.modis addon.
+
+It is compose by this modules:
 
 .. only:: latex
 

@@ -23,8 +23,8 @@ into gui module.
 
 Classes:
 
-* OptionWithDefault
-* OptionParser
+* :class:`OptionWithDefault`
+* :class:`OptionParser`
 
 """
 from __future__ import print_function

@@ -19,11 +19,12 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
-"""Module to check the quality of MODIS data
+"""A class for the extraction and transformation of MODIS quality layers to
+specific information
 
 Classes:
 
-* QualityModis
+* :class:`QualityModis`
 
 """
 from __future__ import print_function

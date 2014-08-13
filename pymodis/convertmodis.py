@@ -18,13 +18,18 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
-"""Module to convert or mosaic MODIS HDF files using MRT
+"""Convert MODIS HDF file to GeoTiff file or create a HDF mosaic file for
+several tiles using Modis Reprojection Tools.
 
 Classes:
 
-* convertModis
-* createMosaic
-* processModis
+* :class:`convertModis`
+* :class:`createMosaic`
+* :class:`processModis`
+
+Functions:
+
+* :func:`checkMRTpath`
 
 """
 # to be compliant with python 3

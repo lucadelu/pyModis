@@ -1,8 +1,6 @@
 :mod:`downmodis` module
 ------------------------------------------------------------------------------------
 
-It is useful to download MODIS data from NASA server
-
 .. automodule:: pymodis.downmodis
     :members:
     :undoc-members:

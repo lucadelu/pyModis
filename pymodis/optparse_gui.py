@@ -5,6 +5,18 @@ A drop-in replacement for optparse ("import optparse_gui as optparse")
 Provides an identical interface to optparse(.OptionParser),
 But displays an automatically generated wx dialog in order to enter the
 options/args, instead of parsing command line arguments
+
+Classes:
+
+* :class:`OptparseDialog`
+* :class:`UserCancelledError`
+* :class:`Option`
+* :class:`OptionParser`
+
+Functions:
+
+* :func:`checkLabel`
+
 '''
 
 from __future__ import print_function

@@ -18,12 +18,13 @@
 #  See the GNU General Public License for more details.
 #
 ##################################################################
-"""parsemodis module contain two classes for parse the MODIS metadata
+"""Simple class to parse MODIS metadata file, it can also write the XML
+metadata file for a mosaic.
 
 Classes:
 
-* parseModis
-* parseModisMulti
+* :class:`parseModis`
+* :class:`parseModisMulti`
 
 """
 
