@@ -13,6 +13,13 @@ Usage
 
 Options
 ^^^^^^^
+
+.. image:: ../_static/gui/modis_download_from_list.png
+  :scale: 50%
+  :alt: GUI for modis_download_from_list.py
+  :align: left
+  :class: gui
+
 ::
 
     -h  --help        show the help message and exit
@@ -37,11 +44,11 @@ Examples
 
 The following text should be in your *MODTilesToDownload.txt* file ::
 
-  MOD11A1.A2012279.h19v11.005.*.hdf*
-  MOD11A1.A2012279.h19v12.005.*.hdf*
-  MOD11A1.A2012279.h20v11.005.*.hdf*
-  MOD11A1.A2012279.h20v12.005.*.hdf*
-  MOD11A1.A2012279.h21v11.005.*.hdf*
+  MOD11A1.A2012278.h19v11.005.*.hdf*
+  MOD11A1.A2012278.h19v12.005.*.hdf*
+  MOD11A1.A2012278.h20v11.005.*.hdf*
+  MOD11A1.A2012278.h20v12.005.*.hdf*
+  MOD11A1.A2012278.h21v11.005.*.hdf*
 
 
 Download Terra LST data from the above text file ::
@@ -50,11 +57,11 @@ Download Terra LST data from the above text file ::
 
 The following text should be in your *MYDTilesToDownload.txt* file ::
 
-  MYD11A1.A2012279.h19v11.005.*.hdf*
-  MYD11A1.A2012279.h19v12.005.*.hdf*
-  MYD11A1.A2012279.h20v11.005.*.hdf*
-  MYD11A1.A2012279.h20v12.005.*.hdf*
-  MYD11A1.A2012279.h21v11.005.*.hdf*
+  MYD11A1.A2012278.h19v11.005.*.hdf*
+  MYD11A1.A2012278.h19v12.005.*.hdf*
+  MYD11A1.A2012278.h20v11.005.*.hdf*
+  MYD11A1.A2012278.h20v12.005.*.hdf*
+  MYD11A1.A2012278.h21v11.005.*.hdf*
 
 Download Aqua LST data from the above text file ::
 

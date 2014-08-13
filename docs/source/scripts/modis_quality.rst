@@ -11,13 +11,28 @@ Usage
 
 Options
 ^^^^^^^
+
+.. image:: ../_static/gui/modis_quality.png
+  :scale: 60%
+  :alt: GUI for modis_quality.py
+  :align: left
+  :class: gui
+
 ::
 
-    -h  --help               show the help
-    -t  --type               quality type either as number or name (e.g. 1 [default=1])
-    -l  --qualitylayer       index of qualitylayer (if more than one existent) ordered from 1..n.
-                             (e.g. 2 for Nighttime LSTE QC from MOD11C1 products. [default=1])
-    -p  --producttype        name of producttype, if working on a mosaic. Not necessary for raw datasets.
+  -h, --help            show this help message and exit
+  -o OUTPUT_FILE, --output=OUTPUT_FILE
+                        (Required) the prefix of output file
+  -t TYPE, --type=TYPE  quality type either as number or name (e.g. 1 or
+                        VIQuality for MOD13 products) [default=1]
+  -l LAYER, --qualitylayer=LAYER
+                        quality layer of the dataset, dependent on the used
+                        MODIS product. (e.g. 1 or QC_Day for the Daytime QC
+                        Layer of MOD11) [default=1]
+  -p PRODUCT, --producttype=PRODUCT
+                        quality layer of the dataset, dependent on the used
+                        MODIS product. (e.g. 1 or QC_Day for the Daytime QC
+                        Layer of MOD11) [default=MOD13Q1]
 
 Examples
 ^^^^^^^^

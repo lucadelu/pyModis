@@ -1,6 +1,5 @@
 modis_download.py
 ------------------
-
 **modis_download.py** is a script to download MODIS data from NASA FTP servers. It can download large amounts of data and it can be profitably used with cron jobs to receive data with a fixed delay of time.
 
 Usage
@@ -12,6 +11,13 @@ Usage
 
 Options
 ^^^^^^^
+
+.. image:: ../_static/gui/modis_download.png
+  :scale: 60%
+  :alt: GUI for modis_download.py
+  :align: left
+  :class: gui
+
 ::
 
     -h  --help        show the help message and exit
@@ -41,7 +47,6 @@ Options
                       options [default=False]
     -r                remove files with size same to zero from
                       'destination_folder'  [default=False]
-
 
 
 Examples

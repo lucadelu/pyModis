@@ -1,12 +1,13 @@
 pyModis Scripts
 ===============
 
-The ``pyModis`` **scripts** provide you with a complete toolkit to work
-with MODIS data, you can download, analyze and convert data. They
-are developed to work from command line and inside scripts to
-automatically update your MODIS files dataset.
+The ``pyModis`` **scripts** provide you with a complete toolkit
+to work with MODIS data, you can download, analyze and convert
+the data. They are developed to work from command line and inside
+scripts to automatically update your MODIS files dataset.
+From version 1.0 the scripts have also Graphical User Interface.
 
-Currently the tools are 5:
+Currently the tools are:
 
 .. only:: latex
 
@@ -32,4 +33,3 @@ Currently the tools are 5:
    modis_mosaic
    modis_convert
    modis_quality
-

@@ -13,8 +13,15 @@ Usage
 
 Options
 ^^^^^^^
+
+.. image:: ../_static/gui/modis_multiparse.png
+  :scale: 40%
+  :alt: GUI for modis_multiparse.py
+  :align: left
+  :class: gui
+
 ::
-    
+
     -h  --help     show the help
     -b             print the values related to the spatial max extent
     -w  --write    write the MODIS XML metadata file for MODIS mosaic

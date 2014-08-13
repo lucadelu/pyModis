@@ -13,6 +13,13 @@ Usage
 
 Options
 ^^^^^^^
+
+.. image:: ../_static/gui/modis_parse.png
+  :scale: 35%
+  :alt: GUI for modis_parse.py
+  :align: left
+  :class: gui
+
 ::
     
     -h  --help     show the help
