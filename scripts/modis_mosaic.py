@@ -113,11 +113,11 @@ def main():
         if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
             parser.error('ERROR: The spectral string should be similar to: '
                          '"1 0" without "(" and ")"')
-    if not options.grain and options.vrt:
-        options.grain = False
-    elif not options.grain and options.vrt:
-        parser.error("You have to define the resolution of output file. Please"
-                     " set -g/--grain option")
+#    if not options.grain and options.vrt:
+#        options.grain = False
+#    elif not options.grain and options.vrt:
+#        parser.error("You have to define the resolution of output file. Please"
+#                     " set -g/--grain option")
     if options.mrt_path:
         modisOgg = convertmodis.createMosaic(args[0], options.output,
                                              options.mrt_path, options.subset)
