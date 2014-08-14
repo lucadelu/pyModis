@@ -67,17 +67,18 @@ def main():
     groupR.add_option("-s", "--subset", dest="subset",
                       help="a subset of product layers. The string should"
                       " be similar to: 1 0 [default: all layers]")
-    # options for set VRT
-    groupR.add_option("-v", "--vrt", dest="vrt", action="store_true",
-                      default=False, help="Create a GDAL VRT file. No other "
-                      "GDAL options have to been set")
     # options only for GDAL
     groupG.add_option("-f", "--output-format", dest="output_format",
                       metavar="OUTPUT_FORMAT", default="GTiff",
                       help="output format supported: GTiff, HDF4Image"
                       " [default=%default]")
-    groupG.add_option("-g", "--grain", dest="grain",
-                      type="int", help="the spatial resolution of output file")
+#    groupG.add_option("-g", "--grain", dest="grain",
+#                      type="int", help="force the spatial resolution of output"
+#                      " file")
+    # options for set VRT
+    groupG.add_option("-v", "--vrt", dest="vrt", action="store_true",
+                      default=False, help="Create a GDAL VRT file. No other "
+                      "GDAL options have to been set")
     # mrt path
     groupM.add_option("-m", "--mrt", dest="mrt_path", required=True,
                       help="the path to MRT software", metavar="MRT_PATH",

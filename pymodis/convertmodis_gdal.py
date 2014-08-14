@@ -463,7 +463,11 @@ class createMosaicGDAL:
         self.in_names = hdfnames
         # #TODO use resolution into mosaic.
         # self.resolution = res
-        self.subset = subset.replace('(', '').replace(')', '').strip().split()
+        if subset:
+            self.subset = subset.replace('(', '').replace(')',
+                                                          '').strip().split()
+        else:
+            self.subset = None
         self.driver = gdal.GetDriverByName(outformat)
         if self.driver is None:
             raise IOError('Format driver %s not found, pick a supported '
@@ -488,8 +492,10 @@ class createMosaicGDAL:
         layers = src_ds.GetSubDatasets()
         self.layers = {}
         n = 0
+        if not self.subset:
+            self.subset = [1 for i in range(len(layers))]
         for i in self.subset:
-            if i == '1':
+            if str(i) == '1':
                 name = layers[n][0].split(':')[-1]
                 self.layers[name] = []
             n = n + 1
@@ -501,7 +507,7 @@ class createMosaicGDAL:
             layers = src_ds.GetSubDatasets()
             n = 0
             for i in self.subset:
-                if i == '1':
+                if str(i) == '1':
                     name = layers[n][0].split(':')[-1]
                     self.layers[name].append(layers[n][0])
                 n = n + 1
