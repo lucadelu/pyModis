@@ -354,7 +354,7 @@ class parseModis:
                               ' max_lon')
         # Order:  UL: N W  - LR: S E
         conFile.write("SPATIAL_SUBSET_UL_CORNER = ( {mala} {milo} )"
-                      "\n".format(male=bound['max_lat'], milo=bound['min_lon']))
+                      "\n".format(mala=bound['max_lat'], milo=bound['min_lon']))
         conFile.write("SPATIAL_SUBSET_LR_CORNER = ( {mila} {malo} )"
                       "\n".format(mila=bound['min_lat'], malo=bound['max_lon']))
         conFile.write("OUTPUT_FILENAME = {out}\n".format(out=fileout))
@@ -493,7 +493,7 @@ class parseModis:
                               ' max_lon')
         # Order:  UL: N W  - LR: S E
         conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = {milo} "
-                      "{mala}\n".format(male=bound['max_lat'],
+                      "{mala}\n".format(mala=bound['max_lat'],
                                         milo=bound['min_lon']))
         conFile.write("OUTPUT_SPACE_LOWER_RIGHT_CORNER (LONG LAT) = {mila} "
                       "{malo}\n".format(mila=bound['min_lat'],
