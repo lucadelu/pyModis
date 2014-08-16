@@ -193,10 +193,14 @@ class convertModisGDAL:
             self.dst_ysize = self._calculateRes(bbox[0][1], bbox[1][1],
                                                 self.resolution)
             if self.dst_xsize == 0:
-                raise IOError('Invalid number of pixel 0 for X size')
+                raise IOError('Invalid number of pixel 0 for X size. The '
+                              'problem could be in an invalid value of '
+                              'resolution')
                 return 0
             elif self.dst_ysize == 0:
-                raise IOError('Invalid number of pixel 0 for Y size')
+                raise IOError('Invalid number of pixel 0 for Y size. The '
+                              'problem could be in an invalid value of '
+                              'resolution')
                 return 0
             self.dst_gt = [bbox[0][0], self.resolution, 0.0, bbox[1][1], 0.0,
                            -self.resolution]

@@ -80,9 +80,8 @@ def main():
                       default=False, help="Create a GDAL VRT file. No other "
                       "GDAL options have to been set")
     # mrt path
-    groupM.add_option("-m", "--mrt", dest="mrt_path", required=True,
-                      help="the path to MRT software", metavar="MRT_PATH",
-                      type='directory')
+    groupM.add_option("-m", "--mrt", dest="mrt_path", type='directory',
+                      help="the path to MRT software", metavar="MRT_PATH")
     parser.add_option_group(groupR)
     parser.add_option_group(groupG)
     parser.add_option_group(groupM)

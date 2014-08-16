@@ -70,9 +70,8 @@ def main():
                       "be similar to: ( 1 0 )")
     groupR.add_option("-o", "--output", dest="output", required=True,
                       help="the prefix of output file", metavar="OUTPUT_FILE")
-    groupR.add_option("-g", "--grain", dest="resolution", required=True,
-                      type="float", help="the spatial resolution of output "
-                      "file")
+    groupR.add_option("-g", "--grain", dest="resolution", type="float",
+                      help="the spatial resolution of output file")
     help_resampl = "the method of resampling."
     help_resampl += " -- mrt methods: {res}".format(res=parsemodis.RESAM_LIST)
     help_resampl += " -- gdal methods: {res}".format(res=convertmodis_gdal.RESAM_GDAL)
