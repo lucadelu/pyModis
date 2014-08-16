@@ -42,7 +42,7 @@ Options
 Examples
 ^^^^^^^^
 
-The following text should be in your *MODTilesToDownload.txt* file ::
+The following text should be in your *MODTiles.txt* file ::
 
   MOD11A1.A2012278.h19v11.005.*.hdf*
   MOD11A1.A2012278.h19v12.005.*.hdf*
@@ -53,9 +53,9 @@ The following text should be in your *MODTilesToDownload.txt* file ::
 
 Download Terra LST data from the above text file ::
 
-    modis_download_from_list.py -f /tmp/MODTilesToDownload.txt /tmp
+    modis_download_from_list.py -f /tmp/MODTiles.txt /tmp
 
-The following text should be in your *MYDTilesToDownload.txt* file ::
+The following text should be in your *MYDTiles.txt* file ::
 
   MYD11A1.A2012278.h19v11.005.*.hdf*
   MYD11A1.A2012278.h19v12.005.*.hdf*
@@ -65,4 +65,10 @@ The following text should be in your *MYDTilesToDownload.txt* file ::
 
 Download Aqua LST data from the above text file ::
 
-    modis_download_from_list.py -s MOLA -p MYD11A1.005 -f /tmp/MYDTilesToDownload.txt /tmp
+    modis_download_from_list.py -s MOLA -p MYD11A1.005 -f /tmp/MYDTiles.txt /tmp
+
+.. only:: latex
+
+  .. raw:: latex
+
+    \newpage % hard pagebreak at exactly this position

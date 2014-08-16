@@ -57,11 +57,11 @@ Examples
 
 Download Terra LST data for a month for two tiles from HTTP server ::
 
-    modis_download.py -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 modis_lst_terra/
+    modis_download.py -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 lst_terra/
 
 Download the last 15 days of Aqua LST data ::
 
-    modis_download.py -r -s MOLA -p MYD11A1.005 -t h18v03,h18v04 -D 15 modis_lst_aqua/
+    modis_download.py -r -s MOLA -p MYD11A1.005 -t h18v03,h18v04 -D 15 lst_aqua/
 
 Download all tiles of NDVI for one day (you have know the right day otherwise it download nothing) ::
 
