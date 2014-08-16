@@ -1,24 +1,23 @@
-Example of a full process
-===========================
+Example reproject data with MRT
+============================================================
 
 In this short example you can understand how to concatenate
 the scripts to obtain a GeoTIFF file for each band of the
-chosen product.
+chosen product using as backend MODIS Reprojection Tools (MRT).
 
 .. warning::
 
   This example is based on a Linux based system. Please if
   you use other OS change the paths where data will be saved
 
-
 Downloading data
 -------------------
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
-  ::
+::
 
-    modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 /tmp
+  modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 /tmp
 
 .. warning::
 
@@ -37,10 +36,10 @@ the product that you download.
   Every time that you download new files of same product it will be overwrite,
   so if you need it, you should rename the file
 
+
 Mosaic data
 --------------
 
-At this point you need to create the mosaic of the tiles downloaded.
 :doc:`../scripts/modis_mosaic` is the script to use.
 
 ::
@@ -72,14 +71,23 @@ projection, to GeoTIFF with several projection. You have to use :doc:`../scripts
 
     modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/ 
 		     -o /tmp/finalfile.tif -g 250 /tmp/outputfile.hdf
-			 
-Extract Quality Information
----------------
+
+Extract quality information
+--------------------------------
 
 If necessary, you can extract specific quality type from the chosen quality layer.
 In this particular case, we extract the Mandatory QA flag of the daytime temperature.
 You have to use :doc:`../scripts/modis_quality`
 
-::
+.. only:: html
 
-  modis_quality.py -p MOD11A1 -l 1 -t 1 /tmp/outputfile.hdf /tmp/mod11a1_daytime_qaflag.tif
+  ::
+
+    modis_quality.py -p MOD11A1 -l 1 -t 1 /tmp/outputfile.hdf /tmp/mod11a1_daytime_qaflag.tif
+
+.. only:: latex
+
+  ::
+
+    modis_quality.py -p MOD11A1 -l 1 -t 1 /tmp/outputfile.hdf
+    /tmp/mod11a1_daytime_qaflag.tif
