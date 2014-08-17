@@ -31,3 +31,10 @@ if [ $procede = "yes" ]; then
   python setup.py sdist upload
 
 fi
+
+echo "Do you want create \"Debian\" packages (answer yes or no)?"
+if [ $Debian = "yes" ]; then
+
+  su -c "dpkg-buildpackage -us -uc -d"
+
+fi
