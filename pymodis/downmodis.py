@@ -56,7 +56,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise ImportError('Python GDAL library not found, please install python-gdal')
 
 
 def urljoin(*args):
@@ -361,13 +361,13 @@ class downModis:
     def _getToday(self):
         """Return the first day for start to download"""
         if self.today is None:
-            # set today variable to today
+            # set today variable from datetime method
             self.today = date.today()
-        else:
-            # set today variable to data pass from user
+        elif type(self.today) == str:
+            # set today variable from string data passed by user
             self.today = str2date(self.today)
-            # set enday variable to data
-        if self.enday is not None:
+        # set enday variable to data passed by user
+        if type(self.enday) == str:
             self.enday = str2date(self.enday)
         if self.today and self.enday:
             if self.today < self.enday:
