@@ -40,7 +40,7 @@ Functions:
 
 """
 from __future__ import print_function
-from types import ListType
+from types import ListType, StringType
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -131,7 +131,13 @@ class convertModisGDAL:
         # error threshold the same value as gdalwarp
         self.error_threshold = 0.125
         self.resampling = getResampling(resampl)
-        self.subset = subset.replace('(', '').replace(')', '').strip().split()
+        if type(subset) == ListType:
+            self.subset = subset
+        elif type(subset) == StringType:
+            self.subset = subset.replace('(', '').replace(')',
+                                                          '').strip().split()
+        else:
+            raise IOError('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
         self.vrt = vrt
         if self.driver is None:
@@ -467,11 +473,15 @@ class createMosaicGDAL:
         self.in_names = hdfnames
         # #TODO use resolution into mosaic.
         # self.resolution = res
-        if subset:
+        if not subset:
+            self.subset = None
+        elif type(subset) == ListType:
+            self.subset = subset
+        elif type(subset) == StringType:
             self.subset = subset.replace('(', '').replace(')',
                                                           '').strip().split()
         else:
-            self.subset = None
+            raise IOError('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
         if self.driver is None:
             raise IOError('Format driver %s not found, pick a supported '
