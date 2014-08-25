@@ -812,11 +812,13 @@ class parseModisMulti:
                 ps = self.ElementTree.SubElement(sens, 'SensorShortName')
                 ps.text = valSens[i]
 
-    def writexml(self, outputname):
+    def writexml(self, outputname, pretty=True):
         """Write a xml file for a mosaic
 
         :param str outputname: the name of output xml file
+        :param bool pretty: write prettyfy output, by default true
         """
+
         # the root element
         granule = self.ElementTree.Element('GranuleMetaDataFile')
         # add DTDVersion
@@ -878,5 +880,10 @@ class parseModisMulti:
         output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.'
                      'gsfc.nasa.gov/ECSInfo/ecsmetadata/dtds/DPL/ECS/'
                      'ScienceGranuleMetadata.dtd">')
-        output.write(self.ElementTree.tostring(granule))
+        if pretty:
+            import xml.dom.minidom as minidom
+            reparsed = minidom.parseString(self.ElementTree.tostring(granule))
+            output.write(reparsed.toprettyxml(indent="\t"))
+        else:
+            output.write(self.ElementTree.tostring(granule))
         output.close()
