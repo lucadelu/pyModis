@@ -282,7 +282,7 @@ class convertModisGDAL:
             self._createWarped(self.layers[0][0])
             n = 0
             for i in self.subset:
-                if i == '1':
+                if str(i) == '1':
                     self._reprojectOne(self.layers[n][0])
                 n = n + 1
             print("All layer for dataset '{name}' "
