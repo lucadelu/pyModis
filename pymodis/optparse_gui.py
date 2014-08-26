@@ -71,7 +71,7 @@ class OptparseDialog(wx.Dialog):
     '''
     def __init__(self, optParser, title, parent=None, ID=0,
                  pos=wx.DefaultPosition, size=wx.DefaultSize,
-                 style=wx.DEFAULT_DIALOG_STYLE):
+                 style=wx.DEFAULT_DIALOG_STYLE|wx.THICK_FRAME):
         """Function for initialization"""
 
         modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.ico',
@@ -85,7 +85,7 @@ class OptparseDialog(wx.Dialog):
         pre.Create(parent, ID, title, pos, size, style)
 
         self.PostCreate(pre)
-
+        self.CenterOnScreen()
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.args_ctrl = []
         self.option_controls = {}
