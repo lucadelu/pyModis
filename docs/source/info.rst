@@ -77,9 +77,20 @@ Install on Windows
 The simple way to install ``pyModis`` on Windows is to install latest Python 2.7
 from http://python.org/download/
 
-Now you have to modify the "Path" environment variable using *powershell* running ::
+Now you have to modify the "Path" environment variable using *powershell* running
+
+.. only:: html
+
+  ::
 
     [Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
+
+.. only:: latex
+
+  ::
+
+    [Environment]::SetEnvironmentVariable("Path",
+    "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
 
 Download and install the last version of Distribute for Windows from
 http://python-distribute.org/distribute_setup.py
