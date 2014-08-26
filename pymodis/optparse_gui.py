@@ -24,7 +24,7 @@ from __future__ import print_function
 import os
 import sys
 import optparse
-
+from types import UnicodeType
 try:
     import wx
     import wx.lib.filebrowsebutton as filebrowse
@@ -162,7 +162,7 @@ class OptparseDialog(wx.Dialog):
 
                     if (option.default != optparse.NO_DEFAULT) and \
                        (option.default is not None):
-                        ctrl.Value = unicode(option.default)
+                        ctrl.Value = str(option.default)
 
                 box.Add(ctrl, 1, wx.ALIGN_RIGHT | wx.ALL, 5)
 
@@ -394,6 +394,8 @@ class OptionParser(optparse.OptionParser):
             if option.takes_value() is False:
                 value = None
 
+            if type(value) == UnicodeType:
+                value = str(value)
             option.process(option, value, values, self)
 
         return values, args
