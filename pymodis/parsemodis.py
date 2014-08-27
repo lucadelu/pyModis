@@ -812,6 +812,70 @@ class parseModisMulti:
                 ps = self.ElementTree.SubElement(sens, 'SensorShortName')
                 ps.text = valSens[i]
 
+    def valInsertTime(self, obj):
+        """Function to add InsertTime elements
+
+        :param obj: element to add InsertTime elements
+        """
+        values = []
+        for i in self.parModis:
+            values.append(i.retInsertTime())
+        for i in self._checkval(values):
+            gur = self.ElementTree.SubElement(obj, 'InsertTime')
+            gur.text = i
+
+    def valLatUpdate(self, obj):
+        """Function to add LastUpdate elements
+
+        :param obj: element to add LastUpdate elements
+        """
+        values = []
+        for i in self.parModis:
+            values.append(i.retLastUpdate())
+        for i in self._checkval(values):
+            gur = self.ElementTree.SubElement(obj, 'LastUpdate')
+            gur.text = i
+
+    def valDataGranule(self, obj):
+        """Function to add DataFileContainer
+
+        :param obj: element to add DataFileContainer
+        """
+        values = []
+        for i in self.parModis:
+            values.append(i.retDataGranule())
+        for i in values:
+            dfc = self.ElementTree.SubElement(obj, 'ECSDataGranule')
+            self._cicle_values(dfc, i)
+
+    def valBrowseProduct(self, obj):
+        """Function to add BrowseGranuleId
+
+        :param obj: element to add BrowseGranuleId
+        """
+        values = []
+        for i in self.parModis:
+            values.append(i.retBrowseProduct())
+        for i in self._checkval(values):
+            dfc = self.ElementTree.SubElement(obj, 'BrowseGranuleId')
+            dfc.text = i
+
+    def valPSA(self, obj):
+        """Function to add PSA
+
+        :param obj: element to add PSA
+        """
+        values = []
+        for i in self.parModis:
+            values.append(i.retPSA())
+        for k in sorted(values[0].keys()):
+            psa = self.ElementTree.SubElement(obj, 'PSA')
+            psaname = self.ElementTree.SubElement(psa, 'PSAName')
+            psaname.text = k
+            for s in values:
+                psaval = self.ElementTree.SubElement(psa, 'PSAValue')
+                psaval.text = s[k]
+
     def writexml(self, outputname, pretty=True):
         """Write a xml file for a mosaic
 
@@ -831,25 +895,25 @@ class parseModisMulti:
         self.valGranuleUR(gurmd)
         # add dbID
         self.valDbID(gurmd)
-
-        # TODO ADD InsertTime LastUpdate
-
+        # add InsertTime
+        self.valInsertTime(gurmd)
+        # add LastUpdate
+        self.valLastUpdate(gurmd)
         # add CollectionMetaData
         cmd = self.ElementTree.SubElement(gurmd, 'CollectionMetaData')
         self.valCollectionMetaData(cmd)
         # add DataFiles
         df = self.ElementTree.SubElement(gurmd, 'DataFiles')
         self.valDataFiles(df)
-
-        # TODO ADD ECSDataGranule
-
+        # add ECSDataGranule
+        self.valDataGranule(gurmd)
         # add PGEVersionClass
         pgevc = self.ElementTree.SubElement(gurmd, 'PGEVersionClass')
         self.valPGEVersion(pgevc)
         # add RangeDateTime
         rdt = self.ElementTree.SubElement(gurmd, 'RangeDateTime')
         self.valRangeTime(rdt)
-        # SpatialDomainContainer
+        # add SpatialDomainContainer
         sdc = self.ElementTree.SubElement(gurmd, 'SpatialDomainContainer')
         hsdc = self.ElementTree.SubElement(sdc, 'HorizontalSpatialDomainContainer')
         gp = self.ElementTree.SubElement(hsdc, 'GPolygon')
@@ -863,18 +927,19 @@ class parseModisMulti:
         mp = self.ElementTree.SubElement(gurmd, 'MeasuredParameter')
         mpc = self.ElementTree.SubElement(mp, 'MeasuredParameterContainer')
         self.valMeasuredParameter(mpc)
-        # Platform
+        # add Platform
         pl = self.ElementTree.SubElement(gurmd, 'Platform')
         self.valPlatform(pl)
-
         # add PSAs
         psas = self.ElementTree.SubElement(gurmd, 'PSAs')
-        # TODO ADD all PSA
-
+        # add all PSA
+        self.valPSA(psas)
         # add InputGranule and InputPointer
         ig = self.ElementTree.SubElement(gurmd, 'InputGranule')
         self.valInputPointer(ig)
-        # TODO ADD BrowseProduct
+        # add BrowseProduct
+        bp = self.ElementTree.SubElement(gurmd, 'BrowseProduct')
+        self.valBrowseProduct(bp)
         output = open(outputname, 'w')
         output.write('<?xml version="1.0" encoding="UTF-8"?>')
         output.write('<!DOCTYPE GranuleMetaDataFile SYSTEM "http://ecsinfo.'
