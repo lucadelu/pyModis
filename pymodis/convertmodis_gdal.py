@@ -91,23 +91,22 @@ def getResampling(res):
 
 class convertModisGDAL:
     """A class to convert modis data from hdf to GDAL formats using GDAL
+
+       :param str hdfname: name of input data
+       :param str prefix: prefix for output data
+       :param str subset: the subset to consider
+       :param int res: output resolution
+       :param str outformat: output format, it is possible to use all the
+                             supported GDAL format
+       :param int epsg: the EPSG code for the preojection of output file
+       :param str wkt: the WKT string for the preojection of output file
+       :param str resampl: the resampling method to use
+       :param bool vrt: True to read GDAL VRT file created with
+                        createMosaicGDAL
     """
     def __init__(self, hdfname, prefix, subset, res, outformat="GTiff",
                  epsg=None, wkt=None, resampl='NEAREST_NEIGHBOR', vrt=False):
-        """Function for the initialize the object
-
-           :param str hdfname: name of input data
-           :param str prefix: prefix for output data
-           :param str subset: the subset to consider
-           :param int res: output resolution
-           :param str outformat: output format, it is possible to use all the
-                                 supported GDAL format
-           :param int epsg: the EPSG code for the preojection of output file
-           :param str wkt: the WKT string for the preojection of output file
-           :param str resampl: the resampling method to use
-           :param bool vrt: True to read GDAL VRT file created with
-                            createMosaicGDAL
-        """
+        """Function for the initialize the object"""
         # Open source dataset
         self.in_name = hdfname
         self.src_ds = gdal.Open(self.in_name)
@@ -228,6 +227,8 @@ class convertModisGDAL:
         band = l_src_ds.GetRasterBand(1)
         if '_FillValue' in meta.keys():
             fill_value = meta['_FillValue']
+        elif band.GetNoDataValue():
+            fill_value = band.GetNoDataValue()
         else:
             fill_value = None
         datatype = band.DataType
@@ -236,6 +237,8 @@ class convertModisGDAL:
             out_name = "{pref}_{lay}.tif".format(pref=self.output_pref,
                                                  lay=l_name)
         except:
+            out_name = "{pref}.tif".format(pref=self.output_pref)
+        if self.vrt:
             out_name = "{pref}.tif".format(pref=self.output_pref)
         try:
             dst_ds = self.driver.Create(out_name, self.dst_xsize,
@@ -266,7 +269,7 @@ class convertModisGDAL:
         return 0
 
     def run_vrt_separated(self):
-        """Reproject VRT created by createMosaicGDAL, funzion write_vrt with
+        """Reproject VRT created by createMosaicGDAL, function write_vrt with
         sepatated=True
         """
         self._createWarped(self.in_name)
