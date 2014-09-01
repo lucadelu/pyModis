@@ -824,7 +824,7 @@ class parseModisMulti:
             gur = self.ElementTree.SubElement(obj, 'InsertTime')
             gur.text = i
 
-    def valLatUpdate(self, obj):
+    def valLastUpdate(self, obj):
         """Function to add LastUpdate elements
 
         :param obj: element to add LastUpdate elements
