@@ -101,7 +101,7 @@ def str2date(datestring):
         stringSplit = datestring.split('.')
     elif ' ' in datestring:
         stringSplit = datestring.split(' ')
-    return date(int(todaySplit[0]), int(todaySplit[1]), int(todaySplit[2]))
+    return date(int(stringSplit[0]), int(stringSplit[1]), int(stringSplit[2]))
 
 
 class modisHtmlParser(HTMLParser):
@@ -169,11 +169,11 @@ class downModis:
        :param str user: the user name, by default 'anonymous', used to
                         connect to an FTP server. Do not use this variable
                         if the server is an HTTP server
-       :param str url: the base url from where to download the MODIS data, 
+       :param str url: the base url from where to download the MODIS data,
                        it can be FTP or HTTP but it has to start with
                        'ftp://' or 'http://'
        :param str path: the directory where the data that you want to
-                        download are stored on the FTP server. For HTTP 
+                        download are stored on the FTP server. For HTTP
                         requests, this is the part of the url between the 'url'
                         parameter and the 'product' parameter.
        :param str product: the code of the product to download, the code
@@ -186,7 +186,7 @@ class downModis:
        :param str enddate: the day to end downloading; in order to pass a
                            date use the format YYYY-MM-DD. This day must be
                            before the 'today' parameter. Downloading happens
-                           in reverse order (currently)                  
+                           in reverse order (currently)
        :param int delta: timelag i.e. the number of days starting from
                          today backwards. Will be overwritten if
                          'enddate' is specifed during instantiation
@@ -265,7 +265,7 @@ class downModis:
         for f in os.listdir(self.writeFilePath):
             if os.path.isfile(os.path.join(self.writeFilePath, f)):
                 self.fileInPath.append(f)
-        # setup gdal     
+        # setup gdal
         gdal.UseExceptions()
         gdalDriver = gdal.GetDriverByName('HDF4')
         if not gdalDriver:
@@ -292,12 +292,15 @@ class downModis:
             self._connectFTP(ncon)
         elif self.urltype == 'http':
             self._connectHTTP(ncon)
+        if len(self.dirData) == 0:
+            raise IOError("There are some troubles with the server. "
+                          "The directory seems to be empty")
 
     def _connectHTTP(self, ncon=20):
         """Connect to HTTP server, create a list of directories for all days
 
            :param int ncon: maximum number of attempts to connect to the HTTP
-                            server before failing. If ncon < 0, connection 
+                            server before failing. If ncon < 0, connection
                             attempts are unlimited in number
         """
         self.nconnection += 1
@@ -417,7 +420,7 @@ class downModis:
             # make a full cycle from the last index and find
             # it make a for cicle from the last value and find the internal
             # delta to remove file outside temporaly range
-            for i in range(0,len(days)):
+            for i in range(0, len(days)):
                 if days[i] < enday_s:
                     break
                 else:
@@ -432,7 +435,7 @@ class downModis:
 
     def getFilesList(self, day=None):
         """Returns a list of files to download. HDF and XML files are
-           downloaded by default. JPG files will be downloaded if 
+           downloaded by default. JPG files will be downloaded if
            self.jpeg == True.
 
            :param str day: the date of data in format YYYY.MM.DD
@@ -483,7 +486,6 @@ class downModis:
                           "files".format(err=e))
             self._getFilesListHTTP(day)
 
-   
     def _getFilesListFTP(self):
         """Create a list of files to download from FTP server, it is possible
            choose to download also the JPG overview files or only the HDF files
