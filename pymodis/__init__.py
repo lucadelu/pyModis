@@ -6,6 +6,6 @@ import qualitymodis
 import convertmodis_gdal
 try:
     import optparse_gui
-except:
+except ImportError:
     print "WxPython missing, no GUI enabled"
-__version__ = '0.8.0'
+__version__ = '1.0.0'
