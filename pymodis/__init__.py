@@ -8,4 +8,4 @@ try:
     import optparse_gui
 except ImportError:
     print "WxPython missing, no GUI enabled"
-__version__ = '1.0.0'
+__version__ = '1.0.0RC1'
