@@ -1,8 +1,8 @@
 modis_multiparse.py
 --------------------
 
-**modis_multiparse.py** is a script to parse several XML metadata files 
-for MODIS tiles. It is very usefull to create XML metadata file for a 
+**modis_multiparse.py** parses several XML metadata files 
+for MODIS tiles. It is very useful to create XML metadata file for a 
 mosaic.
 
 Usage

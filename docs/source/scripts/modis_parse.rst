@@ -1,7 +1,7 @@
 modis_parse.py
 ---------------
 
-**modis_parse.pys** is a script to parse the XML metadata file for a MODIS 
+**modis_parse.pys** parses the XML metadata file for a MODIS
 tile and return the requested value. It can also write the metadata information
 in a text file.
 

@@ -1,9 +1,9 @@
 modis_convert.py
 -----------------
 
-**modis_convert.py** is a script to convert MODIS data to TIF formats and
-different projection reference system. It is an interface to MRT mrtmosaic
-software, the best application for work with HDF MODIS data.
+**modis_convert.py**  converts MODIS data to TIF formats and different
+projection reference system. It is an interface to MRT mrtmosaic
+software or GDAL library.
 
 Usage
 ^^^^^^

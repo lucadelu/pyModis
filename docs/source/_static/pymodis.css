@@ -1,5 +1,10 @@
 body {
     background-color: #FFFFFF;
+    text-align: justify;
+}
+
+div.section {
+    text-align: justify;
 }
 
 h1.bigger {

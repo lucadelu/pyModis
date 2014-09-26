@@ -1,8 +1,8 @@
 modis_mosaic.py
 ----------------
 
-**modis_mosaic.py** is a script to create a mosaic of several MODIS tiles 
-in HDF format.
+**modis_mosaic.py** creates a mosaic of several MODIS tiles in
+HDF format, using MRT mrtmosaic software or GDAL library.
 
 Usage
 ^^^^^^
