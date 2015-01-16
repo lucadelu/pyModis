@@ -21,3 +21,8 @@
 - version 0.7.4
  * add support to requests library to download files
  * fix english typo
+- version 1.0.0
+ * add support to use GDAL to convert MODIS hdf files
+ * add graphical interfaces to scripts
+ * add quality check: library and script
+ * improved documentation and examples (add iPython notebook tutorial)
