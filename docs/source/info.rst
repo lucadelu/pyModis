@@ -53,7 +53,7 @@ from the last to the first) ::
 or `download the latest stable version <https://github.com/lucadelu/pyModis/tags>`_
 from the repository and decompress it.
 
-Now enter the ``pyModis`` folder and launch as administrator of 
+Now enter the ``pyModis`` folder and launch as administrator of
 your computer ::
 
     python setup.py install
@@ -71,10 +71,29 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
-Install on Windows
-^^^^^^^^^^^^^^^^^^^^^
+Install on Windows with osgeo4w
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The simple way to install ``pyModis`` on Windows is to install latest Python 2.7
+The simple way to install ``pyModis`` on Windows is to use
+`OSGeo4W <http://trac.osgeo.org/osgeo4w/>`_.
+Choose *Advanced Install* in the first step of installation and set the
+corrected value until the packages selection.
+
+At this point select the following packages:
+
+* *gdal-python*
+* *python-numpy*
+* *wxpython*
+
+OSGeo4W will install all the required dependencies.
+
+At this point you can follow `Compile from source`_
+section to install pyModis
+
+Install on Windows without osgeo4w
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Another way to install ``pyModis`` on Windows is to install latest Python 2.7
 from http://python.org/download/
 
 Now you have to modify the "Path" environment variable using *powershell* running
