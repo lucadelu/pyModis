@@ -28,7 +28,7 @@ from types import UnicodeType
 try:
     import wx
     import wx.lib.filebrowsebutton as filebrowse
-except ImportError:
+except:
     pass
 
 __version__ = 0.2
