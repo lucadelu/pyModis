@@ -23,7 +23,7 @@ import sys
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
-except ImportError:
+except:
     WXPYTHON = False
 from pymodis import optparse_required
 from pymodis import downmodis
