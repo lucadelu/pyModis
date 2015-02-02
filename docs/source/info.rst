@@ -74,8 +74,21 @@ or one of the tools distributed with ``pyModis``.
 Install on Windows with osgeo4w
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. warning::
+
+  Using this way to install pyModis it will be possible to use pyModis
+  only from OSGeo4W environment.
+
+  It will not possible to use other versions of Python except the OSGeo4W one.
+
 The simple way to install ``pyModis`` on Windows is to use
 `OSGeo4W <http://trac.osgeo.org/osgeo4w/>`_.
+
+.. note::
+
+  To execute OSGeo4W may be required to run it as Administrator.
+
+
 Choose *Advanced Install* in the first step of installation and set the
 corrected value until the packages selection.
 
@@ -87,8 +100,9 @@ At this point select the following packages:
 
 OSGeo4W will install all the required dependencies.
 
-At this point you can follow `Compile from source`_
-section to install pyModis
+At this point, using the OSGeo4W shell, you can follow `Compile from source`_
+section to install pyModis.
+
 
 Install on Windows without osgeo4w
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
