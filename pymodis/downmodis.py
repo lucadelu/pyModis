@@ -393,9 +393,12 @@ class downModis:
         # set delta
         if self.today and self.enday:
             if self.today < self.enday:
-                raise IOError("The first day should be newer then end date")
+                today = self.enday
+                enday = self.today
+                self.today = today
+                self.enday = enday
             delta = self.today - self.enday
-            self.delta = delta.days
+            self.delta = abs(delta.days)
 
     def getListDays(self):
         """Return a list of all selected days"""
