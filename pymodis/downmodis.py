@@ -743,7 +743,7 @@ class downModis:
             logging.debug("Download terminated")
         return 0
 
-    def _downloadsAllDayFTP(self, days):
+    def _downloadAllDaysFTP(self, days):
         """Downloads all the tiles considered from FTP server
 
            :param list days: the list of days to download
