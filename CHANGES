@@ -26,3 +26,7 @@
  * add graphical interfaces to scripts
  * add quality check: library and script
  * improved documentation and examples (add iPython notebook tutorial)
+- version 1.0.1
+ * GDAL support in downmodis is not mandatory
+ * fixed some small bugs
+ * improved documentation
