@@ -55,11 +55,15 @@ import re
 
 try:
     import osgeo.gdal as gdal
+    GDAL = True
 except ImportError:
     try:
         import gdal
+        GDAL = True
     except ImportError:
-        raise ImportError('Python GDAL library not found, please install python-gdal')
+        GDAL = False
+        print('WARNING: Python GDAL library not found, please install it to'
+              ' check data downloaded with pyModis')
 
 
 def urljoin(*args):
@@ -75,13 +79,13 @@ def urljoin(*args):
 
 def getNewerVersion(oldFile, newFile):
     """Check two files to determine which is newer
-    
+
        :param str oldFile: one of the two similar files
        :param str newFile: one of the two similar files
 
        :return: the name of newer file
     """
-    #get the processing date (YYYYDDDHHMMSS) from the file strings
+    # get the processing date (YYYYDDDHHMMSS) from the file strings
     if oldFile.split('.')[4] > newFile.split('.')[4]:
         return oldFile
     else:
@@ -222,7 +226,7 @@ class downModis:
         # tiles to downloads
         if type(tiles) == str:
             self.tiles = tiles.split(',')
-        else: # tiles are list, tuple, or None
+        else:  # tiles are list, tuple, or None
             self.tiles = tiles
         # set destination folder
         if os.access(destinationFolder, os.W_OK):
@@ -237,7 +241,8 @@ class downModis:
             self.product = self.path.split('/')[2]
         # write a file with the name of file to be downloaded
         self.filelist = open(os.path.join(self.writeFilePath,
-                                          'listfile{pro}.txt'.format(pro=self.product)), 'w')
+                                          'listfile{pro}.txt'.format(pro=self.product)),
+                                          'w')
         # set if to download jpgs
         self.jpeg = jpg
         # today, or the last day in the download series chronologically
@@ -266,14 +271,17 @@ class downModis:
             if os.path.isfile(os.path.join(self.writeFilePath, f)):
                 self.fileInPath.append(f)
         # setup gdal
-        gdal.UseExceptions()
-        gdalDriver = gdal.GetDriverByName('HDF4')
-        if not gdalDriver:
-            raise IOError("GDAL installation has no support for HDF4, please"
-                          " update GDAL")
+        if GDAL:
+            gdal.UseExceptions()
+            gdalDriver = gdal.GetDriverByName('HDF4')
+            if not gdalDriver:
+                raise IOError("GDAL installation has no support for HDF4, "
+                              " please update GDAL")
 
     def removeEmptyFiles(self):
-        """Remove files in the download directory that have filesize equal to 0"""
+        """Function to remove files in the download directory that have
+           filesize equal to 0
+        """
         year = str(date.today().year)
         prefix = self.product.split('.')[0]
         files = glob.glob1(self.writeFilePath, '%s.A%s*' % (prefix, year))
@@ -583,12 +591,12 @@ class downModis:
            :param str day: the day in format YYYY.MM.DD
         """
         filSave = open(filHdf, "wb")
-        try: # download and write the file
-            try: # use request module
+        try:  # download and write the file
+            try:  # use request module
                 http = requests.get(urljoin(self.url, self.path, day, filDown))
                 orig_size = http.headers['content-length']
                 filSave.write(http.content)
-            except: # use urllib2 module
+            except:  # use urllib2 module
                 http = urllib2.urlopen(urljoin(self.url, self.path, day,
                                                filDown))
                 orig_size = http.headers['content-length']
@@ -605,7 +613,10 @@ class downModis:
         if int(orig_size) == int(transf_size):
             # if no xml file, delete the HDF and redownload
             if filHdf.find('.xml') == -1:
-                if self.checkFile(filHdf):
+                test = False
+                if GDAL:
+                    test = self.checkFile(filHdf)
+                if test:
                     os.remove(filSave.name)
                     self._downloadFileHTTP(filDown, filHdf, day)
                 else:
@@ -614,7 +625,7 @@ class downModis:
                         logging.debug("File {name} downloaded "
                                       "correctly".format(name=filDown))
                     return 0
-            else: # xml exists
+            else:  # xml exists
                 self.filelist.write("{name}\n".format(name=filDown))
                 if self.debug:
                     logging.debug("File {name} downloaded "
@@ -636,7 +647,7 @@ class downModis:
            :param str filHdf: name of the file to write to
         """
         filSave = open(filHdf, "wb")
-        try: # transfer file from ftp
+        try:  # transfer file from ftp
             self.ftp.retrbinary("RETR " + filDown, filSave.write)
             self.filelist.write("{name}\n".format(name=filDown))
             if self.debug:
