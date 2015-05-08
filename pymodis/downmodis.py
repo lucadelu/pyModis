@@ -232,8 +232,8 @@ class downModis:
         if os.access(destinationFolder, os.W_OK):
             self.writeFilePath = destinationFolder
         else:
-            raise IOError("Folder to store downloaded files does not exist"
-                          " or is not writeable")
+            raise Exception("Folder to store downloaded files does not exist"
+                            " or is not writeable")
         # return the name of product
         if len(self.path.split('/')) == 2:
             self.product = self.path.split('/')[1]
@@ -301,8 +301,8 @@ class downModis:
         elif self.urltype == 'http':
             self._connectHTTP(ncon)
         if len(self.dirData) == 0:
-            raise IOError("There are some troubles with the server. "
-                          "The directory seems to be empty")
+            raise Exception("There are some troubles with the server. "
+                            "The directory seems to be empty")
 
     def _connectHTTP(self, ncon=20):
         """Connect to HTTP server, create a list of directories for all days

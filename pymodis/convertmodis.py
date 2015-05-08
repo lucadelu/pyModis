@@ -51,14 +51,14 @@ def checkMRTpath(mrtpath):
             os.environ['PATH'] = "{path}:{data}".format(path=os.environ['PATH'],
                                                         data=os.path.join(mrtpath, 'data'))
         else:
-            raise IOError('The path {path} does not exist'.format(path=os.path.join(mrtpath, 'bin')))
+            raise Exception('The path {path} does not exist'.format(path=os.path.join(mrtpath, 'bin')))
         if os.path.exists(os.path.join(mrtpath, 'data')):
             mrtpathdata = os.path.join(mrtpath, 'data')
             os.environ['MRTDATADIR'] = os.path.join(mrtpath, 'data')
         else:
-            raise IOError('The path {path} does not exist'.format(path=os.path.join(mrtpath, 'data')))
+            raise Exception('The path {path} does not exist'.format(path=os.path.join(mrtpath, 'data')))
     else:
-        raise IOError('The path {name} does not exist'.format(name=mrtpath))
+        raise Exception('The path {name} does not exist'.format(name=mrtpath))
     return mrtpathbin, mrtpathdata
 
 
@@ -77,12 +77,12 @@ class convertModis:
         if os.path.exists(hdfname):
             self.name = hdfname
         else:
-            raise IOError('{name} does not exist'.format(name=hdfname))
+            raise Exception('{name} does not exist'.format(name=hdfname))
         # check if confile exists
         if os.path.exists(confile):
             self.conf = confile
         else:
-            raise IOError('{name} does not exist'.format(name=confile))
+            raise Exception('{name} does not exist'.format(name=confile))
         # check if mrtpath and subdirectories exists and set environment
         # variables
         self.mrtpathbin, self.mrtpathdata = checkMRTpath(mrtpath)
@@ -101,8 +101,8 @@ class convertModis:
         import subprocess
         execut = self.executable()
         if not os.path.exists(execut):
-            raise IOError('The path {name} does not exist: it could be an '
-                          'erroneus path or software'.format(name=execut))
+            raise Exception('The path {name} does not exist: it could be an '
+                            'erroneus path or software'.format(name=execut))
         else:
             subprocess.call([execut, '-p', self.conf])
         return "The hdf file {name} was converted successfully".format(name=self.name)
@@ -132,7 +132,7 @@ class createMosaic:
                                                   '{name}.prm'.format(name=str(os.getpid()))), 'w')
             self.HDFfiles = open(listfile).readlines()
         else:
-            raise IOError('{name} not exists'.format(name=listfile))
+            raise Exception('{name} not exists'.format(name=listfile))
         # check if mrtpath and subdirectories exists and set environment
         # variables
         self.mrtpathbin, self.mrtpathdata = checkMRTpath(mrtpath)
@@ -171,8 +171,8 @@ class createMosaic:
         import subprocess
         execut = self.executable()
         if not os.path.exists(execut):
-            raise IOError('The path {name} does not exist, it could be an '
-                          'erroneus path or software'.format(name=execut))
+            raise Exception('The path {name} does not exist, it could be an '
+                            'erroneus path or software'.format(name=execut))
         else:
             self.write_mosaic_xml()
             if self.subset:
@@ -200,12 +200,12 @@ class processModis:
         if os.path.exists(hdfname):
             self.name = hdfname
         else:
-            raise IOError('%s does not exist' % hdfname)
+            raise Exception('%s does not exist' % hdfname)
         # check if confile exists
         if os.path.exists(confile):
             self.conf = confile
         else:
-            raise IOError('%s does not exist' % confile)
+            raise Exception('%s does not exist' % confile)
         # check if mrtpath and subdirectories exists and set environment
         # variables
         self.mrtpathbin, self.mrtpathdata = checkMRTpath(mrtpath)
@@ -224,8 +224,8 @@ class processModis:
         import subprocess
         execut = self.executable()
         if not os.path.exists(execut):
-            raise IOError('The path {name} does not exist, it could be an '
-                          'erroneus path or software'.format(name=execut))
+            raise Exception('The path {name} does not exist, it could be an '
+                            'erroneus path or software'.format(name=execut))
         else:
             subprocess.call([execut, '-pf={name}'.format(name=self.conf)])
         return "The hdf file {name} has been converted".format(name=self.name)
