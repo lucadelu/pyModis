@@ -64,6 +64,13 @@ except ImportError:
         GDAL = False
         print('WARNING: Python GDAL library not found, please install it to'
               ' check data downloaded with pyModis')
+# setup gdal
+if GDAL:
+    gdal.UseExceptions()
+    gdalDriver = gdal.GetDriverByName('HDF4')
+    if not gdalDriver:
+        GDAL = False
+        print("GDAL installation has no support for HDF4, please update GDAL")
 
 
 def urljoin(*args):
@@ -270,13 +277,6 @@ class downModis:
         for f in os.listdir(self.writeFilePath):
             if os.path.isfile(os.path.join(self.writeFilePath, f)):
                 self.fileInPath.append(f)
-        # setup gdal
-        if GDAL:
-            gdal.UseExceptions()
-            gdalDriver = gdal.GetDriverByName('HDF4')
-            if not gdalDriver:
-                raise IOError("GDAL installation has no support for HDF4, "
-                              " please update GDAL")
 
     def removeEmptyFiles(self):
         """Function to remove files in the download directory that have
@@ -401,9 +401,12 @@ class downModis:
         # set delta
         if self.today and self.enday:
             if self.today < self.enday:
-                raise IOError("The first day should be newer then end date")
+                today = self.enday
+                enday = self.today
+                self.today = today
+                self.enday = enday
             delta = self.today - self.enday
-            self.delta = delta.days
+            self.delta = abs(delta.days)
 
     def getListDays(self):
         """Return a list of all selected days"""
@@ -813,7 +816,8 @@ class downModis:
                                     "list".format(day=day))
         # the length of list of days and delta are equal
         else:
-            logger.info("debugDays() : getListDays() and self.delta are same length")
+            logger.info("debugDays() : getListDays() and self.delta are same "
+                        "length")
 
     def debugMaps(self):
         """ Prints the files to download to the debug stream"""
