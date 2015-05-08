@@ -39,7 +39,8 @@ except ImportError:
         import gdal
         import gdal_array
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise ImportError('Python GDAL library not found, please install '
+                          'python-gdal')
 
 
 VALIDTYPES = {'13': map(str, range(1, 10)), '11': map(str, range(1, 6))}

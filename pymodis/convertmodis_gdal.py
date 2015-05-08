@@ -47,7 +47,8 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise ImportError('Python GDAL library not found, please install '
+                          'python-gdal')
 
 try:
     import osgeo.osr as osr
@@ -55,7 +56,8 @@ except ImportError:
     try:
         import osr
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise ImportError('Python GDAL library not found, please install '
+                          'python-gdal')
 
 
 RESAM_GDAL = ['AVERAGE', 'BILINEAR', 'CUBIC', 'CUBIC_SPLINE', 'LANCZOS',
@@ -125,8 +127,8 @@ class convertModisGDAL:
             except:
                 self.dst_wkt = wkt
         else:
-            raise IOError('You have to set one of the following option: '
-                          '"epsg", "wkt"')
+            raise Exception('You have to set one of the following option: '
+                            '"epsg", "wkt"')
         # error threshold the same value as gdalwarp
         self.error_threshold = 0.125
         self.resampling = getResampling(resampl)
@@ -136,12 +138,12 @@ class convertModisGDAL:
             self.subset = subset.replace('(', '').replace(')',
                                                           '').strip().split()
         else:
-            raise IOError('Type for subset parameter not supported')
+            raise Exception('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
         self.vrt = vrt
         if self.driver is None:
-            raise IOError('Format driver %s not found, pick a supported '
-                          'driver.' % outformat)
+            raise Exception('Format driver %s not found, pick a supported '
+                            'driver.' % outformat)
 
     def _boundingBox(self, src):
         """Obtain the bounding box of raster in the new coordinate system
@@ -198,14 +200,14 @@ class convertModisGDAL:
             self.dst_ysize = self._calculateRes(bbox[0][1], bbox[1][1],
                                                 self.resolution)
             if self.dst_xsize == 0:
-                raise IOError('Invalid number of pixel 0 for X size. The '
-                              'problem could be in an invalid value of '
-                              'resolution')
+                raise Exception('Invalid number of pixel 0 for X size. The '
+                                'problem could be in an invalid value of '
+                                'resolution')
                 return 0
             elif self.dst_ysize == 0:
-                raise IOError('Invalid number of pixel 0 for Y size. The '
-                              'problem could be in an invalid value of '
-                              'resolution')
+                raise Exception('Invalid number of pixel 0 for Y size. The '
+                                'problem could be in an invalid value of '
+                                'resolution')
                 return 0
             self.dst_gt = [bbox[0][0], self.resolution, 0.0, bbox[1][1], 0.0,
                            -self.resolution]
@@ -244,7 +246,7 @@ class convertModisGDAL:
             dst_ds = self.driver.Create(out_name, self.dst_xsize,
                                         self.dst_ysize, 1, datatype)
         except:
-            raise IOError('Not possibile to create dataset %s' % out_name)
+            raise Exception('Not possibile to create dataset %s' % out_name)
             return 0
         dst_ds.SetProjection(self.dst_wkt)
         dst_ds.SetGeoTransform(self.dst_gt)
@@ -260,8 +262,8 @@ class convertModisGDAL:
                                 cbk_user_data)
             print("Layer {name} reprojected".format(name=l))
         except:
-            raise IOError('Not possibile to reproject dataset '
-                          '{name}'.format(name=l))
+            raise Exception('Not possibile to reproject dataset '
+                            '{name}'.format(name=l))
             return 0
         dst_ds.SetMetadata(meta)
         dst_ds = None
@@ -484,17 +486,17 @@ class createMosaicGDAL:
             self.subset = subset.replace('(', '').replace(')',
                                                           '').strip().split()
         else:
-            raise IOError('Type for subset parameter not supported')
+            raise Exception('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
         if self.driver is None:
-            raise IOError('Format driver %s not found, pick a supported '
-                          'driver.' % outformat)
+            raise Exception('Format driver %s not found, pick a supported '
+                            'driver.' % outformat)
         driverMD = self.driver.GetMetadata()
         if 'DCAP_CREATE' not in driverMD:
-            raise IOError('Format driver %s does not support creation and'
-                          ' piecewise writing.\nPlease select a format that'
-                          ' does, such as GTiff (the default) or HFA (Erdas'
-                          ' Imagine).' % format)
+            raise Exception('Format driver %s does not support creation and'
+                            ' piecewise writing.\nPlease select a format that'
+                            ' does, such as GTiff (the default) or HFA (Erdas'
+                            ' Imagine).' % format)
         self._initLayers()
         self._getUsedLayers()
         self._names_to_fileinfos()
@@ -505,7 +507,7 @@ class createMosaicGDAL:
         if type(self.in_names) == ListType:
             src_ds = gdal.Open(self.in_names[0])
         else:
-            raise IOError("The input value should be a list of HDF files")
+            raise Exception("The input value should be a list of HDF files")
         layers = src_ds.GetSubDatasets()
         self.layers = {}
         n = 0
@@ -592,7 +594,7 @@ class createMosaicGDAL:
         t_fh = self.driver.Create(output, xsize, ysize,
                                   len(self.file_infos.keys()), l1.band_type)
         if t_fh is None:
-            raise IOError('Not possibile to create dataset %s' % output)
+            raise Exception('Not possibile to create dataset %s' % output)
             return
 
         t_fh.SetGeoTransform(geotransform)

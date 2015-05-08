@@ -61,13 +61,13 @@ class parseModis:
             # hdf name
             self.hdfname = filename
         else:
-            raise IOError('{name} does not exist'.format(name=filename))
+            raise Exception('{name} does not exist'.format(name=filename))
 
         if os.path.exists(self.hdfname + '.xml'):
             # xml hdf name
             self.xmlname = self.hdfname + '.xml'
         else:
-            raise IOError('{name}.xml does not exist'.format(name=self.hdfname))
+            raise Exception('{name}.xml does not exist'.format(name=self.hdfname))
 
         # tif name for the output file for resample MRT software
         self.tifname = self.hdfname.replace('.hdf', '.tif')
@@ -326,8 +326,8 @@ class parseModis:
         """
         # check if spectral it's write with correct construct ( value )
         if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
-            raise IOError('ERROR: The spectral string should be similar to: '
-                          '( 1 0 )')
+            raise Exception('ERROR: The spectral string should be similar to:'
+                            ' ( 1 0 )')
         # output name
         if not output:
             fileout = self.tifname
@@ -349,9 +349,9 @@ class parseModis:
         else:
             if 'max_lat' not in bound or 'min_lat' not in bound or \
                'min_lon' not in bound or 'max_lon' not in bound:
-                raise IOError('bound variable is a dictionary with the '
-                              'following keys: max_lat, min_lat, min_lon,'
-                              ' max_lon')
+                raise Exception('bound variable is a dictionary with the '
+                                'following keys: max_lat, min_lat, min_lon,'
+                                ' max_lon')
         # Order:  UL: N W  - LR: S E
         conFile.write("SPATIAL_SUBSET_UL_CORNER = ( {mala} {milo} )"
                       "\n".format(mala=bound['max_lat'], milo=bound['min_lon']))
@@ -362,24 +362,24 @@ class parseModis:
         if resample in RESAM_LIST:
             conFile.write("RESAMPLING_TYPE = {res}\n".format(res=resample))
         else:
-            raise IOError('The resampling type {res} is not supportet.\n'
-                          'The resampling type supported are '
-                          '{reslist}'.format(res=resample, reslist=RESAM_LIST))
+            raise Exception('The resampling type {res} is not supportet.\n'
+                            'The resampling type supported are '
+                            '{reslist}'.format(res=resample, reslist=RESAM_LIST))
         # if projtype is in proj_list set it otherwise return an error
         if projtype in PROJ_LIST:
             conFile.write("OUTPUT_PROJECTION_TYPE = {typ}\n".format(typ=projtype))
         else:
-            raise IOError('The projection type {typ} is not supported.\n'
-                          'The projections supported are '
-                          '{proj}'.format(typ=projtype, proj=PROJ_LIST))
+            raise Exception('The projection type {typ} is not supported.\n'
+                            'The projections supported are '
+                            '{proj}'.format(typ=projtype, proj=PROJ_LIST))
         conFile.write("OUTPUT_PROJECTION_PARAMETERS = {proj}\n".format(proj=projpar))
         # if datum is in datum_list set the parameter otherwise return an error
         if datum in DATUM_LIST:
             conFile.write("DATUM = {dat}\n".format(dat=datum))
         else:
-            raise IOError('The datum {dat} is not supported.\n'
-                          'The datum supported are {datum}'.format(dat=datum,
-                                                                   datum=DATUM_LIST))
+            raise Exception('The datum {dat} is not supported.\n'
+                            'The datum supported are '
+                            '{datum}'.format(dat=datum, datum=DATUM_LIST))
         # if utm is not None write the UTM_ZONE parameter in the file
         if utm:
             conFile.write("UTM_ZONE = {zone}\n".format(zone=utm))
@@ -488,9 +488,9 @@ class parseModis:
         else:
             if 'max_lat' not in bound or 'min_lat' not in bound or \
                'min_lon' not in bound or 'max_lon' not in bound:
-                raise IOError('bound variable is a dictionary with the '
-                              'following keys: max_lat, min_lat, min_lon,'
-                              ' max_lon')
+                raise Exception('bound variable is a dictionary with the '
+                                'following keys: max_lat, min_lat, min_lon,'
+                                ' max_lon')
         # Order:  UL: N W  - LR: S E
         conFile.write("OUTPUT_SPACE_UPPER_LEFT_CORNER (LONG LAT) = {milo} "
                       "{mala}\n".format(mala=bound['max_lat'],
@@ -505,28 +505,28 @@ class parseModis:
             conFile.write("KERNEL_TYPE (CC/BI/NN) = {res}"
                           "\n".format(res=resample))
         else:
-            raise IOError('The resampling type {typ} is not supportet.\n'
-                          'The resampling type supported are '
-                          '{swa}'.format(typ=resample, swa=RESAM_LIST_SWATH))
+            raise Exception('The resampling type {typ} is not supportet.\n'
+                            'The resampling type supported are '
+                            '{swa}'.format(typ=resample, swa=RESAM_LIST_SWATH))
         # if projtype is in proj_list set it otherwise return an error
         if projtype in PROJ_LIST:
             conFile.write("OUTPUT_PROJECTION_NUMBER = {typ}\n".format(typ=projtype))
         else:
-            raise IOError('The projection type {typ} is not supported.\n'
-                          'The projections supported are '
-                          '{proj}'.format(typ=projtype, proj=PROJ_LIST))
+            raise Exception('The projection type {typ} is not supported.\n'
+                            'The projections supported are '
+                            '{proj}'.format(typ=projtype, proj=PROJ_LIST))
         conFile.write("OUTPUT_PROJECTION_PARAMETER = {prj}\n".format(prj=projpar))
         # if sphere is in sphere_list set it otherwise return an error
         if int(sphere) in SPHERE_LIST:
             conFile.write("OUTPUT_PROJECTION_SPHERE = {sph}\n".format(sph=sphere))
         else:
-            raise IOError('The sphere {sph} is not supported.\nThe spheres'
-                          'supported are {sphere}'.format(sph=sphere,
-                                                          sphere=SPHERE_LIST))
+            raise Exception('The sphere {sph} is not supported.\nThe spheres'
+                            'supported are {sphere}'.format(sph=sphere,
+                                                            sphere=SPHERE_LIST))
         # if utm is not None write the UTM_ZONE parameter in the file
         if utm:
             if utm < '-60' or utm > '60':
-                raise IOError('The valid UTM zone are -60 to 60')
+                raise Exception('The valid UTM zone are -60 to 60')
             else:
                 conFile.write("OUTPUT_PROJECTION_ZONE = {utm}\n".format(utm=utm))
         # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
@@ -589,7 +589,7 @@ class parseModisMulti:
             elif len(valtemp) == self.nfiles:
                 outvals[k] = self._most_common(valtemp)
             else:
-                raise IOError('Something wrong reading XML files')
+                raise Exception('Something wrong reading XML files')
 
         return outvals
 
@@ -802,7 +802,7 @@ class parseModisMulti:
         valSens = self._checkval(valuesSensor)
 
         if len(valInstr) != len(valSens):
-            raise IOError('Something wrong reading XML files')
+            raise Exception('Something wrong reading XML files')
         else:
             for i in range(len(valInstr)):
                 ins = self.ElementTree.SubElement(obj, 'Instrument')
