@@ -30,3 +30,6 @@
  * GDAL support in downmodis is not mandatory
  * fixed some small bugs
  * improved documentation
+- version 1.0.2
+ * fixed GDAL support in downmodis is not mandatory
+ * fixed raise exception
