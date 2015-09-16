@@ -350,7 +350,7 @@ class downModis:
             # ensure dirData contains only directories, remove all references to files
             self.dirData = [elem.split()[-1] for elem in self.dirData if elem.startswith("d")]
             if self.debug:
-                logging.debug("Open connection {url}".format(name=self.url))
+                logging.debug("Open connection {url}".format(url=self.url))
         except (EOFError, ftplib.error_perm), e:
             logging.error('Error in connection: {err}'.format(err=e))
             if self.nconnection <= ncon:
@@ -361,7 +361,7 @@ class downModis:
         self.ftp.quit()
         self.closeFilelist()
         if self.debug:
-            logging.debug("Close connection {url}".format(self.url))
+            logging.debug("Close connection {url}".format(url=self.url))
 
     def closeFilelist(self):
         """Function to close the file list of where the files are downloaded"""
