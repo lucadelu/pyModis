@@ -53,6 +53,8 @@ except ImportError:
 from HTMLParser import HTMLParser
 import re
 
+global GDAL
+
 try:
     import osgeo.gdal as gdal
     GDAL = True
@@ -205,11 +207,12 @@ class downModis:
                          file in addition to the HDF
        :param bool debug: set to True if you want to obtain debug information
        :param int timeout: Timeout value for HTTP server (seconds)
+       :param bool checkgdal: variable to set the GDAL check
     """
     def __init__(self, destinationFolder, password=None, user="anonymous",
                  url="http://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.005", today=None, enddate=None, delta=10,
-                 jpg=False, debug=False, timeout=30):
+                 jpg=False, debug=False, timeout=30, checkgdal=True):
         """Function to initialize the object"""
 
         # prepare the base url and set the url type (ftp/http)
@@ -277,6 +280,11 @@ class downModis:
         for f in os.listdir(self.writeFilePath):
             if os.path.isfile(os.path.join(self.writeFilePath, f)):
                 self.fileInPath.append(f)
+        global GDAL
+        if not GDAL and checkgdal:
+            logging.warning("WARNING: Python GDAL library is not found")
+        elif GDAL and not checkgdal:
+            GDAL = False
 
     def removeEmptyFiles(self):
         """Function to remove files in the download directory that have
@@ -401,12 +409,9 @@ class downModis:
         # set delta
         if self.today and self.enday:
             if self.today < self.enday:
-                today = self.enday
-                enday = self.today
-                self.today = today
-                self.enday = enday
+                self.today, self.enday = self.enday, self.today
             delta = self.today - self.enday
-            self.delta = abs(delta.days)
+            self.delta = abs(delta.days) + 1
 
     def getListDays(self):
         """Return a list of all selected days"""
@@ -604,7 +609,7 @@ class downModis:
                                                filDown))
                 orig_size = http.headers['content-length']
                 filSave.write(http.read())
-            filSave.close()
+
         # if local file has an error, try to download the file again
         except:
             logging.error("Cannot download {name}. "
@@ -612,6 +617,7 @@ class downModis:
             filSave.close()
             os.remove(filSave.name)
             self._downloadFileHTTP(filDown, filHdf, day)
+        filSave.close()
         transf_size = os.path.getsize(filSave.name)
         if int(orig_size) == int(transf_size):
             # if no xml file, delete the HDF and redownload
