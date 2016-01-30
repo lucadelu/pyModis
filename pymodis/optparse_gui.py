@@ -19,7 +19,7 @@ Functions:
 
 '''
 
-from __future__ import print_function
+
 
 import os
 import sys
@@ -35,7 +35,7 @@ __version__ = 0.2
 __revision__ = '$Id$'
 
 # for required options
-from optparse_required import STREQUIRED
+from .optparse_required import STREQUIRED
 
 TEXTCTRL_SIZE = (400, -1)
 
@@ -111,7 +111,7 @@ class OptparseDialog(wx.Dialog):
                 continue
 
             if option.help is None:
-                option.help = u''
+                option.help = ''
 
             if checkLabel(option) == 'Formats':
                 continue
@@ -213,7 +213,7 @@ class OptparseDialog(wx.Dialog):
     def _getOptions(self):
         """Return a dictionary with the options and their values"""
         option_values = {}
-        for option, ctrl in self.option_controls.iteritems():
+        for option, ctrl in self.option_controls.items():
             try:
                 option_values[option] = ctrl.Value
             except:
@@ -381,7 +381,7 @@ class OptionParser(optparse.OptionParser):
 
         option_values, args = dlg.getOptionsAndArgs()
 
-        for option, value in option_values.iteritems():
+        for option, value in option_values.items():
             if option.required and value == "":
                 self.error("The option %s is mandatory" % option)
             if ('store_true' == option.action) and (value is False):

@@ -34,7 +34,7 @@ from pymodis import optparse_required
 def readDict(dic):
     """Function to decode dictionary"""
     out = ""
-    for k, v in dic.iteritems():
+    for k, v in dic.items():
         out += "%s = %s\n" % (k, v)
     return out
 
@@ -66,10 +66,10 @@ def main():
 
     if options.bound:
         modisOgg.valBound()
-        print readDict(modisOgg.boundary)
+        print(readDict(modisOgg.boundary))
     elif options.output:
         modisOgg.writexml(options.output)
-        print "%s write correctly" % options.output
+        print("%s write correctly" % options.output)
     else:
         parser.error("You have to choose at least one option")
 

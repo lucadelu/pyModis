@@ -39,7 +39,7 @@ Functions:
 * :func:`raster_copy_with_nodata`
 
 """
-from __future__ import print_function
+
 from types import ListType, StringType
 try:
     import osgeo.gdal as gdal
@@ -227,7 +227,7 @@ class convertModisGDAL:
         l_src_ds = gdal.Open(l)
         meta = l_src_ds.GetMetadata()
         band = l_src_ds.GetRasterBand(1)
-        if '_FillValue' in meta.keys():
+        if '_FillValue' in list(meta.keys()):
             fill_value = meta['_FillValue']
         elif band.GetNoDataValue():
             fill_value = band.GetNoDataValue()
@@ -375,7 +375,7 @@ class file_info:
         self.lry = self.uly + self.geotransform[5] * self.ysize
 
         meta = fh.GetMetadata()
-        if '_FillValue' in meta.keys():
+        if '_FillValue' in list(meta.keys()):
             self.fill_value = meta['_FillValue']
         elif fh.GetRasterBand(1).GetNoDataValue():
             self.fill_value = fh.GetRasterBand(1).GetNoDataValue()
@@ -540,7 +540,7 @@ class createMosaicGDAL:
         files.
         """
         self.file_infos = {}
-        for k, v in self.layers.iteritems():
+        for k, v in self.layers.items():
             self.file_infos[k] = []
             for name in v:
                 fi = file_info()
@@ -553,13 +553,13 @@ class createMosaicGDAL:
 
            :return: X size, Y size and geotransform parameters
         """
-        values = self.file_infos.values()
+        values = list(self.file_infos.values())
         l1 = values[0][0]
         ulx = l1.ulx
         uly = l1.uly
         lrx = l1.lrx
         lry = l1.lry
-        for fi in self.file_infos[self.file_infos.keys()[0]]:
+        for fi in self.file_infos[list(self.file_infos.keys())[0]]:
             ulx = min(ulx, fi.ulx)
             uly = max(uly, fi.uly)
             lrx = max(lrx, fi.lrx)
@@ -577,7 +577,7 @@ class createMosaicGDAL:
 
            :param str prefix: the prefix for the XML file containing metadata
         """
-        from parsemodis import parseModisMulti
+        from .parsemodis import parseModisMulti
         import os
         listHDF = []
         for i in self.in_names:
@@ -590,11 +590,11 @@ class createMosaicGDAL:
 
            :param str output: the name of output file
         """
-        values = self.file_infos.values()
+        values = list(self.file_infos.values())
         l1 = values[0][0]
         xsize, ysize, geotransform = self._calculateNewSize()
         t_fh = self.driver.Create(output, xsize, ysize,
-                                  len(self.file_infos.keys()), l1.band_type)
+                                  len(list(self.file_infos.keys())), l1.band_type)
         if t_fh is None:
             raise Exception('Not possibile to create dataset %s' % output)
             return
@@ -602,7 +602,7 @@ class createMosaicGDAL:
         t_fh.SetGeoTransform(geotransform)
         t_fh.SetProjection(l1.projection)
         i = 1
-        for names in self.file_infos.values():
+        for names in list(self.file_infos.values()):
             fill = None
             if names[0].fill_value:
                 fill = float(names[0].fill_value)
@@ -659,7 +659,7 @@ class createMosaicGDAL:
 
         xsize, ysize, geot = self._calculateNewSize()
         if separate:
-            for k in self.file_infos.keys():
+            for k in list(self.file_infos.keys()):
                 l1 = self.file_infos[k][0]
                 out = open("{pref}_{band}.vrt".format(pref=output, band=k),
                            'w')
@@ -684,7 +684,7 @@ class createMosaicGDAL:
                 out.write('</VRTDataset>\n')
                 out.close()
         else:
-            values = self.file_infos.values()
+            values = list(self.file_infos.values())
             l1 = values[0][0]
             band = 1  # the number of band
             out = open("{pref}.vrt".format(pref=output), 'w')
@@ -695,7 +695,7 @@ class createMosaicGDAL:
                       ' {geo4}, {geo5}</GeoTransform>\n'.format(geo0=geot[0],
                       geo1=geot[1], geo2=geot[2], geo3=geot[3], geo4=geot[4],
                       geo5=geot[5]))
-            for k in self.file_infos.keys():
+            for k in list(self.file_infos.keys()):
                 l1 = self.file_infos[k][0]
                 out.write('\t<VRTRasterBand dataType="{typ}" band="{n}"'
                           '>\n'.format(typ=gdal.GetDataTypeName(l1.band_type),

@@ -20,7 +20,7 @@
 ##################################################################
 """Script to mosaic the input tiles. It is able to use MRT or GDAL as backend
 """
-from __future__ import print_function
+
 
 import os
 import sys
