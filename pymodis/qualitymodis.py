@@ -27,7 +27,7 @@ Classes:
 * :class:`QualityModis`
 
 """
-from __future__ import print_function
+
 import os
 import numpy as np
 
@@ -43,7 +43,7 @@ except ImportError:
                           'python-gdal')
 
 
-VALIDTYPES = {'13': map(str, range(1, 10)), '11': map(str, range(1, 6))}
+VALIDTYPES = {'13': list(map(str, list(range(1, 10)))), '11': list(map(str, list(range(1, 6))))}
 
 PRODUCTPROPS = {'MOD13Q1': ([2], ['QAGrp1']),
                 'MYD13Q1': ([2], ['QAGrp1']),
@@ -115,7 +115,7 @@ class QualityModis():
 
     def setQAGroup(self):
         """set QA dataset group type"""
-        if self.productType in PRODUCTPROPS.keys():
+        if self.productType in list(PRODUCTPROPS.keys()):
             self.qaGroup = PRODUCTPROPS[self.productType][1][int(self.qLayer)-1]
         else:
             print("Product version is currently not supported!")

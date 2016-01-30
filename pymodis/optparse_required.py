@@ -27,7 +27,7 @@ Classes:
 * :class:`OptionParser`
 
 """
-from __future__ import print_function
+
 import optparse
 
 # classes for required options

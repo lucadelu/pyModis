@@ -22,7 +22,7 @@
 """Script to convert the input file HDF or VRT in different projection and
 format. It is able to use MRT or GDAL as backend
 """
-from __future__ import print_function
+
 import os
 import sys
 import string

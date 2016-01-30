@@ -33,7 +33,7 @@ Functions:
 
 """
 # to be compliant with python 3
-from __future__ import print_function
+
 
 import os
 import sys
@@ -142,7 +142,7 @@ class createMosaic:
 
     def write_mosaic_xml(self):
         """Write the XML metadata file for MODIS mosaic"""
-        from parsemodis import parseModisMulti
+        from .parsemodis import parseModisMulti
         listHDF = []
         for i in self.HDFfiles:
             if i.find(self.basepath) == -1 and i.find('.hdf.xml') == -1:

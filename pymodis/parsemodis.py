@@ -28,7 +28,7 @@ Classes:
 
 """
 
-from __future__ import print_function
+
 import string
 import os
 
@@ -578,7 +578,7 @@ class parseModisMulti:
 
         :param dict vals: dictionary of values
         """
-        keys = vals[0].keys()
+        keys = list(vals[0].keys())
         outvals = {}
         for k in keys:
             valtemp = []
@@ -622,7 +622,7 @@ class parseModisMulti:
 
         :param values: dictionary containing keys and values
         """
-        for k, v in values.iteritems():
+        for k, v in values.items():
             elem = self.ElementTree.SubElement(obj, k)
             elem.text = v
 

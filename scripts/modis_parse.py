@@ -19,7 +19,7 @@
 #
 ##################################################################
 """Script to read metadata from a MODIS HDF file"""
-from __future__ import print_function
+
 # import system library
 import sys
 from types import ListType
@@ -38,7 +38,7 @@ ERROR = "You have to define the name of HDF file"
 def readDict(dic):
     """Function to decode dictionary"""
     out = ""
-    for k, v in dic.iteritems():
+    for k, v in dic.items():
         out += "%s = %s\n" % (k, v)
     return out
 
