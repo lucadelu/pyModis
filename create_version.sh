@@ -33,6 +33,7 @@ if [ $procede = "yes" ]; then
 fi
 
 echo "Do you want create \"Debian\" packages (answer yes or no)?"
+read Debian
 if [ $Debian = "yes" ]; then
 
   su -c "dpkg-buildpackage -us -uc -d"
