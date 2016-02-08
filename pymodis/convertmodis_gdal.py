@@ -42,6 +42,7 @@ Functions:
 
 # python 2 and 3 compatibility
 from __future__ import print_function
+from __future__ import division
 
 from types import ListType, StringType
 try:
