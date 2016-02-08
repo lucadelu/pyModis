@@ -19,6 +19,8 @@ Functions:
 
 '''
 
+# python 2 and 3 compatibility
+from builtins import dict
 
 
 import os
@@ -88,7 +90,7 @@ class OptparseDialog(wx.Dialog):
         self.CenterOnScreen()
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.args_ctrl = []
-        self.option_controls = {}
+        self.option_controls = dict()
 
 #       IN THE TOP OF GUI THERE WAS THE NAME OF THE SCRIPT, BUT NOW IT IS IN
 #       THE TITLE
@@ -104,7 +106,7 @@ class OptparseDialog(wx.Dialog):
         sizer.Add(arg, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT |
                   wx.TOP, 5)
 
-        self.browse_option_map = {}
+        self.browse_option_map = dict()
         # Add controls for all the options
         for option in optParser.list_of_option:
             if option.dest is None:
@@ -212,7 +214,7 @@ class OptparseDialog(wx.Dialog):
 
     def _getOptions(self):
         """Return a dictionary with the options and their values"""
-        option_values = {}
+        option_values = dict()
         for option, ctrl in self.option_controls.items():
             try:
                 option_values[option] = ctrl.Value
