@@ -249,7 +249,7 @@ class convertModisGDAL:
             dst_ds = self.driver.Create(out_name, self.dst_xsize,
                                         self.dst_ysize, 1, datatype)
         except:
-            raise Exception('Not possibile to create dataset %s' % out_name)
+            raise Exception('Not possible to create dataset %s' % out_name)
         dst_ds.SetProjection(self.dst_wkt)
         dst_ds.SetGeoTransform(self.dst_gt)
         if fill_value:
@@ -264,7 +264,7 @@ class convertModisGDAL:
                                 cbk_user_data)
             print("Layer {name} reprojected".format(name=l))
         except:
-            raise Exception('Not possibile to reproject dataset '
+            raise Exception('Not possible to reproject dataset '
                             '{name}'.format(name=l))
         dst_ds.SetMetadata(meta)
         dst_ds = None
@@ -273,14 +273,14 @@ class convertModisGDAL:
 
     def run_vrt_separated(self):
         """Reproject VRT created by createMosaicGDAL, function write_vrt with
-        sepatated=True
+        separated=True
         """
         self._createWarped(self.in_name)
         self._reprojectOne(self.in_name)
         print("Dataset '{name}' reprojected".format(name=self.in_name))
 
     def run(self):
-        """Reproject all the subset of choosen layer"""
+        """Reproject all the subset of chosen layer"""
         if self.vrt:
             self.run_vrt_separated()
             return
@@ -503,7 +503,7 @@ class createMosaicGDAL:
         self._names_to_fileinfos()
 
     def _initLayers(self):
-        """Set up the variable self.layers as dictionary for each choosen
+        """Set up the variable self.layers as dictionary for each chosen
         subset"""
         if type(self.in_names) == ListType:
             src_ds = gdal.Open(self.in_names[0])
@@ -585,7 +585,7 @@ class createMosaicGDAL:
         pmm.writexml("%s.xml" % prefix)
 
     def run(self, output):
-        """Create the mosaik
+        """Create the mosaic
 
            :param str output: the name of output file
         """
@@ -595,7 +595,7 @@ class createMosaicGDAL:
         t_fh = self.driver.Create(output, xsize, ysize,
                                   len(list(self.file_infos.keys())), l1.band_type)
         if t_fh is None:
-            raise Exception('Not possibile to create dataset %s' % output)
+            raise Exception('Not possible to create dataset %s' % output)
 
         t_fh.SetGeoTransform(geotransform)
         t_fh.SetProjection(l1.projection)
