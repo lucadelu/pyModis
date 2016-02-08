@@ -28,6 +28,8 @@ Classes:
 
 """
 
+# python 2 and 3 compatibility
+from builtins import dict
 
 import string
 import os
@@ -134,7 +136,7 @@ class parseModis:
     def retCollectionMetaData(self):
         """Return the CollectionMetaData element as dictionary"""
         self.getGranule()
-        collect = {}
+        collect = dict()
         for i in self.granule.find('CollectionMetaData').getiterator():
             if i.text.strip() != '':
                 collect[i.tag] = i.text
@@ -143,7 +145,7 @@ class parseModis:
     def retDataFiles(self):
         """Return the DataFiles element as dictionary"""
         self.getGranule()
-        collect = {}
+        collect = dict()
         datafiles = self.granule.find('DataFiles')
         for i in datafiles.find('DataFileContainer').getiterator():
             if i.text.strip() != '':
@@ -153,7 +155,7 @@ class parseModis:
     def retDataGranule(self):
         """Return the ECSDataGranule elements as dictionary"""
         self.getGranule()
-        datagran = {}
+        datagran = dict()
         for i in self.granule.find('ECSDataGranule').getiterator():
             if i.text.strip() != '':
                 datagran[i.tag] = i.text
@@ -167,7 +169,7 @@ class parseModis:
     def retRangeTime(self):
         """Return the RangeDateTime elements as dictionary"""
         self.getGranule()
-        rangeTime = {}
+        rangeTime = dict()
         for i in self.granule.find('RangeDateTime').getiterator():
             if i.text.strip() != '':
                 rangeTime[i.tag] = i.text
@@ -189,25 +191,25 @@ class parseModis:
             lon.append(la)
             lat.append(lo)
             self.boundary.append({'lat': la, 'lon': lo})
-        extent = {'min_lat': min(lat), 'max_lat': max(lat),
-                  'min_lon': min(lon), 'max_lon': max(lon)}
+        extent = dict({'min_lat': min(lat), 'max_lat': max(lat),
+                       'min_lon': min(lon), 'max_lon': max(lon)})
         return extent
 
     def retMeasure(self):
         """Return statistics of QA as dictionary"""
-        value = {}
+        value = dict()
         self.getGranule()
         mes = self.granule.find('MeasuredParameter')
         mespc = mes.find('MeasuredParameterContainer')
         value['ParameterName'] = mespc.find('ParameterName').text
         meStat = mespc.find('QAStats')
-        qastat = {}
+        qastat = dict()
         for i in meStat.getiterator():
             if i.tag != 'QAStats':
                 qastat[i.tag] = i.text
         value['QAStats'] = qastat
         meFlag = mespc.find('QAFlags')
-        flagstat = {}
+        flagstat = dict()
         for i in meFlag.getiterator():
             if i.tag != 'QAFlags':
                 flagstat[i.tag] = i.text
@@ -216,7 +218,7 @@ class parseModis:
 
     def retPlatform(self):
         """Return the platform values as dictionary."""
-        value = {}
+        value = dict()
         self.getGranule()
         plat = self.granule.find('Platform')
         value['PlatformShortName'] = plat.find('PlatformShortName').text
@@ -230,7 +232,7 @@ class parseModis:
         """Return the PSA values as dictionary, the PSAName is the key and
         and PSAValue is the value
         """
-        value = {}
+        value = dict()
         self.getGranule()
         psas = self.granule.find('PSAs')
         for i in psas.findall('PSA'):
@@ -579,7 +581,7 @@ class parseModisMulti:
         :param dict vals: dictionary of values
         """
         keys = list(vals[0].keys())
-        outvals = {}
+        outvals = dict()
         for k in keys:
             valtemp = []
             for v in vals:
