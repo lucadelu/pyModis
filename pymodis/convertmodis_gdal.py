@@ -207,12 +207,10 @@ class convertModisGDAL:
                 raise Exception('Invalid number of pixel 0 for X size. The '
                                 'problem could be in an invalid value of '
                                 'resolution')
-                return 0
             elif self.dst_ysize == 0:
                 raise Exception('Invalid number of pixel 0 for Y size. The '
                                 'problem could be in an invalid value of '
                                 'resolution')
-                return 0
             self.dst_gt = [bbox[0][0], self.resolution, 0.0, bbox[1][1], 0.0,
                            -self.resolution]
         tmp_ds = None
@@ -251,7 +249,6 @@ class convertModisGDAL:
                                         self.dst_ysize, 1, datatype)
         except:
             raise Exception('Not possibile to create dataset %s' % out_name)
-            return 0
         dst_ds.SetProjection(self.dst_wkt)
         dst_ds.SetGeoTransform(self.dst_gt)
         if fill_value:
@@ -268,7 +265,6 @@ class convertModisGDAL:
         except:
             raise Exception('Not possibile to reproject dataset '
                             '{name}'.format(name=l))
-            return 0
         dst_ds.SetMetadata(meta)
         dst_ds = None
         l_src_ds = None
@@ -601,7 +597,6 @@ class createMosaicGDAL:
                                   len(list(self.file_infos.keys())), l1.band_type)
         if t_fh is None:
             raise Exception('Not possibile to create dataset %s' % output)
-            return
 
         t_fh.SetGeoTransform(geotransform)
         t_fh.SetProjection(l1.projection)
