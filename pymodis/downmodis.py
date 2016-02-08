@@ -37,6 +37,8 @@ Functions:
 
 """
 
+# python 2 and 3 compatibility
+from __future__ import print_function
 
 from datetime import date
 from datetime import timedelta

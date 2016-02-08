@@ -20,6 +20,9 @@
 ##################################################################
 """Script to read metadata from a MODIS HDF file"""
 
+# python 2 and 3 compatibility
+from __future__ import print_function
+
 # import system library
 import sys
 from types import ListType

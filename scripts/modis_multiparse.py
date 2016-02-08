@@ -19,6 +19,9 @@
 #
 ##################################################################
 
+# python 2 and 3 compatibility
+from __future__ import print_function
+
 #import system library
 import sys
 #import modis library
