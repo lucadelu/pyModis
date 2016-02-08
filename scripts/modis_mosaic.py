@@ -21,7 +21,6 @@
 """Script to mosaic the input tiles. It is able to use MRT or GDAL as backend
 """
 
-
 import os
 import sys
 import string
@@ -41,7 +40,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise Exception('Python GDAL library not found, please install python-gdal')
 
 ERROR = "You have to define the name of a text file containing HDF files" \
         " (One HDF file for line)."
