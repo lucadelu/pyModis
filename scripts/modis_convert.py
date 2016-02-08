@@ -42,7 +42,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise Exception('Python GDAL library not found, please install python-gdal')
 
 
 def removeBracs(stri):
