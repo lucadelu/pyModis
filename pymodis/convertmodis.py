@@ -32,8 +32,8 @@ Functions:
 * :func:`checkMRTpath`
 
 """
-# to be compliant with python 3
-
+# python 2 and 3 compatibility
+from __future__ import print_function
 
 import os
 import sys

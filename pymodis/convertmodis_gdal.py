@@ -40,6 +40,9 @@ Functions:
 
 """
 
+# python 2 and 3 compatibility
+from __future__ import print_function
+
 from types import ListType, StringType
 try:
     import osgeo.gdal as gdal
