@@ -26,7 +26,6 @@ from builtins import dict
 import os
 import sys
 import optparse
-from types import UnicodeType
 try:
     import wx
     import wx.lib.filebrowsebutton as filebrowse
@@ -396,7 +395,7 @@ class OptionParser(optparse.OptionParser):
             if option.takes_value() is False:
                 value = None
 
-            if type(value) == UnicodeType:
+            if isinstance(value, str):
                 value = str(value)
             option.process(option, value, values, self)
 
