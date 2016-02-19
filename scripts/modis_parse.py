@@ -25,7 +25,6 @@ from __future__ import print_function
 
 # import system library
 import sys
-from types import ListType
 # import modis library
 try:
     from pymodis import optparse_gui
@@ -101,7 +100,7 @@ def main():
         parser.error(ERROR)
         sys.exit()
     else:
-        if type(args) != ListType:
+        if not isinstance(args, list):
             parser.error(ERROR)
             sys.exit()
     # create modis object

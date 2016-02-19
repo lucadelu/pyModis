@@ -24,7 +24,6 @@
 import os
 import sys
 import string
-from types import ListType
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -93,7 +92,7 @@ def main():
         parser.error(ERROR)
         sys.exit()
     else:
-        if type(args) != ListType:
+        if not isinstance(args, list):
             parser.error(ERROR)
             sys.exit()
         elif len(args) > 1:

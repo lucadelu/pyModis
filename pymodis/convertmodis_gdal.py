@@ -45,7 +45,6 @@ from __future__ import print_function
 from __future__ import division
 from builtins import dict
 
-from types import ListType, StringType
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -137,9 +136,9 @@ class convertModisGDAL:
         # error threshold the same value as gdalwarp
         self.error_threshold = 0.125
         self.resampling = getResampling(resampl)
-        if type(subset) == ListType:
+        if isinstance(subset,list):
             self.subset = subset
-        elif type(subset) == StringType:
+        elif isinstance(subset, bytes):
             self.subset = subset.replace('(', '').replace(')',
                                                           '').strip().split()
         else:
@@ -481,9 +480,9 @@ class createMosaicGDAL:
         # self.resolution = res
         if not subset:
             self.subset = None
-        elif type(subset) == ListType:
+        elif isinstance(subset, list):
             self.subset = subset
-        elif type(subset) == StringType:
+        elif isinstance(subset, bytes):
             self.subset = subset.replace('(', '').replace(')',
                                                           '').strip().split()
         else:
@@ -505,7 +504,7 @@ class createMosaicGDAL:
     def _initLayers(self):
         """Set up the variable self.layers as dictionary for each chosen
         subset"""
-        if type(self.in_names) == ListType:
+        if isinstance(self.in_names, list):
             src_ds = gdal.Open(self.in_names[0])
         else:
             raise Exception("The input value should be a list of HDF files")
