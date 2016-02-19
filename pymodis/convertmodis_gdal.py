@@ -138,9 +138,8 @@ class convertModisGDAL:
         self.resampling = getResampling(resampl)
         if isinstance(subset,list):
             self.subset = subset
-        elif isinstance(subset, bytes):
-            self.subset = subset.replace('(', '').replace(')',
-                                                          '').strip().split()
+        elif isinstance(subset, str):
+            self.subset = subset.replace('(', '').replace(')', '').strip().split()
         else:
             raise Exception('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
@@ -482,9 +481,8 @@ class createMosaicGDAL:
             self.subset = None
         elif isinstance(subset, list):
             self.subset = subset
-        elif isinstance(subset, bytes):
-            self.subset = subset.replace('(', '').replace(')',
-                                                          '').strip().split()
+        elif isinstance(subset, str):
+            self.subset = subset.replace('(', '').replace(')', '').strip().split()
         else:
             raise Exception('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
