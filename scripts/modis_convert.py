@@ -47,9 +47,7 @@ except ImportError:
 
 def removeBracs(stri):
     """Remove brackets from string"""
-    stri = string.replace(stri, ']', '')
-    stri = string.replace(stri, '[', '')
-    return stri
+    return stri.replace(']', '').replace('[', '')
 
 
 def main():
