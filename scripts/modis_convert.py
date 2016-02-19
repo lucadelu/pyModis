@@ -25,7 +25,6 @@ format. It is able to use MRT or GDAL as backend
 
 import os
 import sys
-import string
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -130,7 +129,7 @@ def main():
         parser.error("You have to define the name of HDF file.")
     if not os.path.isfile(args[0]):
         parser.error("You have to define the name of HDF file.")
-    if string.find(options.subset, '(') == -1 or string.find(options.subset, ')') == -1:
+    if not (options.subset.strip()[0] == '(' and options.subset.strip()[-1] == ')'):
         parser.error('ERROR: The spectral string should be similar to: "( 1 0 )"')
 
     if options.mrt_path:
