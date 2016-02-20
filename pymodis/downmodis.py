@@ -132,7 +132,7 @@ class modisHtmlParser(HTMLParser):
         """Function to initialize the object"""
         HTMLParser.__init__(self)
         self.fileids = []
-        self.feed(fh)
+        self.feed(str(fh))
 
     def handle_starttag(self, tag, attrs):
         if tag == 'a':
