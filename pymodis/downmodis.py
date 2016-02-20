@@ -49,10 +49,13 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
-try:
-    import requests
-except ImportError:
-    import urllib.request, urllib.error, urllib.parse
+import requests
+
+# urllib in python 2 and 3
+from future.standard_library import install_aliases
+install_aliases()
+from urllib.request import urlopen
+
 from html.parser import HTMLParser
 import re
 
@@ -329,7 +332,7 @@ class downModis:
                                     timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.content).get_dates()
             except:
-                http = urllib.request.urlopen(urljoin(self.url, self.path),
+                http = urlopen(urljoin(self.url, self.path),
                                        timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
@@ -482,7 +485,7 @@ class downModis:
                 http = modisHtmlParser(requests.get(url,
                                        timeout=self.timeout).content)
             except:
-                http = modisHtmlParser(urllib.request.urlopen(url,
+                http = modisHtmlParser(urlopen(url,
                                        timeout=self.timeout).read())
             # download JPG files also
             if self.jpeg:
@@ -607,8 +610,8 @@ class downModis:
                 http = requests.get(urljoin(self.url, self.path, day, filDown))
                 orig_size = http.headers['content-length']
                 filSave.write(http.content)
-            except:  # use urllib2 module
-                http = urllib.request.urlopen(urljoin(self.url, self.path, day,
+            except:  # use urllib module
+                http = urlopen(urljoin(self.url, self.path, day,
                                                filDown))
                 orig_size = http.headers['content-length']
                 filSave.write(http.read())
