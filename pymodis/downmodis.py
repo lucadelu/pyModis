@@ -247,6 +247,7 @@ class downModis:
         # set destination folder
         if not os.path.isdir(destinationFolder):
             os.makedirs(destinationFolder)
+            self.writeFilePath = destinationFolder
         elif os.access(destinationFolder, os.W_OK):
             self.writeFilePath = destinationFolder
         else:
