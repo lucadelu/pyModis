@@ -245,7 +245,9 @@ class downModis:
         else:  # tiles are list, tuple, or None
             self.tiles = tiles
         # set destination folder
-        if os.access(destinationFolder, os.W_OK):
+        if not os.path.isdir(destinationFolder):
+            os.makedirs(destinationFolder)
+        elif os.access(destinationFolder, os.W_OK):
             self.writeFilePath = destinationFolder
         else:
             raise Exception("Folder to store downloaded files does not exist"
