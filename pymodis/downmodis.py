@@ -639,12 +639,14 @@ class downModis:
                     self._downloadFileHTTP(filDown, filHdf, day)
                 else:
                     self.filelist.write("{name}\n".format(name=filDown))
+                    self.filelist.flush()
                     if self.debug:
                         logging.debug("File {name} downloaded "
                                       "correctly".format(name=filDown))
                     return 0
             else:  # xml exists
                 self.filelist.write("{name}\n".format(name=filDown))
+                self.filelist.flush()
                 if self.debug:
                     logging.debug("File {name} downloaded "
                                   "correctly".format(name=filDown))
@@ -668,6 +670,7 @@ class downModis:
         try:  # transfer file from ftp
             self.ftp.retrbinary("RETR " + filDown, filSave.write)
             self.filelist.write("{name}\n".format(name=filDown))
+            self.filelist.flush()
             if self.debug:
                 logging.debug("File {name} downloaded".format(name=filDown))
         # if error during download process, try to redownload the file
