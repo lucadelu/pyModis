@@ -39,19 +39,19 @@ Examples
 
 Extract VI Usefulness value from MOD13 product ::
 
-    modis_quality.py -t 2 infile.hdf outfile.tif
+    modis_quality.py -t 2 infile.hdf -o outfile.tif
 
 Extract shadow mask from MOD13 product ::
 
-    modis_quality.py -t 9 input_file.hdf destination_file.tif
+    modis_quality.py -t 9 input_file.hdf -o destination_file.tif
 
 Extract Emissitivity error flag of Nighttime LSTE quality control from MOD11C1 product ::
 
-    modis_quality.py -t 4 -l 2 infile.hdf outfile.tif
+    modis_quality.py -t 4 -l 2 infile.hdf -o outfile.tif
 
 Extract MODLAND QA value from MOD13Q1 mosaic ::
 
-    modis_quality.py -t 1 -p MOD13Q1 input_file.hdf destination_file.tif
+    modis_quality.py -t 1 -p MOD13Q1 input_file.hdf -o destination_file.tif
 
 .. only:: latex
 
