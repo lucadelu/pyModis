@@ -1,11 +1,11 @@
 modis_mosaic.py
-----------------
+---------------
 
 **modis_mosaic.py** creates a mosaic of several MODIS tiles in
 HDF format, using MRT mrtmosaic software or GDAL library.
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_mosaic.py [options] hdflist_file
@@ -43,7 +43,7 @@ Examples
 ^^^^^^^^
 
 MODIS Reprojection Tools
-"""""""""""""""""""""""""""
+""""""""""""""""""""""""
 
 Convert all the layers of several tiles::
 
@@ -54,7 +54,7 @@ Convert LAYERS of several LST MODIS tiles::
     modis_mosaic.py -s "1 0 1 0" -m "/usr/local/bin/" -o FILE_mosaic MOSAIC_FILES_LIST
 
 GDAL
-""""""""""""
+""""
 
 Convert the first LAYERS of several tiles with resolution 1km in GeoTIFF format::
 

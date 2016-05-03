@@ -1,10 +1,10 @@
 modis_quality.py
-------------------
+----------------
 
 **modis_quality.py** checks the quality of MODIS data using the QA layer
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_quality.py [options] input_file destination_file
