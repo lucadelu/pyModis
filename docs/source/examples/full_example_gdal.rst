@@ -1,5 +1,5 @@
 Example of a full process with GDAL library
-=====================================================
+===========================================
 
 In this short example you can understand how to concatenate
 the scripts to obtain a GeoTIFF file for each band of the
@@ -13,7 +13,7 @@ chosen product using as backend GDAL library.
 .. _download-data:
 
 Downloading data
--------------------
+----------------
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
@@ -39,7 +39,7 @@ the product that you download.
   so if you need it, you should rename the file
 
 Mosaic data
---------------
+-----------
 
 At this point you need to create the mosaic of the tiles downloaded.
 :doc:`../scripts/modis_mosaic` is the script to use. We create a *VRT*
@@ -52,7 +52,7 @@ The command will create a file called ``mosaic_LST_Day_1km.vrt`` in /tmp/
 directory
 
 Convert data
----------------
+------------
 
 The last part of the procedure is to convert the mosaic using
 :doc:`../scripts/modis_convert`. Using *VRT* format it create dataset

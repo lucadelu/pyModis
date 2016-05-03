@@ -1,10 +1,10 @@
 Examples
-============
+========
 
 Some example about ``pyModis`` library and script
 
 Scripts
-^^^^^^^^^^
+^^^^^^^
 
 .. only:: latex
 
@@ -22,7 +22,7 @@ Scripts
    full_example_mrt
 
 Library
-^^^^^^^^^^^
+^^^^^^^
 
 To test ``pyModis`` library you can find an `Ipython notebook`_ example
 in the documentation source code.
