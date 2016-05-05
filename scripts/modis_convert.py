@@ -129,7 +129,7 @@ def main():
         parser.error("You have to define the name of HDF file.")
     if not os.path.isfile(args[0]):
         parser.error("You have to define the name of HDF file.")
-    if not (options.subset.strip()[0] == '(' and options.subset.strip()[-1] == ')'):
+    if not (options.subset.strip().startswith('(') and options.subset.strip().endswith(')')):
         parser.error('ERROR: The spectral string should be similar to: "( 1 0 )"')
 
     if options.mrt_path:
