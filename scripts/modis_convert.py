@@ -22,10 +22,9 @@
 """Script to convert the input file HDF or VRT in different projection and
 format. It is able to use MRT or GDAL as backend
 """
-from __future__ import print_function
+
 import os
 import sys
-import string
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -42,14 +41,12 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise Exception('Python GDAL library not found, please install python-gdal')
 
 
 def removeBracs(stri):
     """Remove brackets from string"""
-    stri = string.replace(stri, ']', '')
-    stri = string.replace(stri, '[', '')
-    return stri
+    return stri.replace(']', '').replace('[', '')
 
 
 def main():
@@ -132,7 +129,7 @@ def main():
         parser.error("You have to define the name of HDF file.")
     if not os.path.isfile(args[0]):
         parser.error("You have to define the name of HDF file.")
-    if string.find(options.subset, '(') == -1 or string.find(options.subset, ')') == -1:
+    if not (options.subset.strip()[0] == '(' and options.subset.strip()[-1] == ')'):
         parser.error('ERROR: The spectral string should be similar to: "( 1 0 )"')
 
     if options.mrt_path:

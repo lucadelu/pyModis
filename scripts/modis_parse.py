@@ -19,10 +19,12 @@
 #
 ##################################################################
 """Script to read metadata from a MODIS HDF file"""
+
+# python 2 and 3 compatibility
 from __future__ import print_function
+
 # import system library
 import sys
-from types import ListType
 # import modis library
 try:
     from pymodis import optparse_gui
@@ -38,7 +40,7 @@ ERROR = "You have to define the name of HDF file"
 def readDict(dic):
     """Function to decode dictionary"""
     out = ""
-    for k, v in dic.iteritems():
+    for k, v in dic.items():
         out += "%s = %s\n" % (k, v)
     return out
 
@@ -98,7 +100,7 @@ def main():
         parser.error(ERROR)
         sys.exit()
     else:
-        if type(args) != ListType:
+        if not isinstance(args, list):
             parser.error(ERROR)
             sys.exit()
     # create modis object

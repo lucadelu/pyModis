@@ -1,5 +1,5 @@
 Example reproject data with MRT
-============================================================
+===============================
 
 In this short example you can understand how to concatenate
 the scripts to obtain a GeoTIFF file for each band of the
@@ -11,7 +11,7 @@ chosen product using as backend MODIS Reprojection Tools (MRT).
   you use other OS change the paths where data will be saved
 
 Downloading data
--------------------
+----------------
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
@@ -38,7 +38,7 @@ the product that you download.
 
 
 Mosaic data
---------------
+-----------
 
 :doc:`../scripts/modis_mosaic` is the script to use.
 
@@ -54,7 +54,7 @@ The output of this command are *outputfile.hdf* and *outputfile.hdf.xml* inside 
 directory ``/tmp``. It's reading the input files contained in *listfileMOD11A1.005.txt*
 
 Convert data
----------------
+------------
 
 The last part of the procedure is to convert the mosaic, from HDF format and sinusoidal 
 projection, to GeoTIFF with several projection. You have to use :doc:`../scripts/modis_convert`
@@ -69,11 +69,11 @@ projection, to GeoTIFF with several projection. You have to use :doc:`../scripts
 
   ::
 
-    modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/ 
+    modis_convert.py -s '( 1 1 1 1 1 1 1 1 1 1 1 1 )' -m /path/to/mrt/
 		     -o /tmp/finalfile.tif -g 250 /tmp/outputfile.hdf
 
 Extract quality information
---------------------------------
+---------------------------
 
 If necessary, you can extract specific quality type from the chosen quality layer.
 In this particular case, we extract the Mandatory QA flag of the daytime temperature.

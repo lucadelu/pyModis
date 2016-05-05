@@ -36,7 +36,10 @@ Functions:
 * :func:`str2date`
 
 """
+
+# python 2 and 3 compatibility
 from __future__ import print_function
+from builtins import dict
 
 from datetime import date
 from datetime import timedelta
@@ -46,11 +49,14 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
-try:
-    import requests
-except ImportError:
-    import urllib2
-from HTMLParser import HTMLParser
+import requests
+
+# urllib in python 2 and 3
+from future.standard_library import install_aliases
+install_aliases()
+from urllib.request import urlopen
+
+from html.parser import HTMLParser
 import re
 
 global GDAL
@@ -83,7 +89,7 @@ def urljoin(*args):
     :return: a string
     """
 
-    return "/".join(map(lambda x: str(x).rstrip('/'), args))
+    return "/".join([str(x).rstrip('/') for x in args])
 
 
 def getNewerVersion(oldFile, newFile):
@@ -126,7 +132,7 @@ class modisHtmlParser(HTMLParser):
         """Function to initialize the object"""
         HTMLParser.__init__(self)
         self.fileids = []
-        self.feed(fh)
+        self.feed(str(fh))
 
     def handle_starttag(self, tag, attrs):
         if tag == 'a':
@@ -239,7 +245,10 @@ class downModis:
         else:  # tiles are list, tuple, or None
             self.tiles = tiles
         # set destination folder
-        if os.access(destinationFolder, os.W_OK):
+        if not os.path.isdir(destinationFolder):
+            os.makedirs(destinationFolder)
+            self.writeFilePath = destinationFolder
+        elif os.access(destinationFolder, os.W_OK):
             self.writeFilePath = destinationFolder
         else:
             raise Exception("Folder to store downloaded files does not exist"
@@ -326,7 +335,7 @@ class downModis:
                                     timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.content).get_dates()
             except:
-                http = urllib2.urlopen(urljoin(self.url, self.path),
+                http = urlopen(urljoin(self.url, self.path),
                                        timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
@@ -359,7 +368,7 @@ class downModis:
             self.dirData = [elem.split()[-1] for elem in self.dirData if elem.startswith("d")]
             if self.debug:
                 logging.debug("Open connection {url}".format(url=self.url))
-        except (EOFError, ftplib.error_perm), e:
+        except (EOFError, ftplib.error_perm) as e:
             logging.error('Error in connection: {err}'.format(err=e))
             if self.nconnection <= ncon:
                 self._connectFTP()
@@ -382,7 +391,7 @@ class downModis:
         """
         try:
             self.ftp.cwd(day)
-        except (ftplib.error_reply, socket.error), e:
+        except (ftplib.error_reply, socket.error) as e:
             logging.error("Error {err} entering in directory "
                           "{name}".format(err=e, name=day))
             self.setDirectoryIn(day)
@@ -391,7 +400,7 @@ class downModis:
         """Move up within the file directory"""
         try:
             self.ftp.cwd('..')
-        except (ftplib.error_reply, socket.error), e:
+        except (ftplib.error_reply, socket.error) as e:
             logging.error("Error {err} when trying to come back".format(err=e))
             self.setDirectoryOver()
 
@@ -479,7 +488,7 @@ class downModis:
                 http = modisHtmlParser(requests.get(url,
                                        timeout=self.timeout).content)
             except:
-                http = modisHtmlParser(urllib2.urlopen(url,
+                http = modisHtmlParser(urlopen(url,
                                        timeout=self.timeout).read())
             # download JPG files also
             if self.jpeg:
@@ -497,7 +506,7 @@ class downModis:
                 logging.debug("The number of file to download is: "
                               "{num}".format(num=len(finalList)))
             return finalList
-        except (socket.error), e:
+        except (socket.error) as e:
             logging.error("Error {err} when try to receive list of "
                           "files".format(err=e))
             self._getFilesListHTTP(day)
@@ -543,7 +552,7 @@ class downModis:
                 logging.debug("The number of file to download is: "
                               "{num}".format(num=len(finalList)))
             return finalList
-        except (ftplib.error_reply, socket.error), e:
+        except (ftplib.error_reply, socket.error) as e:
             logging.error("Error {err} when trying to receive list of "
                           "files".format(err=e))
             self._getFilesListFTP()
@@ -575,7 +584,7 @@ class downModis:
         try:
             gdal.Open(filHdf)
             return 0
-        except (RuntimeError), e:
+        except (RuntimeError) as e:
             logging.error(e)
             return 1
 
@@ -604,8 +613,8 @@ class downModis:
                 http = requests.get(urljoin(self.url, self.path, day, filDown))
                 orig_size = http.headers['content-length']
                 filSave.write(http.content)
-            except:  # use urllib2 module
-                http = urllib2.urlopen(urljoin(self.url, self.path, day,
+            except:  # use urllib module
+                http = urlopen(urljoin(self.url, self.path, day,
                                                filDown))
                 orig_size = http.headers['content-length']
                 filSave.write(http.read())
@@ -630,12 +639,14 @@ class downModis:
                     self._downloadFileHTTP(filDown, filHdf, day)
                 else:
                     self.filelist.write("{name}\n".format(name=filDown))
+                    self.filelist.flush()
                     if self.debug:
                         logging.debug("File {name} downloaded "
                                       "correctly".format(name=filDown))
                     return 0
             else:  # xml exists
                 self.filelist.write("{name}\n".format(name=filDown))
+                self.filelist.flush()
                 if self.debug:
                     logging.debug("File {name} downloaded "
                                   "correctly".format(name=filDown))
@@ -659,18 +670,19 @@ class downModis:
         try:  # transfer file from ftp
             self.ftp.retrbinary("RETR " + filDown, filSave.write)
             self.filelist.write("{name}\n".format(name=filDown))
+            self.filelist.flush()
             if self.debug:
                 logging.debug("File {name} downloaded".format(name=filDown))
         # if error during download process, try to redownload the file
         except (ftplib.error_reply, socket.error, ftplib.error_temp,
-                EOFError), e:
+                EOFError) as e:
             logging.error("Cannot download {name}, the error was '{err}'. "
                           "Retrying...".format(name=filDown, err=e))
             filSave.close()
             os.remove(filSave.name)
             try:
                 self.ftp.pwd()
-            except (ftplib.error_temp, EOFError), e:
+            except (ftplib.error_temp, EOFError) as e:
                 self._connectFTP()
             self._downloadFileFTP(filDown, filHdf)
         filSave.close()

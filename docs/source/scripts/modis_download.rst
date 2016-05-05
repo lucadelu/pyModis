@@ -1,5 +1,5 @@
 modis_download.py
-------------------
+-----------------
 **modis_download.py** downloads MODIS data from NASA FTP servers.
 It can download large amounts of data and it can be profitably
 used with cron jobs to receive data with a fixed delay of time.

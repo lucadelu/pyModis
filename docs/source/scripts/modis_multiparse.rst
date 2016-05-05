@@ -1,12 +1,12 @@
 modis_multiparse.py
---------------------
+-------------------
 
 **modis_multiparse.py** parses several XML metadata files 
 for MODIS tiles. It is very useful to create XML metadata file for a 
 mosaic.
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_multiparse.py [options] hdf_files_list
