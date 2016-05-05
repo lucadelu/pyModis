@@ -23,7 +23,6 @@
 
 import os
 import sys
-import string
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -107,7 +106,7 @@ def main():
     if not options.subset:
         options.subset = False
     else:
-        if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
+        if not (options.subset.strip().startswith('(') and options.subset.strip().endswith(')')):
             parser.error('ERROR: The spectral string should be similar to: '
                          '"1 0" without "(" and ")"')
 #    if not options.grain and options.vrt:
