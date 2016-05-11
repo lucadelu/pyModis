@@ -43,7 +43,7 @@ Mosaic data
 
 At this point you need to create the mosaic of the tiles downloaded.
 :doc:`../scripts/modis_mosaic` is the script to use. We create a *VRT*
-file (``flag -v``) to improve the speed of analysis, without lose any data
+file (``flag -v``) to improve the speed of analysis, without losing any data
 only for the first layer ::
 
     modis_mosaic.py -s "1" -o /tmp/mosaik -v /tmp/listfileMOD11A1.005.txt
