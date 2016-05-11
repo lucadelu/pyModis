@@ -1,14 +1,14 @@
 Example of a full process with GDAL library
 =====================================================
 
-In this short example you can understand how to concatenate
+In this short example you will understand how to concatenate
 the scripts to obtain a GeoTIFF file for each band of the
-chosen product using as backend GDAL library.
+chosen MODIS product using as backend GDAL library.
 
 .. warning::
 
   This example is based on a Linux based system. Please if
-  you use other OS change the paths where data will be saved
+  you use another operating system, change the paths where data will be saved
 
 .. _download-data:
 
@@ -23,10 +23,12 @@ For first you need to obtain data, so you need to use :doc:`../scripts/modis_dow
 
 .. warning::
 
-  In this example we are working on Italian extension, so please
-  change the name of tiles according with your region.
+  In this example we are working on Italian spatial extent, so please
+  change the name of tiles according with your region. See also the
+  MODIS tile calculator (<http://landweb.nascom.nasa.gov/cgi-bin/developer/tilemap.cgi>)
+  to find the right tile number(s).
 
-  In this example we download data for only one day (2012-12-05)
+  In this example we download MODIS data for only one day (2012-12-05)
   using the option "-O".
 
 Inside ``/tmp/`` directory you will find a file called *listfileMOD11A1.005.txt*
@@ -35,15 +37,15 @@ the product that you download.
 
 .. warning::
 
-  Every time that you download new files of same product it will be overwrite,
-  so if you need it, you should rename the file
+  Every time that you download new files of the same product it will be overwritten;
+  so: if you need it, you should rename the file.
 
 Mosaic data
 --------------
 
-At this point you need to create the mosaic of the tiles downloaded.
+At this point you need to create the mosaic of the downloaded tiles.
 :doc:`../scripts/modis_mosaic` is the script to use. We create a *VRT*
-file (``flag -v``) to improve the speed of analysis, without lose any data
+file (``flag -v``) to improve the speed of analysis, without losing any data,
 only for the first layer ::
 
     modis_mosaic.py -s "1" -o /tmp/mosaik -v /tmp/listfileMOD11A1.005.txt
