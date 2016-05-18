@@ -74,8 +74,9 @@ class OptparseDialog(wx.Dialog):
                  style=wx.DEFAULT_DIALOG_STYLE|wx.THICK_FRAME):
         """Function for initialization"""
 
-        modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.ico',
-                             wx.BITMAP_TYPE_ICO)
+        # TODO fix icon
+#        modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.ico',
+#                             wx.BITMAP_TYPE_ICO)
 #        self.SetIcon(modis_icon)
         provider = wx.SimpleHelpProvider()
         wx.HelpProvider_Set(provider)
