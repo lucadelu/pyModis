@@ -1,12 +1,12 @@
 modis_convert.py
------------------
+----------------
 
 **modis_convert.py**  converts MODIS data to TIF formats and different
 projection reference system. It is an interface to MRT mrtmosaic
 software or GDAL library.
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_convert.py [options] hdf_file
@@ -81,7 +81,7 @@ Examples
     something like 0.01* depending on the placement in the Earth.
 
 MODIS Reprojection Tools
-"""""""""""""""""""""""""""
+""""""""""""""""""""""""
 
 .. warning::
 
@@ -100,7 +100,7 @@ UTM projection in the 32 zone ::
     modis_convert.py -s "( 1 0 1 0 )" -o OUTPUT_FILE -m "/usr/local/bin/" -g 500 -p UTM -u 32 FILE
 
 GDAL
-""""""""""""
+""""
 
 Convert the first layer in latitude and longitude with the original resolution ::
 

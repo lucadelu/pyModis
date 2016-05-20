@@ -1,5 +1,5 @@
 Example of a full process with GDAL library
-=====================================================
+===========================================
 
 In this short example you will learn how to run a series of
 scripts to obtain a GeoTIFF file for each band of the
@@ -13,7 +13,7 @@ chosen product using as backend GDAL library.
 .. _download-data:
 
 Downloading data
--------------------
+----------------
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
@@ -40,25 +40,25 @@ the product that you download.
   so if you need it, you should rename the file.
 
 Mosaic data
---------------
+-----------
 
 At this point you need to create the mosaic of the tiles downloaded.
 :doc:`../scripts/modis_mosaic` is the script to use. We create a *VRT*
 file (``flag -v``) to improve the speed of analysis, without lose any data
 only for the first layer ::
 
-    modis_mosaic.py -s "1" -o $HOME/tmp/mosaik -v $HOME/tmp/listfileMOD11A1.005.txt
+    modis_mosaic.py -s "1" -o $HOME/tmp/mosaic -v $HOME/tmp/listfileMOD11A1.005.txt
 
-The command will create a file called ``mosaik_LST_Day_1km.vrt`` in $HOME/tmp/
+The command will create a file called ``mosaic_LST_Day_1km.vrt`` in $HOME/tmp/
 directory
 
 Convert data
----------------
+------------
 
 The last part of the procedure is to convert the mosaic using
 :doc:`../scripts/modis_convert`. Using *VRT* format it create dataset
 of only one later, so you are forced to use ``-s "( 1 )"``. The
 following command create a GeoTIFF file called
-final_mosaik_LST_Day_1km.vrt.tif ::
+final_mosaic_LST_Day_1km.vrt.tif ::
 
-    modis_convert.py -v -s "( 1 )" -o $HOME/tmp/final -e 4326 $HOME/tmp/mosaik_LST_Day_1km.vrt
+    modis_convert.py -v -s "( 1 )" -o $HOME/tmp/final -e 4326 $HOME/tmp/mosaic_LST_Day_1km.vrt
