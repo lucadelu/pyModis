@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #  class to download modis data
 #
-#  (c) Copyright Luca Delucchi 2010
+#  (c) Copyright Luca Delucchi 2010-2016
 #  (c) Copyright Logan C Byers 2014
 #  Authors: Luca Delucchi
 #           Logan C Byers
-#  Email: luca dot delucchi at iasma dot it
+#  Email: luca dot delucchi at fmach dot it
 #         loganbyers@ku.edu
 #
 ##################################################################
@@ -251,8 +251,12 @@ class downModis:
         elif os.access(destinationFolder, os.W_OK):
             self.writeFilePath = destinationFolder
         else:
-            raise Exception("Folder to store downloaded files does not exist"
-                            " or is not writeable")
+            try:
+                os.mkdir(destinationFolder)
+                self.writeFilePath = destinationFolder
+            except:
+                raise Exception("Folder to store downloaded files does not exist"
+                                " or is not writeable")
         # return the name of product
         if len(self.path.split('/')) == 2:
             self.product = self.path.split('/')[1]
@@ -291,7 +295,7 @@ class downModis:
                 self.fileInPath.append(f)
         global GDAL
         if not GDAL and checkgdal:
-            logging.warning("WARNING: Python GDAL library is not found")
+            logging.warning("WARNING: Python GDAL library not found")
         elif GDAL and not checkgdal:
             GDAL = False
 
@@ -622,7 +626,7 @@ class downModis:
         # if local file has an error, try to download the file again
         except:
             logging.error("Cannot download {name}. "
-                          "Retrying..".format(name=filDown))
+                          "Retrying...".format(name=filDown))
             filSave.close()
             os.remove(filSave.name)
             self._downloadFileHTTP(filDown, filHdf, day)

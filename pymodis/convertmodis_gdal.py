@@ -640,7 +640,7 @@ class createMosaicGDAL:
                       'RasterYSize="{y}" DataType="{typ}" '
                       'BlockXSize="{bx}" BlockYSize="{by}" />'
                       '\n'.format(x=f.xsize, y=f.ysize,
-                                  typ=gdal.GetDataTypeName(v1.band_type),
+                                  typ=gdal.GetDataTypeName(f.band_type),
                                   bx=f.block_size[0], by=f.block_size[1]))
             out.write('\t\t\t<SrcRect xOff="0" yOff="0" xSize="{x}" '
                       'ySize="{y}" />\n'.format(x=f.xsize, y=f.ysize))
