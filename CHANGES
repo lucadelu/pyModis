@@ -33,3 +33,9 @@
 - version 1.0.2
  * fixed GDAL support in downmodis is not mandatory
  * fixed raise exception
+- version 1.0.3
+ * new website address
+
+- version 2.0.0
+ * PyModis now have support for Python v3
+ * fixed and improved documentation

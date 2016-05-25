@@ -23,7 +23,6 @@
 
 import os
 import sys
-import string
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -107,7 +106,7 @@ def main():
     if not options.subset:
         options.subset = False
     else:
-        if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
+        if not (options.subset.strip().startswith('(') and options.subset.strip().endswith(')')):
             parser.error('ERROR: The spectral string should be similar to: '
                          '"1 0" without "(" and ")"')
 #    if not options.grain and options.vrt:
@@ -121,11 +120,17 @@ def main():
         modisOgg.run()
     else:
         tiles = []
+        dire = os.path.dirname(args[0])
         with open(args[0]) as f:
             for l in f:
                 name = os.path.splitext(l.strip())[0]
                 if '.hdf' not in name:
-                    tiles.append(l.strip())
+                    if dire not in l:
+                        fname = os.path.join(dire, l.strip())
+                    else:
+                        fname = l.strip()
+                    tiles.append(fname)
+
         modisOgg = convertmodis_gdal.createMosaicGDAL(tiles, options.subset,
                                                       options.output_format)
         if options.vrt:

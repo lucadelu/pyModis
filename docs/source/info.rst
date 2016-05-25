@@ -71,6 +71,21 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
+If you want to install into /usr/local/, run ::
+
+    python setup.py install --prefix=/usr/local
+
+In this case, if you get the following error ::
+
+    TEST FAILED: /usr/local/lib/python2.7/site-packages/ does NOT support .pth files
+
+then you need to define the PYTHONPATH environmental variable ::
+
+    export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+    python setup.py install --prefix=/usr/local 
+
+and now re-run the installation command.
+
 Install on Windows with osgeo4w
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

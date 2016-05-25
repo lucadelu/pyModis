@@ -31,7 +31,6 @@ Classes:
 # python 2 and 3 compatibility
 from builtins import dict
 
-import string
 import os
 
 # lists of parameters accepted by resample MRT software
@@ -327,7 +326,7 @@ class parseModis:
                            * min_lon
         """
         # check if spectral it's write with correct construct ( value )
-        if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
+        if not (spectral.strip().startswith('(') and spectral.strip().endswith(')')):
             raise Exception('ERROR: The spectral string should be similar to:'
                             ' ( 1 0 )')
         # output name
