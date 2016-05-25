@@ -10,4 +10,4 @@ try:
     from . import optparse_gui
 except:
     print("WxPython missing, no GUI enabled")
-__version__ = '1.0.2'
+__version__ = '2.0.0'
