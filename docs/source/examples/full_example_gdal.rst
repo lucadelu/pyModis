@@ -24,27 +24,27 @@ For first you need to obtain data, so you need to use :doc:`../scripts/modis_dow
 
 .. warning::
 
-  In this example we are working on Italian extent, so please
-  change the name of tiles according with your region.
+  In this example we are working on the spatial extent of Italy:
+  for your area of interest, change the tile name(s) according to your region.
 
   In this example we download data for only one day (2012-12-05)
   using the option "-O".
 
-Inside ``$HOME/tmp/`` directory you will find a file called *listfileMOD11A1.005.txt*
-containing the names of files downloaded. The name of file is related to
-the product that you download.
+Inside the ``$HOME/tmp/`` directory you will find a file called *listfileMOD11A1.005.txt*
+containing the names of downloaded files. The name of file is related to
+the product that you want to download.
 
 .. warning::
 
-  Every time that you download new files of same product it will be overwrite,
-  so if you need it, you should rename the file.
+  Every time that you download new files of the same product they will be overwritten,
+  so if you need them, you must rename the file before.
 
 Mosaic data
 --------------
 
 At this point you need to create the mosaic of the tiles downloaded.
 :doc:`../scripts/modis_mosaic` is the script to use. We create a *VRT*
-file (``flag -v``) to improve the speed of analysis, without lose any data
+file (``flag -v``) to improve the speed of analysis, without losing any data
 only for the first layer ::
 
     modis_mosaic.py -s "1" -o $HOME/tmp/mosaik -v $HOME/tmp/listfileMOD11A1.005.txt
