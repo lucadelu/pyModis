@@ -1,5 +1,5 @@
 modis_download_from_list.py
-------------------------------
+---------------------------
 
 **modis_download_from_list.py** downloads MODIS data from NASA servers,
 the names of files to download have to be contained into a text file.

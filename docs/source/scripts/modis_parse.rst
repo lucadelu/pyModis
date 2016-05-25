@@ -1,12 +1,12 @@
 modis_parse.py
----------------
+--------------
 
 **modis_parse.pys** parses the XML metadata file for a MODIS
 tile and return the requested value. It can also write the metadata information
 into a text file.
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_parse.py [options] hdf_file

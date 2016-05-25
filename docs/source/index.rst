@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to pyModis
-===================
+==================
 
 ``pyModis`` is a Free and Open Source Python based library to work with MODIS data.
 It offers bulk-download for user selected time ranges, mosaicking of MODIS tiles,
