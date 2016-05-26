@@ -52,8 +52,11 @@ import ftplib
 import requests
 
 # urllib in python 2 and 3
-from future.standard_library import install_aliases
-install_aliases()
+try:
+    from future.standard_library import install_aliases
+    install_aliases()
+except ImportError:
+    raise ImportError("Future library not found, please install it")
 from urllib.request import urlopen
 
 from html.parser import HTMLParser

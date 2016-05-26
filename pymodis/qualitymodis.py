@@ -33,7 +33,10 @@ from __future__ import print_function
 from builtins import dict
 
 import os
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    raise ImportError('Numpy library not found, please install it')
 
 try:
     import osgeo.gdal as gdal
