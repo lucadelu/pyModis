@@ -47,7 +47,7 @@ setup(
     author_email='luca.delucchi@fmach.it',
     url='http://www.pymodis.org',
     description='Python library for MODIS data',
-    long_description=read('README'),
+    long_description=read('README.rst'),
     install_requires=['GDAL', 'numpy'],
     extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',
