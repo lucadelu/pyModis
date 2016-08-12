@@ -58,7 +58,9 @@ try:
 except ImportError:
     raise ImportError("Future library not found, please install it")
 from urllib.request import urlopen
-
+import urllib.request
+import urllib.error
+from base64 import b64encode
 from html.parser import HTMLParser
 import re
 
@@ -114,7 +116,6 @@ def str2date(datestring):
     """Convert to datetime.date object from a string
 
        :param str datestring string with format (YYYY-MM-DD)
-
        :return: a datetime.date object representing datestring
     """
     if '-' in datestring:
@@ -124,6 +125,11 @@ def str2date(datestring):
     elif ' ' in datestring:
         stringSplit = datestring.split(' ')
     return date(int(stringSplit[0]), int(stringSplit[1]), int(stringSplit[2]))
+
+
+class ModisHTTPRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def http_error_302(self, req, fp, code, msg, headers):
+        return urllib.request.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
 
 
 class modisHtmlParser(HTMLParser):
@@ -209,6 +215,7 @@ class downModis:
                            date use the format YYYY-MM-DD. This day must be
                            before the 'today' parameter. Downloading happens
                            in reverse order (currently)
+
        :param int delta: timelag i.e. the number of days starting from
                          today backwards. Will be overwritten if
                          'enddate' is specifed during instantiation
@@ -237,6 +244,13 @@ class downModis:
         self.user = user
         # password for download using ftp
         self.password = password
+        self.userpwd = "{us}:{pw}".format(us=self.user,
+                                          pw=self.password)
+        userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
+        self.http_header = { 'Authorization' : 'Basic %s' %  userAndPass }
+        cookieprocessor = urllib.request.HTTPCookieProcessor()
+        opener = urllib.request.build_opener(ModisHTTPRedirectHandler, cookieprocessor)
+        urllib.request.install_opener(opener)
         # the product (product_code.004 or product_cod.005)
         self.product = product
         self.product_code = product.split('.')[0]
@@ -616,22 +630,21 @@ class downModis:
         """
         filSave = open(filHdf, "wb")
         try:  # download and write the file
-            try:  # use request module
-                http = requests.get(urljoin(self.url, self.path, day, filDown))
-                orig_size = http.headers['content-length']
-                filSave.write(http.content)
-            except:  # use urllib module
-                http = urlopen(urljoin(self.url, self.path, day,
-                                               filDown))
-                orig_size = http.headers['content-length']
-                filSave.write(http.read())
-
+            url = urljoin(self.url, self.path, day, filDown)
+            print(url)
+            req = urllib.request.Request(url, headers = self.http_header)
+            http = urllib.request.urlopen(req)
+            print(http.headers)
+            orig_size = http.headers['Content-Length']
+            filSave.write(http.read())
         # if local file has an error, try to download the file again
         except:
             logging.error("Cannot download {name}. "
                           "Retrying...".format(name=filDown))
             filSave.close()
             os.remove(filSave.name)
+            import time
+            time.sleep(5)
             self._downloadFileHTTP(filDown, filHdf, day)
         filSave.close()
         transf_size = os.path.getsize(filSave.name)
