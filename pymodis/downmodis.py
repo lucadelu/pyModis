@@ -631,10 +631,8 @@ class downModis:
         filSave = open(filHdf, "wb")
         try:  # download and write the file
             url = urljoin(self.url, self.path, day, filDown)
-            print(url)
             req = urllib.request.Request(url, headers = self.http_header)
             http = urllib.request.urlopen(req)
-            print(http.headers)
             orig_size = http.headers['Content-Length']
             filSave.write(http.read())
         # if local file has an error, try to download the file again
@@ -648,6 +646,11 @@ class downModis:
             self._downloadFileHTTP(filDown, filHdf, day)
         filSave.close()
         transf_size = os.path.getsize(filSave.name)
+        if not orig_size:
+            if self.debug:
+                logging.debug("File {name} downloaded but not "
+                              "check the size".format(name=filDown))
+            return 0
         if int(orig_size) == int(transf_size):
             # if no xml file, delete the HDF and redownload
             if filHdf.find('.xml') == -1:
