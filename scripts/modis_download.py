@@ -44,11 +44,10 @@ def main():
                       dest="url")
     # password
     parser.add_option("-P", "--password", dest="password",
-                      help="password to connect only if ftp server")
+                      help="password to connect to the server")
     # username
-    parser.add_option("-U", "--username", dest="user", default="anonymous",
-                      help="username to connect only if ftp server "
-                      "[default=%default]")
+    parser.add_option("-U", "--username", dest="user",
+                      help="username to connect to the server")
     # tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
                       help="string of tiles separated with comma "
