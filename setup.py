@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 #  class to download modis data
 #
-#  (c) Copyright Luca Delucchi 2010
+#  (c) Copyright Luca Delucchi 2010-2016
 #  Authors: Luca Delucchi
-#  Email: luca dot delucchi at iasma dot it
+#  Email: luca dot delucchi at fmach dot it
 #
 ##################################################################
 #
-#  Modis class is licensed under the terms of GNU GPL 2
+#  The Modis class is licensed under the terms of GNU GPL 2
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License as
 #  published by the Free Software Foundation; either version 2 of
-#  the License,or (at your option) any later version.
+#  the License, or (at your option) any later version.
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -45,9 +45,9 @@ setup(
              'scripts/modis_download_from_list.py'],
     author='Luca Delucchi',
     author_email='luca.delucchi@fmach.it',
-    url='http://pymodis.fem-environment.eu',
+    url='http://www.pymodis.org',
     description='Python library for MODIS data',
-    long_description=read('README'),
+    long_description=read('README.rst'),
     install_requires=['GDAL', 'numpy'],
     extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',

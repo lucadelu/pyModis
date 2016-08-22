@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #  class to download modis data
 #
-#  (c) Copyright Luca Delucchi 2010
+#  (c) Copyright Luca Delucchi 2010-2016
 #  (c) Copyright Logan C Byers 2014
 #  Authors: Luca Delucchi
 #           Logan C Byers
-#  Email: luca dot delucchi at iasma dot it
+#  Email: luca dot delucchi at fmach dot it
 #         loganbyers@ku.edu
 #
 ##################################################################
@@ -242,8 +242,12 @@ class downModis:
         if os.access(destinationFolder, os.W_OK):
             self.writeFilePath = destinationFolder
         else:
-            raise Exception("Folder to store downloaded files does not exist"
-                            " or is not writeable")
+            try:
+                os.mkdir(destinationFolder)
+                self.writeFilePath = destinationFolder
+            except:
+                raise Exception("Folder to store downloaded files does not exist"
+                                " or is not writeable")
         # return the name of product
         if len(self.path.split('/')) == 2:
             self.product = self.path.split('/')[1]
@@ -282,7 +286,7 @@ class downModis:
                 self.fileInPath.append(f)
         global GDAL
         if not GDAL and checkgdal:
-            logging.warning("WARNING: Python GDAL library is not found")
+            logging.warning("WARNING: Python GDAL library not found")
         elif GDAL and not checkgdal:
             GDAL = False
 
@@ -359,7 +363,7 @@ class downModis:
             self.dirData = [elem.split()[-1] for elem in self.dirData if elem.startswith("d")]
             if self.debug:
                 logging.debug("Open connection {url}".format(url=self.url))
-        except (EOFError, ftplib.error_perm), e:
+        except (EOFError, ftplib.error_perm) as e:
             logging.error('Error in connection: {err}'.format(err=e))
             if self.nconnection <= ncon:
                 self._connectFTP()
@@ -382,7 +386,7 @@ class downModis:
         """
         try:
             self.ftp.cwd(day)
-        except (ftplib.error_reply, socket.error), e:
+        except (ftplib.error_reply, socket.error) as e:
             logging.error("Error {err} entering in directory "
                           "{name}".format(err=e, name=day))
             self.setDirectoryIn(day)
@@ -391,7 +395,7 @@ class downModis:
         """Move up within the file directory"""
         try:
             self.ftp.cwd('..')
-        except (ftplib.error_reply, socket.error), e:
+        except (ftplib.error_reply, socket.error) as e:
             logging.error("Error {err} when trying to come back".format(err=e))
             self.setDirectoryOver()
 
@@ -497,7 +501,7 @@ class downModis:
                 logging.debug("The number of file to download is: "
                               "{num}".format(num=len(finalList)))
             return finalList
-        except (socket.error), e:
+        except (socket.error) as e:
             logging.error("Error {err} when try to receive list of "
                           "files".format(err=e))
             self._getFilesListHTTP(day)
@@ -543,7 +547,7 @@ class downModis:
                 logging.debug("The number of file to download is: "
                               "{num}".format(num=len(finalList)))
             return finalList
-        except (ftplib.error_reply, socket.error), e:
+        except (ftplib.error_reply, socket.error) as e:
             logging.error("Error {err} when trying to receive list of "
                           "files".format(err=e))
             self._getFilesListFTP()
@@ -575,7 +579,7 @@ class downModis:
         try:
             gdal.Open(filHdf)
             return 0
-        except (RuntimeError), e:
+        except (RuntimeError) as e:
             logging.error(e)
             return 1
 
@@ -613,7 +617,7 @@ class downModis:
         # if local file has an error, try to download the file again
         except:
             logging.error("Cannot download {name}. "
-                          "Retrying..".format(name=filDown))
+                          "Retrying...".format(name=filDown))
             filSave.close()
             os.remove(filSave.name)
             self._downloadFileHTTP(filDown, filHdf, day)
@@ -663,14 +667,14 @@ class downModis:
                 logging.debug("File {name} downloaded".format(name=filDown))
         # if error during download process, try to redownload the file
         except (ftplib.error_reply, socket.error, ftplib.error_temp,
-                EOFError), e:
+                EOFError) as e:
             logging.error("Cannot download {name}, the error was '{err}'. "
                           "Retrying...".format(name=filDown, err=e))
             filSave.close()
             os.remove(filSave.name)
             try:
                 self.ftp.pwd()
-            except (ftplib.error_temp, EOFError), e:
+            except (ftplib.error_temp, EOFError) as e:
                 self._connectFTP()
             self._downloadFileFTP(filDown, filHdf)
         filSave.close()

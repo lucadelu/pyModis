@@ -1,11 +1,11 @@
 modis_mosaic.py
-----------------
+---------------
 
 **modis_mosaic.py** creates a mosaic of several MODIS tiles in
 HDF format, using MRT mrtmosaic software or GDAL library.
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_mosaic.py [options] hdflist_file
@@ -42,32 +42,32 @@ Options
 Examples
 ^^^^^^^^
 
-MODIS Reprojection Tools
-"""""""""""""""""""""""""""
+Using the MODIS Reprojection Tool
+"""""""""""""""""""""""""""""""""
 
 Convert all the layers of several tiles::
 
-    modis_mosaic.py -m "/usr/local/bin/" -o FILE_mosaik MOSAIK_FILES_LIST
+    modis_mosaic.py -m "/usr/local/bin/" -o FILE_mosaic MOSAIC_FILES_LIST
 
 Convert LAYERS of several LST MODIS tiles::
 
-    modis_mosaic.py -s "1 0 1 0" -m "/usr/local/bin/" -o FILE_mosaik MOSAIK_FILES_LIST
+    modis_mosaic.py -s "1 0 1 0" -m "/usr/local/bin/" -o FILE_mosaic MOSAIC_FILES_LIST
 
-GDAL
-""""""""""""
+Using GDAL
+""""""""""
 
 Convert the first LAYERS of several tiles with resolution 1km in GeoTIFF format::
 
-    modis_mosaic.py -o FILE_mosaik.tif -s "1"  MOSAIK_FILES_LIST
+    modis_mosaic.py -o FILE_mosaic.tif -s "1"  MOSAIC_FILES_LIST
 
 Create a mosaic with all the layers of several tiles in HDF4Image format::
 
-    modis_mosaic.py -o FILE_mosaik.hdf -f HDF4Image MOSAIK_FILES_LIS
+    modis_mosaic.py -o FILE_mosaic.hdf -f HDF4Image MOSAIC_FILES_LIS
 
-Create VRT file for all subset. It create a VRT file for each subset with the
-choosen prefix (``-o`` flag) and the name of layer as suffix::
+Create VRT file for all subset. It creates a VRT file for each subset with the
+chosen prefix (``-o`` flag) and the name of layer as suffix::
 
-    modis_mosaic.py -o mosaik_vrt -v MOSAIK_FILES_LIS
+    modis_mosaic.py -o mosaic_vrt -v MOSAIC_FILES_LIS
 
 .. only:: latex
 

@@ -123,11 +123,17 @@ def main():
         modisOgg.run()
     else:
         tiles = []
+        dire = os.path.dirname(args[0])
         with open(args[0]) as f:
             for l in f:
                 name = os.path.splitext(l.strip())[0]
                 if '.hdf' not in name:
-                    tiles.append(l.strip())
+                    if dire not in l:
+                        fname = os.path.join(dire, l.strip())
+                    else:
+                        fname = l.strip()
+                    tiles.append(fname)
+
         modisOgg = convertmodis_gdal.createMosaicGDAL(tiles, options.subset,
                                                       options.output_format)
         if options.vrt:

@@ -1,12 +1,12 @@
 modis_multiparse.py
---------------------
+-------------------
 
 **modis_multiparse.py** parses several XML metadata files 
 for MODIS tiles. It is very useful to create XML metadata file for a 
 mosaic.
 
 Usage
-^^^^^^
+^^^^^
 ::
 
     modis_multiparse.py [options] hdf_files_list
@@ -31,11 +31,11 @@ Examples
 
 Print values of spatial bounding box ::
 
-    modis_multiparse.py -b FILE1 FILE2 ...
+    modis_multiparse.py -b hdf_file1 hdf_file2 ...
 
-Write xml file to use with hdf file create by :doc:`modis_convert` ::
+Write xml file to use with hdf file created by :doc:`modis_convert` ::
 
-    modis_multiparse.py -w FILE_mosaic.xml FILE1 FILE2 ...
+    modis_multiparse.py -w FILE_mosaic.xml hdf_file1 hdf_file2 ...
 
 .. only:: latex
 

@@ -1,5 +1,6 @@
+==========================
 Welcome in pyModis library
-******************************
+==========================
 
 *Thank you for downloading pyModis*
 
@@ -8,17 +9,17 @@ Welcome in pyModis library
 Copyright Luca Delucchi - 2010-2014
 
 License
-===========
+-------
 
 pyModis is licensed under the terms of **GNU GPL 2**. Read COPYING for more info
 
 Install
-===========
+-------
 
 For how to compile or install pyModis see INSTALL file.
 
 Executables
-================
+-----------
 
 Some executables are distributed with the library:
 
@@ -33,8 +34,8 @@ Some executables are distributed with the library:
 
 
 Other info
-============
+----------
 
 The logo of pyModis is pyModis.png; it is released under CC-BY-SA and it's distributed with the pyModis library
 
-More info about pyModis at http://pymodis.fem-environment.eu/
+More info about pyModis at http://www.pymodis.org/

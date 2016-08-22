@@ -377,6 +377,8 @@ class file_info:
         meta = fh.GetMetadata()
         if '_FillValue' in meta.keys():
             self.fill_value = meta['_FillValue']
+        elif fh.GetRasterBand(1).GetNoDataValue():
+            self.fill_value = fh.GetRasterBand(1).GetNoDataValue()
         else:
             self.fill_value = None
 
@@ -641,8 +643,8 @@ class createMosaicGDAL:
                       'RasterYSize="{y}" DataType="{typ}" '
                       'BlockXSize="{bx}" BlockYSize="{by}" />'
                       '\n'.format(x=f.xsize, y=f.ysize,
-                                  typ=f.band_type, bx=f.block_size[0],
-                                  by=f.block_size[1]))
+                                  typ=gdal.GetDataTypeName(f.band_type),
+                                  bx=f.block_size[0], by=f.block_size[1]))
             out.write('\t\t\t<SrcRect xOff="0" yOff="0" xSize="{x}" '
                       'ySize="{y}" />\n'.format(x=f.xsize, y=f.ysize))
             xoff, yoff = self._calculateOffset(f, geot)

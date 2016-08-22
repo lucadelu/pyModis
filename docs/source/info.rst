@@ -1,8 +1,8 @@
 About pyModis
-==============
+=============
 
 Requirements
--------------
+------------
 
 ``pyModis`` requires **Python GDAL** and **Numpy** packages.
 
@@ -13,10 +13,10 @@ You can use also software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/t
 to convert or mosaic MODIS HDF files.
 
 How to install pyModis
------------------------
+----------------------
 
 Using pip
-^^^^^^^^^^^^^^
+^^^^^^^^^
 
 From version 0.6.3 it is possible to install ``pyModis`` using
 `pip <https://pypi.python.org/pypi/pip>`_. You have to run the following
@@ -39,7 +39,7 @@ With ``pip`` it is also really simple to remove the library
   pip uninstall pyModis
 
 Compile from source
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^
 
 Compile ``pyModis`` is very simple. First you need to download ``pyModis``
 source code from `github repository <https://github.com/lucadelu/pyModis>`_.
@@ -71,8 +71,23 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
+If you want to install into /usr/local/, run ::
+
+    python setup.py install --prefix=/usr/local
+
+In this case, if you get the following error ::
+
+    TEST FAILED: /usr/local/lib/python2.7/site-packages/ does NOT support .pth files
+
+then you need to define the PYTHONPATH environmental variable ::
+
+    export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+    python setup.py install --prefix=/usr/local 
+
+and now re-run the installation command.
+
 Install on Windows with osgeo4w
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. warning::
 
@@ -105,7 +120,7 @@ section to install pyModis.
 
 
 Install on Windows without osgeo4w
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Another way to install ``pyModis`` on Windows is to install latest Python 2.7
 from http://python.org/download/
@@ -149,10 +164,10 @@ Finally install ``pyModis`` using *pip* ::
 If you want use the GUI you have to `download and install wxPython <http://www.wxpython.org/download.php>`_
 
 Troubleshooting
-------------------
+---------------
 
 Problem installing dependencies with pip
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Sometimes *pip* return error when it try to install Python GDAL, Numpy or wxPython.
 You can solve this problem installing Python GDAL or Numpy using the
@@ -160,13 +175,13 @@ version of your operating system.
 
 
 How to report a bug
---------------------
+-------------------
 
 If you find any problems in ``pyModis`` library you can report it using
 the `issues tracker of github <https://github.com/lucadelu/pyModis/issues>`_.
 
 How to compile documentation
------------------------------
+----------------------------
 
 This documentation has been made with `Sphinx <http://sphinx.pocoo.org>`_, so you
 need to install it to compile the original files to obtain different
@@ -199,7 +214,7 @@ with one of the following target to obtain the desired output:
   - **doctest**: to run all doctests embedded in the documentation (if enabled)
 
 PDF link in HTML
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 To insert a link to PDF file of pyModis documentation into HTML documentation
 (the link will be added on the sidebar) you have to compile first the PDF and
 after the HTML, so you need to launch::
@@ -210,7 +225,7 @@ after the HTML, so you need to launch::
 If PDF file is missing no link will be added
 
 Ohloh statistics
------------------
+----------------
 
 .. only:: html
 
