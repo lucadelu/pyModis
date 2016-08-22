@@ -47,9 +47,10 @@ def checkMRTpath(mrtpath):
     """
     if os.path.exists(mrtpath):
         if os.path.exists(os.path.join(mrtpath, 'bin')):
+            if os.environ['PATH'].find(os.path.join(mrtpath,'data')) == -1:
+                os.environ['PATH'] = "{path}:{data}".format(path=os.environ['PATH'],
+                                                            data=os.path.join(mrtpath, 'data'))
             mrtpathbin = os.path.join(mrtpath, 'bin')
-            os.environ['PATH'] = "{path}:{data}".format(path=os.environ['PATH'],
-                                                        data=os.path.join(mrtpath, 'data'))
         else:
             raise Exception('The path {path} does not exist'.format(path=os.path.join(mrtpath, 'bin')))
         if os.path.exists(os.path.join(mrtpath, 'data')):
