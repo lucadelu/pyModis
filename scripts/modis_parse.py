@@ -90,6 +90,9 @@ def main():
     # time
     parser.add_option("-t", action="store_true", dest="time", default=False,
                       help="print the values related to times")
+    # layers
+    parser.add_option("-l", action="store_true", dest="layers", default=False,
+                      help="print the names of layer in HDF file")
 
     # return options and argument
     (options, args) = parser.parse_args()
@@ -134,6 +137,8 @@ def main():
         outString += readDict(modisOgg.retCollectionMetaData())
         outString += "PGEVersion = %s\n" % modisOgg.retPGEVersion()
         outString += "BrowseProduct = %s\n" % modisOgg.retBrowseProduct()
+    if options.all or options.layers:
+        outString += modisOgg.getLayersName()
     if not outString:
         print("Please select at least one flag")
     # write option it is set write the string into file
