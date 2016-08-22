@@ -783,12 +783,13 @@ class parseModisMulti:
         valuesQAFlags = []
         valuesParameter = []
         for i in self.parModis:
-            valuesQAStats.append(i.retMeasure()['QAStats'])
-            valuesQAFlags.append(i.retMeasure()['QAFlags'])
-            valuesParameter.append(i.retMeasure()['ParameterName'])
-        for i in self._checkval(valuesParameter):
-            pn = self.ElementTree.SubElement(obj, 'ParameterName')
-            pn.text = i
+            for val in i.retMeasure():
+                valuesQAStats.append(val['QAStats'])
+                valuesQAFlags.append(val['QAFlags'])
+                valuesParameter.append(val['ParameterName'])
+                for i in self._checkval(valuesParameter):
+                    pn = self.ElementTree.SubElement(obj, 'ParameterName')
+                    pn.text = i
 
     def valInputPointer(self, obj):
         """Function to add InputPointer
