@@ -588,6 +588,12 @@ class downModis:
         """
         # different return if this method is used from downloadsAllDay() or
         # moveFile()
+        if not listNewFile and not self.fileInPath:
+            logging.error("checkDataExist both lists are empty")
+        elif not listNewFile:
+            listNewFile = list()
+        elif not self.fileInPath:
+            self.fileInPath = list()
         if not move:
             listOfDifferent = list(set(listNewFile) - set(self.fileInPath))
         elif move:
