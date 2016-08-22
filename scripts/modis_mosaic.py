@@ -106,7 +106,7 @@ def main():
     if not options.subset:
         options.subset = False
     else:
-        if not (options.subset.strip().startswith('(') and options.subset.strip().endswith(')')):
+        if  (options.subset.strip().startswith('(') or options.subset.strip().endswith(')')):
             parser.error('ERROR: The spectral string should be similar to: '
                          '"1 0" without "(" and ")"')
 #    if not options.grain and options.vrt:
