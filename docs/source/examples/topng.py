@@ -5,6 +5,7 @@ Created on Tue Sep  9 22:51:41 2014
 @author: lucadelu
 """
 
+import os
 import subprocess
 try:
     import osgeo.gdal as gdal
@@ -12,8 +13,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
-import os
+        raise Exception('Python GDAL library not found, please install python-gdal')
 
 lstcolortable = "\
 0 255 255 255\n\

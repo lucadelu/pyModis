@@ -19,12 +19,13 @@ Functions:
 
 '''
 
-from __future__ import print_function
+# python 2 and 3 compatibility
+from builtins import dict
+
 
 import os
 import sys
 import optparse
-from types import UnicodeType
 try:
     import wx
     import wx.lib.filebrowsebutton as filebrowse
@@ -35,7 +36,7 @@ __version__ = 0.2
 __revision__ = '$Id$'
 
 # for required options
-from optparse_required import STREQUIRED
+from .optparse_required import STREQUIRED
 
 TEXTCTRL_SIZE = (400, -1)
 
@@ -89,7 +90,7 @@ class OptparseDialog(wx.Dialog):
         self.CenterOnScreen()
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.args_ctrl = []
-        self.option_controls = {}
+        self.option_controls = dict()
 
 #       IN THE TOP OF GUI THERE WAS THE NAME OF THE SCRIPT, BUT NOW IT IS IN
 #       THE TITLE
@@ -105,14 +106,14 @@ class OptparseDialog(wx.Dialog):
         sizer.Add(arg, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT |
                   wx.TOP, 5)
 
-        self.browse_option_map = {}
+        self.browse_option_map = dict()
         # Add controls for all the options
         for option in optParser.list_of_option:
             if option.dest is None:
                 continue
 
             if option.help is None:
-                option.help = u''
+                option.help = ''
 
             if checkLabel(option) == 'Formats':
                 continue
@@ -213,8 +214,8 @@ class OptparseDialog(wx.Dialog):
 
     def _getOptions(self):
         """Return a dictionary with the options and their values"""
-        option_values = {}
-        for option, ctrl in self.option_controls.iteritems():
+        option_values = dict()
+        for option, ctrl in self.option_controls.items():
             try:
                 option_values[option] = ctrl.Value
             except:
@@ -382,7 +383,7 @@ class OptionParser(optparse.OptionParser):
 
         option_values, args = dlg.getOptionsAndArgs()
 
-        for option, value in option_values.iteritems():
+        for option, value in option_values.items():
             if option.required and value == "":
                 self.error("The option %s is mandatory" % option)
             if ('store_true' == option.action) and (value is False):
@@ -395,7 +396,7 @@ class OptionParser(optparse.OptionParser):
             if option.takes_value() is False:
                 value = None
 
-            if type(value) == UnicodeType:
+            if isinstance(value, str):
                 value = str(value)
             option.process(option, value, values, self)
 

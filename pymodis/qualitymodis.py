@@ -27,9 +27,16 @@ Classes:
 * :class:`QualityModis`
 
 """
+
+# python 2 and 3 compatibility
 from __future__ import print_function
+from builtins import dict
+
 import os
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    raise ImportError('Numpy library not found, please install it')
 
 try:
     import osgeo.gdal as gdal
@@ -43,41 +50,45 @@ except ImportError:
                           'python-gdal')
 
 
-VALIDTYPES = {'13': map(str, range(1, 10)), '11': map(str, range(1, 6))}
+VALIDTYPES = dict({'13': list(map(str, list(range(1, 10)))), '11': list(map(str, list(range(1, 6))))})
 
-PRODUCTPROPS = {'MOD13Q1': ([2], ['QAGrp1']),
-                'MYD13Q1': ([2], ['QAGrp1']),
-                'MOD13A1': ([2], ['QAGrp1']),
-                'MYD13A1': ([2], ['QAGrp1']),
-                'MOD13A2': ([2], ['QAGrp1']),
-                'MYD13A2': ([2], ['QAGrp1']),
-                'MOD13A3': ([2], ['QAGrp1']),
-                'MYD13A3': ([2], ['QAGrp1']),
-                'MOD13C1': ([2], ['QAGrp1']),
-                'MYD13C1': ([2], ['QAGrp1']),
-                'MOD13C2': ([2], ['QAGrp1']),
-                'MYD13C2': ([2], ['QAGrp1']),
-                'MOD11A1': ([1, 5], ['QAGrp2', 'QAGrp2']),
-                'MYD11A1': ([1, 5], ['QAGrp2', 'QAGrp2']),
-                'MOD11A2': ([1, 5], ['QAGrp4', 'QAGrp4']),
-                'MYD11A2': ([1, 5], ['QAGrp4', 'QAGrp4']),
-                'MOD11B1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
-                'MYD11B1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
-                'MOD11C1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
-                'MYD11C1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
-                'MOD11C2': ([1, 6], ['QAGrp2', 'QAGrp2']),
-                'MYD11C2': ([1, 6], ['QAGrp2', 'QAGrp2']),
-                'MOD11C3': ([1, 6], ['QAGrp2', 'QAGrp2']),
-                'MYD11C3': ([1, 6], ['QAGrp2', 'QAGrp2'])}
+PRODUCTPROPS = dict({
+    'MOD13Q1': ([2], ['QAGrp1']),
+    'MYD13Q1': ([2], ['QAGrp1']),
+    'MOD13A1': ([2], ['QAGrp1']),
+    'MYD13A1': ([2], ['QAGrp1']),
+    'MOD13A2': ([2], ['QAGrp1']),
+    'MYD13A2': ([2], ['QAGrp1']),
+    'MOD13A3': ([2], ['QAGrp1']),
+    'MYD13A3': ([2], ['QAGrp1']),
+    'MOD13C1': ([2], ['QAGrp1']),
+    'MYD13C1': ([2], ['QAGrp1']),
+    'MOD13C2': ([2], ['QAGrp1']),
+    'MYD13C2': ([2], ['QAGrp1']),
+    'MOD11A1': ([1, 5], ['QAGrp2', 'QAGrp2']),
+    'MYD11A1': ([1, 5], ['QAGrp2', 'QAGrp2']),
+    'MOD11A2': ([1, 5], ['QAGrp4', 'QAGrp4']),
+    'MYD11A2': ([1, 5], ['QAGrp4', 'QAGrp4']),
+    'MOD11B1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
+    'MYD11B1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
+    'MOD11C1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
+    'MYD11C1': ([1, 5, -2], ['QAGrp2', 'QAGrp2', 'QAGrp3']),
+    'MOD11C2': ([1, 6], ['QAGrp2', 'QAGrp2']),
+    'MYD11C2': ([1, 6], ['QAGrp2', 'QAGrp2']),
+    'MOD11C3': ([1, 6], ['QAGrp2', 'QAGrp2']),
+    'MYD11C3': ([1, 6], ['QAGrp2', 'QAGrp2'])
+})
 
 
-QAindices = {'QAGrp1': (16, [[-2, None], [-6, -2], [-8, -6], [-9, -8],
-                             [-10, -9], [-11, -10], [-14, -11], [-15, -14],
-                             [-16, -15]]),
-             'QAGrp2': (7, [[-2, None], [-3, -2], [-4, -3], [-6, -4],
-                            [-8, -6]]),
-             'QAGrp3': (7, [[-3, None], [-6, -3], [-7, -6]]),
-             'QAGrp4': (8, [[-2, None], [-4, -2], [-6, -4], [-8, -6]])}
+QAindices = dict({
+    'QAGrp1': (16, [[-2, None], [-6, -2], [-8, -6], [-9, -8],
+               [-10, -9], [-11, -10], [-14, -11], [-15, -14],
+               [-16, -15]]),
+    'QAGrp2': (7, [[-2, None], [-3, -2], [-4, -3], [-6, -4],
+               [-8, -6]]),
+    'QAGrp3': (7, [[-3, None], [-6, -3], [-7, -6]]),
+    'QAGrp4': (8, [[-2, None], [-4, -2], [-6, -4], [-8, -6]])
+})
 
 
 class QualityModis():
@@ -115,7 +126,7 @@ class QualityModis():
 
     def setQAGroup(self):
         """set QA dataset group type"""
-        if self.productType in PRODUCTPROPS.keys():
+        if self.productType in list(PRODUCTPROPS.keys()):
             self.qaGroup = PRODUCTPROPS[self.productType][1][int(self.qLayer)-1]
         else:
             print("Product version is currently not supported!")

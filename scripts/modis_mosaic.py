@@ -20,12 +20,9 @@
 ##################################################################
 """Script to mosaic the input tiles. It is able to use MRT or GDAL as backend
 """
-from __future__ import print_function
 
 import os
 import sys
-import string
-from types import ListType
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -41,7 +38,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise Exception('Python GDAL library not found, please install python-gdal')
 
 ERROR = "You have to define the name of a text file containing HDF files" \
         " (One HDF file for line)."
@@ -94,7 +91,7 @@ def main():
         parser.error(ERROR)
         sys.exit()
     else:
-        if type(args) != ListType:
+        if not isinstance(args, list):
             parser.error(ERROR)
             sys.exit()
         elif len(args) > 1:
@@ -109,7 +106,7 @@ def main():
     if not options.subset:
         options.subset = False
     else:
-        if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
+        if not (options.subset.strip().startswith('(') and options.subset.strip().endswith(')')):
             parser.error('ERROR: The spectral string should be similar to: '
                          '"1 0" without "(" and ")"')
 #    if not options.grain and options.vrt:

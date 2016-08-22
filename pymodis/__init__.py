@@ -1,11 +1,13 @@
-import downmodis
-import parsemodis
-import convertmodis
-import optparse_required
-import qualitymodis
-import convertmodis_gdal
+from __future__ import print_function
+
+from . import downmodis
+from . import parsemodis
+from . import convertmodis
+from . import optparse_required
+from . import qualitymodis
+from . import convertmodis_gdal
 try:
-    import optparse_gui
+    from . import optparse_gui
 except:
-    print "WxPython missing, no GUI enabled"
-__version__ = '1.0.2'
+    print("WxPython missing, no GUI enabled")
+__version__ = '2.0.0'

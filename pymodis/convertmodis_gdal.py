@@ -39,8 +39,12 @@ Functions:
 * :func:`raster_copy_with_nodata`
 
 """
+
+# python 2 and 3 compatibility
 from __future__ import print_function
-from types import ListType, StringType
+from __future__ import division
+from builtins import dict
+
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -132,11 +136,10 @@ class convertModisGDAL:
         # error threshold the same value as gdalwarp
         self.error_threshold = 0.125
         self.resampling = getResampling(resampl)
-        if type(subset) == ListType:
+        if isinstance(subset,list):
             self.subset = subset
-        elif type(subset) == StringType:
-            self.subset = subset.replace('(', '').replace(')',
-                                                          '').strip().split()
+        elif isinstance(subset, str):
+            self.subset = subset.replace('(', '').replace(')', '').strip().split()
         else:
             raise Exception('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
@@ -203,12 +206,10 @@ class convertModisGDAL:
                 raise Exception('Invalid number of pixel 0 for X size. The '
                                 'problem could be in an invalid value of '
                                 'resolution')
-                return 0
             elif self.dst_ysize == 0:
                 raise Exception('Invalid number of pixel 0 for Y size. The '
                                 'problem could be in an invalid value of '
                                 'resolution')
-                return 0
             self.dst_gt = [bbox[0][0], self.resolution, 0.0, bbox[1][1], 0.0,
                            -self.resolution]
         tmp_ds = None
@@ -227,7 +228,7 @@ class convertModisGDAL:
         l_src_ds = gdal.Open(l)
         meta = l_src_ds.GetMetadata()
         band = l_src_ds.GetRasterBand(1)
-        if '_FillValue' in meta.keys():
+        if '_FillValue' in list(meta.keys()):
             fill_value = meta['_FillValue']
         elif band.GetNoDataValue():
             fill_value = band.GetNoDataValue()
@@ -246,8 +247,7 @@ class convertModisGDAL:
             dst_ds = self.driver.Create(out_name, self.dst_xsize,
                                         self.dst_ysize, 1, datatype)
         except:
-            raise Exception('Not possibile to create dataset %s' % out_name)
-            return 0
+            raise Exception('Not possible to create dataset %s' % out_name)
         dst_ds.SetProjection(self.dst_wkt)
         dst_ds.SetGeoTransform(self.dst_gt)
         if fill_value:
@@ -262,9 +262,8 @@ class convertModisGDAL:
                                 cbk_user_data)
             print("Layer {name} reprojected".format(name=l))
         except:
-            raise Exception('Not possibile to reproject dataset '
+            raise Exception('Not possible to reproject dataset '
                             '{name}'.format(name=l))
-            return 0
         dst_ds.SetMetadata(meta)
         dst_ds = None
         l_src_ds = None
@@ -272,14 +271,14 @@ class convertModisGDAL:
 
     def run_vrt_separated(self):
         """Reproject VRT created by createMosaicGDAL, function write_vrt with
-        sepatated=True
+        separated=True
         """
         self._createWarped(self.in_name)
         self._reprojectOne(self.in_name)
         print("Dataset '{name}' reprojected".format(name=self.in_name))
 
     def run(self):
-        """Reproject all the subset of choosen layer"""
+        """Reproject all the subset of chosen layer"""
         if self.vrt:
             self.run_vrt_separated()
             return
@@ -375,7 +374,7 @@ class file_info:
         self.lry = self.uly + self.geotransform[5] * self.ysize
 
         meta = fh.GetMetadata()
-        if '_FillValue' in meta.keys():
+        if '_FillValue' in list(meta.keys()):
             self.fill_value = meta['_FillValue']
         elif fh.GetRasterBand(1).GetNoDataValue():
             self.fill_value = fh.GetRasterBand(1).GetNoDataValue()
@@ -482,11 +481,10 @@ class createMosaicGDAL:
         # self.resolution = res
         if not subset:
             self.subset = None
-        elif type(subset) == ListType:
+        elif isinstance(subset, list):
             self.subset = subset
-        elif type(subset) == StringType:
-            self.subset = subset.replace('(', '').replace(')',
-                                                          '').strip().split()
+        elif isinstance(subset, str):
+            self.subset = subset.replace('(', '').replace(')', '').strip().split()
         else:
             raise Exception('Type for subset parameter not supported')
         self.driver = gdal.GetDriverByName(outformat)
@@ -504,14 +502,14 @@ class createMosaicGDAL:
         self._names_to_fileinfos()
 
     def _initLayers(self):
-        """Set up the variable self.layers as dictionary for each choosen
+        """Set up the variable self.layers as dictionary for each chosen
         subset"""
-        if type(self.in_names) == ListType:
+        if isinstance(self.in_names, list):
             src_ds = gdal.Open(self.in_names[0])
         else:
             raise Exception("The input value should be a list of HDF files")
         layers = src_ds.GetSubDatasets()
-        self.layers = {}
+        self.layers = dict()
         n = 0
         if not self.subset:
             self.subset = [1 for i in range(len(layers))]
@@ -539,8 +537,8 @@ class createMosaicGDAL:
         objects than names if some of the names could not be opened as GDAL
         files.
         """
-        self.file_infos = {}
-        for k, v in self.layers.iteritems():
+        self.file_infos = dict()
+        for k, v in self.layers.items():
             self.file_infos[k] = []
             for name in v:
                 fi = file_info()
@@ -553,13 +551,13 @@ class createMosaicGDAL:
 
            :return: X size, Y size and geotransform parameters
         """
-        values = self.file_infos.values()
+        values = list(self.file_infos.values())
         l1 = values[0][0]
         ulx = l1.ulx
         uly = l1.uly
         lrx = l1.lrx
         lry = l1.lry
-        for fi in self.file_infos[self.file_infos.keys()[0]]:
+        for fi in self.file_infos[list(self.file_infos.keys())[0]]:
             ulx = min(ulx, fi.ulx)
             uly = max(uly, fi.uly)
             lrx = max(lrx, fi.lrx)
@@ -577,7 +575,7 @@ class createMosaicGDAL:
 
            :param str prefix: the prefix for the XML file containing metadata
         """
-        from parsemodis import parseModisMulti
+        from .parsemodis import parseModisMulti
         import os
         listHDF = []
         for i in self.in_names:
@@ -586,23 +584,22 @@ class createMosaicGDAL:
         pmm.writexml("%s.xml" % prefix)
 
     def run(self, output):
-        """Create the mosaik
+        """Create the mosaic
 
            :param str output: the name of output file
         """
-        values = self.file_infos.values()
+        values = list(self.file_infos.values())
         l1 = values[0][0]
         xsize, ysize, geotransform = self._calculateNewSize()
         t_fh = self.driver.Create(output, xsize, ysize,
-                                  len(self.file_infos.keys()), l1.band_type)
+                                  len(list(self.file_infos.keys())), l1.band_type)
         if t_fh is None:
-            raise Exception('Not possibile to create dataset %s' % output)
-            return
+            raise Exception('Not possible to create dataset %s' % output)
 
         t_fh.SetGeoTransform(geotransform)
         t_fh.SetProjection(l1.projection)
         i = 1
-        for names in self.file_infos.values():
+        for names in list(self.file_infos.values()):
             fill = None
             if names[0].fill_value:
                 fill = float(names[0].fill_value)
@@ -659,7 +656,7 @@ class createMosaicGDAL:
 
         xsize, ysize, geot = self._calculateNewSize()
         if separate:
-            for k in self.file_infos.keys():
+            for k in list(self.file_infos.keys()):
                 l1 = self.file_infos[k][0]
                 out = open("{pref}_{band}.vrt".format(pref=output, band=k),
                            'w')
@@ -684,7 +681,7 @@ class createMosaicGDAL:
                 out.write('</VRTDataset>\n')
                 out.close()
         else:
-            values = self.file_infos.values()
+            values = list(self.file_infos.values())
             l1 = values[0][0]
             band = 1  # the number of band
             out = open("{pref}.vrt".format(pref=output), 'w')
@@ -695,7 +692,7 @@ class createMosaicGDAL:
                       ' {geo4}, {geo5}</GeoTransform>\n'.format(geo0=geot[0],
                       geo1=geot[1], geo2=geot[2], geo3=geot[3], geo4=geot[4],
                       geo5=geot[5]))
-            for k in self.file_infos.keys():
+            for k in list(self.file_infos.keys()):
                 l1 = self.file_infos[k][0]
                 out.write('\t<VRTRasterBand dataType="{typ}" band="{n}"'
                           '>\n'.format(typ=gdal.GetDataTypeName(l1.band_type),
