@@ -43,7 +43,6 @@ Functions:
 # python 2 and 3 compatibility
 from __future__ import print_function
 from __future__ import division
-from builtins import dict
 from collections import OrderedDict
 try:
     import osgeo.gdal as gdal
