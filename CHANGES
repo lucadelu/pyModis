@@ -25,7 +25,7 @@
  * add support to use GDAL to convert MODIS hdf files
  * add graphical interfaces to scripts
  * add quality check: library and script
- * improved documentation and examples (add iPython notebook tutorial)
+ * improved documentation and examples (add iPytrhon notebook tutorial)
 - version 1.0.1
  * GDAL support in downmodis is not mandatory
  * fixed some small bugs
@@ -37,6 +37,7 @@
  * new website address
 
 - version 2.0.0
- * PyModis now have support for Python v3
+ * pyModis now support Python 3
  * fixed and improved documentation
  * added support for new authentication system
+ * added capabilities to set user and password through standard input
