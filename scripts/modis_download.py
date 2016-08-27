@@ -20,6 +20,7 @@
 ##################################################################
 """Script to download massive MODIS data"""
 import sys
+import getpass
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -117,11 +118,16 @@ def main():
     if options.oneday:
         options.delta = 1
     if options.input:
-        user = raw_input('Insert user: ')
-        password = raw_input('Insert password: ')
+        if sys.version_info.major == 3:
+            user = input("Username: ")
+        else:
+            user = raw_input("Username: ")
+        password = getpass.getpass()
     else:
         user = options.user
         password = options.password
+    if not user or not password:
+        parser.error("You have to set user and password")
     # set modis object
     modisOgg = downmodis.downModis(url=options.url, user=user,
                                    password=password,
