@@ -43,8 +43,7 @@ Functions:
 # python 2 and 3 compatibility
 from __future__ import print_function
 from __future__ import division
-from builtins import dict
-
+from collections import OrderedDict
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -509,14 +508,14 @@ class createMosaicGDAL:
         else:
             raise Exception("The input value should be a list of HDF files")
         layers = src_ds.GetSubDatasets()
-        self.layers = dict()
+        self.layers = OrderedDict()
         n = 0
         if not self.subset:
             self.subset = [1 for i in range(len(layers))]
         for i in self.subset:
             if str(i) == '1':
                 name = layers[n][0].split(':')[-1]
-                self.layers[name] = []
+                self.layers[name] = list()
             n = n + 1
 
     def _getUsedLayers(self):
@@ -537,7 +536,7 @@ class createMosaicGDAL:
         objects than names if some of the names could not be opened as GDAL
         files.
         """
-        self.file_infos = dict()
+        self.file_infos = OrderedDict()
         for k, v in self.layers.items():
             self.file_infos[k] = []
             for name in v:

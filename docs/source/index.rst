@@ -37,6 +37,8 @@ It has several features:
 
 * Graphical User Interface for each script written in `wxPython`_ (pyModis >=  1.0)
 
+* it support Python 2 and Python 3 (pyModis >= 2.0)
+
 .. only:: latex
 
    We acknowledge the `Fondazione Edmund Mach`_ for promoting the development of

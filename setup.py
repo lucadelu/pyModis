@@ -26,13 +26,19 @@ try:
     from setuptools import setup
 except:
     from distutils.core import setup
-
+import sys
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(HERE, 'README.rst'), encoding='utf-8') as f:
-    README = f.read()
-with open(os.path.join(HERE, 'pymodis', '__init__.py'), encoding='utf-8') as fp:
-    VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
+if sys.version_info.major == 3:
+    with open(os.path.join(HERE, 'README.rst'), encoding='utf-8') as f:
+        README = f.read()
+    with open(os.path.join(HERE, 'pymodis', '__init__.py'), encoding='utf-8') as fp:
+        VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
+else:
+    with open(os.path.join(HERE, 'README.rst')) as f:
+        README = f.read()
+    with open(os.path.join(HERE, 'pymodis', '__init__.py')) as fp:
+        VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
 
 setup(
     name='pyModis',
@@ -40,7 +46,7 @@ setup(
     py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
                 'pymodis.parsemodis', 'pymodis.optparse_required',
                 'pymodis.optparse_gui', 'pymodis.qualitymodis',
-                'pymodis.convertmodis_gdal'],
+                'pymodis.convertmodis_gdal',  'pymodis.productmodis'], 
     #packages = ['pymodis'],
     scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
              'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
@@ -51,7 +57,7 @@ setup(
     url='http://www.pymodis.org',
     description='Python library for MODIS data',
     long_description=README,
-    install_requires=['GDAL', 'numpy', 'future'],
+    install_requires=['GDAL', 'numpy', 'future',  'requests'],
     extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',
     platforms=['Any'],

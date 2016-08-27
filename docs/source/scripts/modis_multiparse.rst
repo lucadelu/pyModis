@@ -7,7 +7,7 @@ mosaic.
 
 Usage
 ^^^^^
-::
+.. code-block:: none
 
     modis_multiparse.py [options] hdf_files_list
 
@@ -20,7 +20,7 @@ Options
   :align: left
   :class: gui
 
-::
+.. code-block:: none
 
     -h  --help     show the help
     -b             print the values related to the spatial max extent
@@ -29,11 +29,15 @@ Options
 Examples
 ^^^^^^^^
 
-Print values of spatial bounding box ::
+Print values of spatial bounding box
+
+.. code-block:: none
 
     modis_multiparse.py -b hdf_file1 hdf_file2 ...
 
-Write xml file to use with hdf file created by :doc:`modis_convert` ::
+Write xml file to use with hdf file created by :doc:`modis_convert`
+
+.. code-block:: none
 
     modis_multiparse.py -w FILE_mosaic.xml hdf_file1 hdf_file2 ...
 

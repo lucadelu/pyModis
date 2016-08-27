@@ -30,7 +30,7 @@ Classes:
 
 # python 2 and 3 compatibility
 from builtins import dict
-
+import sys
 import os
 
 # lists of parameters accepted by resample MRT software
@@ -199,21 +199,38 @@ class parseModis:
         value = dict()
         self.getGranule()
         mes = self.granule.find('MeasuredParameter')
-        mespc = mes.find('MeasuredParameterContainer')
-        value['ParameterName'] = mespc.find('ParameterName').text
-        meStat = mespc.find('QAStats')
-        qastat = dict()
-        for i in meStat.getiterator():
-            if i.tag != 'QAStats':
-                qastat[i.tag] = i.text
-        value['QAStats'] = qastat
-        meFlag = mespc.find('QAFlags')
-        flagstat = dict()
-        for i in meFlag.getiterator():
-            if i.tag != 'QAFlags':
-                flagstat[i.tag] = i.text
-        value['QAFlags'] = flagstat
+        mespcs = mes.findall('MeasuredParameterContainer')
+        ind = 1
+        for me in mespcs:
+            value[ind] = dict()
+            value[ind]['ParameterName'] = me.find('ParameterName').text
+            meStat = me.find('QAStats')
+            qastat = dict()
+            for i in meStat.getiterator():
+                if i.tag != 'QAStats':
+                    qastat[i.tag] = i.text
+            value[ind]['QAStats'] = qastat
+            meFlag = me.find('QAFlags')
+            flagstat = dict()
+            for i in meFlag.getiterator():
+                if i.tag != 'QAFlags':
+                    flagstat[i.tag] = i.text
+            value[ind]['QAFlags'] = flagstat
+            ind += 1
         return value
+
+    def getLayersName(self,  output=None):
+        names = list()
+        measures = self.retMeasure()
+        for k, v in measures.items():
+            names.append("{id}\t{na}".format(id=k,
+                                             na=v['ParameterName']))
+        if output:
+            out = open(output,  'w')
+        else:
+            out = sys.stdout
+        out.write("{ns}\n".format(ns='\n'.join(names)))
+        return 0
 
     def retPlatform(self):
         """Return the platform values as dictionary."""
@@ -766,12 +783,13 @@ class parseModisMulti:
         valuesQAFlags = []
         valuesParameter = []
         for i in self.parModis:
-            valuesQAStats.append(i.retMeasure()['QAStats'])
-            valuesQAFlags.append(i.retMeasure()['QAFlags'])
-            valuesParameter.append(i.retMeasure()['ParameterName'])
-        for i in self._checkval(valuesParameter):
-            pn = self.ElementTree.SubElement(obj, 'ParameterName')
-            pn.text = i
+            for val in i.retMeasure():
+                valuesQAStats.append(val['QAStats'])
+                valuesQAFlags.append(val['QAFlags'])
+                valuesParameter.append(val['ParameterName'])
+                for i in self._checkval(valuesParameter):
+                    pn = self.ElementTree.SubElement(obj, 'ParameterName')
+                    pn.text = i
 
     def valInputPointer(self, obj):
         """Function to add InputPointer

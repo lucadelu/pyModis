@@ -37,6 +37,7 @@
  * new website address
 
 - version 2.0.0
- * PyModis now have support for Python v3
+ * pyModis now support Python 3
  * fixed and improved documentation
  * added support for new authentication system
+ * added capabilities to set user and password through standard input

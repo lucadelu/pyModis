@@ -20,6 +20,7 @@
 ##################################################################
 """Script to download massive MODIS data"""
 import sys
+import getpass
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -42,6 +43,9 @@ def main():
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
                       help="http/ftp server url [default=%default]",
                       dest="url")
+    # username and password from stdin
+    parser.add_option("-I", "--input", dest="input", action="store_true",
+                      help="insert user and password from standard input")
     # password
     parser.add_option("-P", "--password", dest="password",
                       help="password to connect to the server")
@@ -113,9 +117,20 @@ def main():
     # check if oneday option it is set
     if options.oneday:
         options.delta = 1
+    if options.input:
+        if sys.version_info.major == 3:
+            user = input("Username: ")
+        else:
+            user = raw_input("Username: ")
+        password = getpass.getpass()
+    else:
+        user = options.user
+        password = options.password
+    if not user or not password:
+        parser.error("You have to set user and password")
     # set modis object
-    modisOgg = downmodis.downModis(url=options.url, user=options.user,
-                                   password=options.password,
+    modisOgg = downmodis.downModis(url=options.url, user=user,
+                                   password=password,
                                    destinationFolder=args[0],
                                    tiles=options.tiles, path=options.path,
                                    product=options.prod, today=options.today,

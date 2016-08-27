@@ -7,7 +7,7 @@ into a text file.
 
 Usage
 ^^^^^
-::
+.. code-block:: none
 
     modis_parse.py [options] hdf_file
 
@@ -20,9 +20,10 @@ Options
   :align: left
   :class: gui
 
-::
+.. code-block:: none
     
     -h  --help     show the help
+    -w  --write    write the chosen information into a file
     -a             print all possible values of metadata
     -b             print the values related to the spatial max extent
     -d             print the values related to the date files
@@ -33,20 +34,26 @@ Options
     -q             print the values related to quality
     -s             print the values related to psas
     -t             print the values related to times
-    -w  --write    write the chosen information into a file
+    -l             print the names of layer in HDF file 
 
 Examples
 ^^^^^^^^
 
-Return all values of metadata ::
+Return all values of metadata
+
+.. code-block:: none
 
     modis_parse.py -a hdf_file
 
-Write all values to a file ::
+Write all values to a file
+
+.. code-block:: none
 
     modis_parse.py -a -w metadata_FILE.txt hdf_file
 
-Print spatial extent and quality ::
+Print spatial extent and quality
+
+.. code-block:: none
 
     modis_parse.py -b -q hdf_file
 
