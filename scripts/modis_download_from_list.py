@@ -30,6 +30,7 @@ except:
 from pymodis import downmodis
 from pymodis import optparse_required
 import sys
+import getpass
 
 
 def main():
@@ -49,6 +50,9 @@ def main():
     parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
                       help="http/ftp server url [default=%default]",
                       dest="url")
+    # username and password from stdin
+    parser.add_option("-I", "--input", dest="input", action="store_true",
+                      help="insert user and password from standard input")
     # password
     parser.add_option("-P", "--password", dest="password",
                       help="password to connect only if ftp server")
@@ -79,6 +83,18 @@ def main():
         sys.exit(1)
     if len(args) > 1:
         parser.error("You have to define the destination folder for HDF file")
+
+    if options.input:
+        if sys.version_info.major == 3:
+            user = input("Username: ")
+        else:
+            user = raw_input("Username: ")
+        password = getpass.getpass()
+    else:
+        user = options.user
+        password = options.password
+    if not user or not password:
+        parser.error("You have to set user and password")
 
     f = open(options.file)
 
