@@ -5,7 +5,7 @@ modis_quality.py
 
 Usage
 ^^^^^
-::
+.. code-block:: none
 
     modis_quality.py [options] input_file destination_file
 
@@ -18,7 +18,7 @@ Options
   :align: left
   :class: gui
 
-::
+.. code-block:: none
 
   -h, --help            show this help message and exit
   -o OUTPUT_FILE, --output=OUTPUT_FILE
@@ -37,19 +37,27 @@ Options
 Examples
 ^^^^^^^^
 
-Extract VI Usefulness value from MOD13 product ::
+Extract VI Usefulness value from MOD13 product
+
+.. code-block:: none
 
     modis_quality.py -t 2 infile.hdf -o outfile.tif
 
-Extract shadow mask from MOD13 product ::
+Extract shadow mask from MOD13 product
+
+.. code-block:: none
 
     modis_quality.py -t 9 input_file.hdf -o destination_file.tif
 
-Extract Emissitivity error flag of Nighttime LSTE quality control from MOD11C1 product ::
+Extract Emissitivity error flag of Nighttime LSTE quality control from MOD11C1 product
+
+.. code-block:: none
 
     modis_quality.py -t 4 -l 2 infile.hdf -o outfile.tif
 
-Extract MODLAND QA value from MOD13Q1 mosaic ::
+Extract MODLAND QA value from MOD13Q1 mosaic
+
+.. code-block:: none
 
     modis_quality.py -t 1 -p MOD13Q1 input_file.hdf -o destination_file.tif
 
