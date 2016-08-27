@@ -23,6 +23,7 @@ Options
 ::
     
     -h  --help     show the help
+    -w  --write    write the chosen information into a file
     -a             print all possible values of metadata
     -b             print the values related to the spatial max extent
     -d             print the values related to the date files
@@ -33,7 +34,7 @@ Options
     -q             print the values related to quality
     -s             print the values related to psas
     -t             print the values related to times
-    -w  --write    write the chosen information into a file
+    -l             print the names of layer in HDF file 
 
 Examples
 ^^^^^^^^

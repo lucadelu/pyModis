@@ -25,9 +25,9 @@ Options
     -h  --help        show the help message and exit
     -f  --file        Input file containing data to donwload
     -u  --url         http/ftp server url [default=http://e4ftl01.cr.usgs.gov]
-    -P  --password    password to connect only if ftp server
-    -U  --username    username to connect only if ftp server
-                      [default=anonymous]
+    -I  --input       insert user and password from standard input
+    -P  --password    password to connect
+    -U  --username    username to connect
     -t  --tiles       string of tiles separated from comma 
                       [default=none] for all tiles
     -s  --source      directory on the http/ftp 
@@ -53,7 +53,7 @@ The following text should be in your *MODTiles.txt* file ::
 
 Download Terra LST data from the above text file ::
 
-    modis_download_from_list.py -f /tmp/MODTiles.txt /tmp
+    modis_download_from_list.py -U user -P passwd -f /tmp/MODTiles.txt /tmp
 
 The following text should be in your *MYDTiles.txt* file ::
 
@@ -65,7 +65,7 @@ The following text should be in your *MYDTiles.txt* file ::
 
 Download Aqua LST data from the above text file ::
 
-    modis_download_from_list.py -s MOLA -p MYD11A1.005 -f /tmp/MYDTiles.txt /tmp
+    modis_download_from_list.py -I -s MOLA -p MYD11A1.005 -f /tmp/MYDTiles.txt /tmp
 
 .. only:: latex
 

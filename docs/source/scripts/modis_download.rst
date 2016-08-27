@@ -24,9 +24,9 @@ Options
 
     -h  --help        shows the help message and exit
     -u  --url         http/ftp server url [default=http://e4ftl01.cr.usgs.gov]
-    -P  --password    password to connect (only if ftp server url)
-    -U  --username    username to connect (only if ftp server url)
-                      [default=anonymous]
+    -I  --input       insert user and password from standard input
+    -P  --password    password to connect
+    -U  --username    username to connect
     -t  --tiles       string of tiles separated by comma 
                       [default=none] for all tiles
     -s  --source      directory on the http/ftp server
@@ -59,15 +59,15 @@ Examples
 
 Download Terra LST data for a month for two tiles from HTTP server ::
 
-    modis_download.py -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 lst_terra/
+    modis_download.py -I -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 lst_terra/
 
 Download the last 15 days of Aqua LST data ::
 
-    modis_download.py -r -s MOLA -p MYD11A1.005 -t h18v03,h18v04 -D 15 lst_aqua/
+    modis_download.py -I -r -s MOLA -p MYD11A1.005 -t h18v03,h18v04 -D 15 lst_aqua/
 
 Download all tiles of NDVI for one day (you have pick the right day otherwise it does not download anything) ::
 
-    modis_download.py -r -p MOD13Q1.005 -f 2010-12-31 -O
+    modis_download.py -U user -P passwd -r -p MOD13Q1.005 -f 2010-12-31 -O
 
 Download Snow product from FTP server
 
@@ -75,13 +75,13 @@ Download Snow product from FTP server
 
   ::
 
-    modis_download.py -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com -s SAN/MOST -p MOD10A1.005
+    modis_download.py -I -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com -s SAN/MOST -p MOD10A1.005
 
 .. only:: latex
 
   ::
 
-    modis_download.py -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com
+    modis_download.py -I -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com
     -s SAN/MOST -p MOD10A1.005
 
   .. raw:: latex

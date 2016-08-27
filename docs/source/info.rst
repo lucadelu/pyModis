@@ -111,6 +111,8 @@ At this point select the following packages:
 
 * *gdal-python*
 * *python-numpy*
+* *python-requests*
+* *python-future*
 * *wxpython*
 
 OSGeo4W will install all the required dependencies.
@@ -119,8 +121,8 @@ At this point, using the OSGeo4W shell, you can follow `Compile from source`_
 section to install pyModis.
 
 
-Install on Windows without osgeo4w
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Install on Windows without osgeo4w (old and non updated)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Another way to install ``pyModis`` on Windows is to install latest Python 2.7
 from http://python.org/download/
@@ -169,9 +171,11 @@ Troubleshooting
 Problem installing dependencies with pip
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sometimes *pip* return error when it try to install Python GDAL, Numpy or wxPython.
-You can solve this problem installing Python GDAL or Numpy using the
-version of your operating system.
+warning ::
+
+    Sometimes *pip* return error when it try to install Python GDAL, Numpy or wxPython.
+    You can solve this problem installing Python GDAL or Numpy using the
+    version of your operating system.
 
 
 How to report a bug
