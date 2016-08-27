@@ -46,7 +46,7 @@ setup(
     py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
                 'pymodis.parsemodis', 'pymodis.optparse_required',
                 'pymodis.optparse_gui', 'pymodis.qualitymodis',
-                'pymodis.convertmodis_gdal'],
+                'pymodis.convertmodis_gdal',  'pymodis.productmodis'], 
     #packages = ['pymodis'],
     scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
              'scripts/modis_parse.py', 'scripts/modis_mosaic.py',

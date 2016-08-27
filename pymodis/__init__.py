@@ -6,6 +6,7 @@ from . import convertmodis
 from . import optparse_required
 from . import qualitymodis
 from . import convertmodis_gdal
+from . import productmodis
 try:
     from . import optparse_gui
 except:
