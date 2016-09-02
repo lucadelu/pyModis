@@ -665,7 +665,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retDTD())
-        for i in self._checkval(values):
+        for i in set(values):
             dtd = self.ElementTree.SubElement(obj, 'DTDVersion')
             dtd.text = i
 
@@ -677,7 +677,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retDataCenter())
-        for i in self._checkval(values):
+        for i in set(values):
             dci = self.ElementTree.SubElement(obj, 'DataCenterId')
             dci.text = i
 
@@ -689,7 +689,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retGranuleUR())
-        for i in self._checkval(values):
+        for i in set(values):
             gur = self.ElementTree.SubElement(obj, 'GranuleUR')
             gur.text = i
 
@@ -701,7 +701,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retDbID())
-        for i in self._checkval(values):
+        for i in set(values):
             dbid = self.ElementTree.SubElement(obj, 'DbID')
             dbid.text = i
 
@@ -745,7 +745,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retPGEVersion())
-        for i in self._checkval(values):
+        for i in set(values):
             pge = self.ElementTree.SubElement(obj, 'PGEVersion')
             pge.text = i
 
@@ -787,7 +787,7 @@ class parseModisMulti:
                 valuesQAStats.append(val['QAStats'])
                 valuesQAFlags.append(val['QAFlags'])
                 valuesParameter.append(val['ParameterName'])
-        for i in self._checkval(valuesParameter):
+        for i in set(valuesParameter):
             pn = self.ElementTree.SubElement(obj, 'ParameterName')
             pn.text = i
 
@@ -813,10 +813,9 @@ class parseModisMulti:
             valuesSName.append(i.retPlatform()['PlatformShortName'])
             valuesInstr.append(i.retPlatform()['InstrumentShortName'])
             valuesSensor.append(i.retPlatform()['SensorShortName'])
-        for i in self._checkval(valuesSName):
+        for i in set(valuesSName):
             pn = self.ElementTree.SubElement(obj, 'PlatformShortName')
             pn.text = i
-
         valInstr = self._checkval(valuesInstr)
         valSens = self._checkval(valuesSensor)
 
@@ -839,7 +838,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retInsertTime())
-        for i in self._checkval(values):
+        for i in set(values):
             gur = self.ElementTree.SubElement(obj, 'InsertTime')
             gur.text = i
 
@@ -851,7 +850,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retLastUpdate())
-        for i in self._checkval(values):
+        for i in set(values):
             gur = self.ElementTree.SubElement(obj, 'LastUpdate')
             gur.text = i
 
@@ -875,7 +874,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retBrowseProduct())
-        for i in self._checkval(values):
+        for i in set(values):
             dfc = self.ElementTree.SubElement(obj, 'BrowseGranuleId')
             dfc.text = i
 
