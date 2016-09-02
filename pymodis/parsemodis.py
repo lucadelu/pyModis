@@ -787,9 +787,9 @@ class parseModisMulti:
                 valuesQAStats.append(val['QAStats'])
                 valuesQAFlags.append(val['QAFlags'])
                 valuesParameter.append(val['ParameterName'])
-                for i in self._checkval(valuesParameter):
-                    pn = self.ElementTree.SubElement(obj, 'ParameterName')
-                    pn.text = i
+        for i in self._checkval(valuesParameter):
+            pn = self.ElementTree.SubElement(obj, 'ParameterName')
+            pn.text = i
 
     def valInputPointer(self, obj):
         """Function to add InputPointer
