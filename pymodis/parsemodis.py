@@ -783,7 +783,7 @@ class parseModisMulti:
         valuesQAFlags = []
         valuesParameter = []
         for i in self.parModis:
-            for val in i.retMeasure():
+            for val in i.retMeasure().values():
                 valuesQAStats.append(val['QAStats'])
                 valuesQAFlags.append(val['QAFlags'])
                 valuesParameter.append(val['ParameterName'])
