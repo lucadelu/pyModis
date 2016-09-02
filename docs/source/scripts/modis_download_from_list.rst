@@ -4,6 +4,11 @@ modis_download_from_list.py
 **modis_download_from_list.py** downloads MODIS data from NASA servers,
 the names of files to download have to be contained into a text file.
 
+.. warning::
+
+  Remember to register yourself at https://urs.earthdata.nasa.gov/users/new,
+  read more at :ref:`userpw-label` session.
+
 Usage
 ^^^^^
 

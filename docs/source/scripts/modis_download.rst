@@ -4,6 +4,11 @@ modis_download.py
 It can download large amounts of data and it can be profitably
 used with cron jobs to receive data with a fixed delay of time.
 
+.. warning::
+
+  Remember to register yourself at https://urs.earthdata.nasa.gov/users/new,
+  read more at :ref:`userpw-label` session.
+
 Usage
 ^^^^^
 
@@ -51,11 +56,11 @@ Options
                       'destination_folder'  [default=False]
 
 
+
+
+
 Examples
 ^^^^^^^^
-
-.. warning
-  The target directory needs to be created beforehand.
 
 Download Terra LST data for a month for two tiles from HTTP server
 

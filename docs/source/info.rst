@@ -12,6 +12,15 @@ install also **wxPython** library.
 You can use also software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
 to convert or mosaic MODIS HDF files.
 
+.. _userpw-label:
+
+User and password
+^^^^^^^^^^^^^^^^^
+To be able to download data you need user and password provided by NASA.
+Please **register at https://urs.earthdata.nasa.gov/users/new**; now login
+and move to your profile page. Go to "My application" tab and approve the
+ollowing applications "LP DAAC Data Pool" and "Earthdata Search".
+
 How to install pyModis
 ----------------------
 
