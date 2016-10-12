@@ -30,6 +30,7 @@ except:
 from pymodis import downmodis
 from pymodis import optparse_required
 import sys
+import os
 import getpass
 
 
@@ -83,6 +84,8 @@ def main():
         sys.exit(1)
     if len(args) > 1:
         parser.error("You have to define the destination folder for HDF file")
+    if not os.path.isdir(args[0]):
+        parser.error("The destination folder is not a dir or not exists")
 
     if options.input:
         if sys.version_info.major == 3:

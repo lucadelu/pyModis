@@ -20,6 +20,7 @@
 ##################################################################
 """Script to download massive MODIS data"""
 import sys
+import os
 import getpass
 try:
     from pymodis import optparse_gui
@@ -114,6 +115,9 @@ def main():
         sys.exit(1)
     if len(args) == 0:
         parser.error("You have to define the destination folder for HDF file")
+    if not os.path.isdir(args[0]):
+        parser.error("The destination folder is not a dir or not exists")
+
     # check if oneday option it is set
     if options.oneday:
         options.delta = 1

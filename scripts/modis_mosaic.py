@@ -89,14 +89,13 @@ def main():
         sys.exit(1)
     if not args:
         parser.error(ERROR)
-        sys.exit()
     else:
         if not isinstance(args, list):
             parser.error(ERROR)
-            sys.exit()
         elif len(args) > 1:
             parser.error(ERROR)
-            sys.exit()
+        if not os.path.isfile(args[0]):
+            parser.error(ERROR + '. ' + args[0] + ' does not exists')
 
     if not os.path.isfile(args[0]):
         parser.error("You have to define the name of a text file containing "

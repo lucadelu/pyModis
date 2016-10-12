@@ -24,6 +24,7 @@ from __future__ import print_function
 
 #import system library
 import sys
+import os
 #import modis library
 try:
     from pymodis import optparse_gui
@@ -64,7 +65,10 @@ def main():
         parser.print_help()
         sys.exit(1)
     if len(args) < 2:
-        parser.error("You have to define the name of HDF files")
+        parser.error("You have to define the name of multiple HDF files")
+    for arg in args:
+        if not os.path.isfile(arg):
+            parser.error(arg + " does not exist or is not a file")
     modisOgg = parsemodis.parseModisMulti(args)
 
     if options.bound:

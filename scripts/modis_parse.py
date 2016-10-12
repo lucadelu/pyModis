@@ -25,6 +25,7 @@ from __future__ import print_function
 
 # import system library
 import sys
+import os
 # import modis library
 try:
     from pymodis import optparse_gui
@@ -101,11 +102,11 @@ def main():
         sys.exit(1)
     if not args:
         parser.error(ERROR)
-        sys.exit()
     else:
         if not isinstance(args, list):
             parser.error(ERROR)
-            sys.exit()
+        if not os.path.isfile(args[0]):
+            parser.error(ERROR + '. ' + args[0] + ' does not exists')
     # create modis object
     modisOgg = parsemodis.parseModis(args[0])
     # the output string
