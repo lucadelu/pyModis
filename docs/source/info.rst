@@ -19,7 +19,11 @@ User and password
 To be able to download data you need user and password provided by NASA.
 Please **register at https://urs.earthdata.nasa.gov/users/new**; now login
 and move to your profile page. Go to "My application" tab and approve the
-ollowing applications "LP DAAC Data Pool" and "Earthdata Search".
+following applications "LP DAAC Data Pool" and "Earthdata Search".
+
+If you are an already registered user, login and enable the applications
+at https://urs.earthdata.nasa.gov/home
+
 
 How to install pyModis
 ----------------------
