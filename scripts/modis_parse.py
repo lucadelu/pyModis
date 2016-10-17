@@ -132,8 +132,10 @@ def main():
         outString += readDict(modisOgg.retPSA())
     if options.all or options.qa:
         out = modisOgg.retMeasure()
-        outString += readDict(out['QAStats'])
-        outString += readDict(out['QAFlags'])
+        for mes in out.values():
+            outString += mes['ParameterName'] + '\n'
+            outString += readDict(mes['QAStats'])
+            outString += readDict(mes['QAFlags'])
     if options.all or options.other:
         outString += readDict(modisOgg.retCollectionMetaData())
         outString += "PGEVersion = %s\n" % modisOgg.retPGEVersion()
