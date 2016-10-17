@@ -30,7 +30,6 @@ Classes:
 
 # python 2 and 3 compatibility
 from builtins import dict
-import sys
 import os
 
 # lists of parameters accepted by resample MRT software
@@ -219,7 +218,11 @@ class parseModis:
             ind += 1
         return value
 
-    def getLayersName(self,  output=None):
+    def getMeasureName(self, output=None):
+        """Return the names of measure names
+
+        :param str output: the path of the file where write the output
+        """
         names = list()
         measures = self.retMeasure()
         for k, v in measures.items():
@@ -227,10 +230,40 @@ class parseModis:
                                              na=v['ParameterName']))
         if output:
             out = open(output,  'w')
+            out.write("{ns}\n".format(ns='\n'.join(names)))
+            out.close()
+            return 0
         else:
-            out = sys.stdout
-        out.write("{ns}\n".format(ns='\n'.join(names)))
-        return 0
+            return "{ns}".format(ns='\n'.join(names))
+
+    def getLayersName(self, output=None):
+        """Return the names of layers using GDAL
+
+        :param str output: the path of the file where write the output
+        """
+        try:
+            import osgeo.gdal as gdal
+        except ImportError:
+            try:
+                import gdal as gdal
+            except ImportError:
+                print('WARNING: Python GDAL library not found, please'
+                      ' install it to get layers list')
+        names = list()
+        gd = gdal.Open(self.hdfname)
+        subs = gd.GetSubDatasets()
+        num = 1
+        for sub in subs:
+            names.append("{id}\t{na}".format(id=num,
+                                             na=sub[0].split(':')[-1]))
+            num += 1
+        if output:
+            out = open(output,  'w')
+            out.write("{ns}\n".format(ns='\n'.join(names)))
+            out.close()
+            return 0
+        else:
+            return "{ns}".format(ns='\n'.join(names))
 
     def retPlatform(self):
         """Return the platform values as dictionary."""
