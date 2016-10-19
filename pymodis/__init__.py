@@ -4,8 +4,13 @@ from . import downmodis
 from . import parsemodis
 from . import convertmodis
 from . import optparse_required
-from . import qualitymodis
-from . import convertmodis_gdal
+try:
+    from . import qualitymodis
+    from . import convertmodis_gdal
+except ImportError:
+    print("qualitymodis and convertmodis_gdal modules not enabled, "
+          "maybe Python GDAL is missing")
+    pass
 from . import productmodis
 try:
     from . import optparse_gui
