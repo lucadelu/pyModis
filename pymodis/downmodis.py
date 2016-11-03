@@ -64,6 +64,11 @@ from base64 import b64encode
 from html.parser import HTMLParser
 import re
 
+from cookielib import CookieJar
+from urllib import urlencode
+ 
+import urllib2
+
 global GDAL
 
 try:
@@ -637,8 +642,42 @@ class downModis:
         filSave = open(filHdf, "wb")
         try:  # download and write the file
             url = urljoin(self.url, self.path, day, filDown)
-            req = urllib.request.Request(url, headers = self.http_header)
-            http = urllib.request.urlopen(req)
+            #req = urllib.request.Request(url, headers = self.http_header)
+            #http = urllib.request.urlopen(req)
+            
+            # extract from https://wiki.earthdata.nasa.gov/display/EL/How+To+Access+Data+With+Python
+            password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm()
+            password_manager.add_password(None, 
+                                          "https://urs.earthdata.nasa.gov", 
+                                          self.user, 
+                                          self.password)
+             
+             
+            # Create a cookie jar for storing cookies. This is used to store and return
+            # the session cookie given to use by the data server (otherwise it will just
+            # keep sending us back to Earthdata Login to authenticate).  Ideally, we
+            # should use a file based cookie jar to preserve cookies between runs. This
+            # will make it much more efficient.
+             
+            cookie_jar = CookieJar()
+              
+             
+            # Install all the handlers.
+             
+            opener = urllib2.build_opener(
+            urllib2.HTTPBasicAuthHandler(password_manager),
+            urllib2.HTTPCookieProcessor(cookie_jar))
+            urllib2.install_opener(opener)
+             
+             
+            # Create and submit the request. There are a wide range of exceptions that
+            # can be thrown here, including HTTPError and URLError. These should be
+            # caught and handled.
+             
+            request = urllib2.Request(url)
+            http = urllib2.urlopen(request)
+
+
             orig_size = http.headers['Content-Length']
             filSave.write(http.read())
         # if local file has an error, try to download the file again
