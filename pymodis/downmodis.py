@@ -238,6 +238,9 @@ class downModis:
         elif 'http://' in url:
             self.url = url
             self.urltype = 'http'
+        elif 'https://' in url:
+            self.url = url
+            self.urltype = 'http'
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
         # user for download using ftp
@@ -351,13 +354,12 @@ class downModis:
         """
         self.nconnection += 1
         try:
+            url = urljoin(self.url, self.path)
             try:
-                http = requests.get(urljoin(self.url, self.path),
-                                    timeout=self.timeout)
+                http = requests.get(url, timeout=self.timeout, verify=False)
                 self.dirData = modisHtmlParser(http.content).get_dates()
             except:
-                http = urlopen(urljoin(self.url, self.path),
-                                       timeout=self.timeout)
+                http = urlopen(url, timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
         except:
@@ -507,7 +509,8 @@ class downModis:
                 logging.debug("The url is: {url}".format(url=url))
             try:
                 http = modisHtmlParser(requests.get(url,
-                                       timeout=self.timeout).content)
+                                       timeout=self.timeout,
+                                       verify=False).content)
             except:
                 http = modisHtmlParser(urlopen(url,
                                        timeout=self.timeout).read())
@@ -526,6 +529,7 @@ class downModis:
             if self.debug:
                 logging.debug("The number of file to download is: "
                               "{num}".format(num=len(finalList)))
+
             return finalList
         except (socket.error) as e:
             logging.error("Error {err} when try to receive list of "
@@ -635,21 +639,27 @@ class downModis:
            :param str day: the day in format YYYY.MM.DD
         """
         filSave = open(filHdf, "wb")
+        url = urljoin(self.url, self.path, day, filDown)
+        orig_size = None
         try:  # download and write the file
-            url = urljoin(self.url, self.path, day, filDown)
             req = urllib.request.Request(url, headers = self.http_header)
             http = urllib.request.urlopen(req)
             orig_size = http.headers['Content-Length']
             filSave.write(http.read())
         # if local file has an error, try to download the file again
         except:
-            logging.error("Cannot download {name}. "
-                          "Retrying...".format(name=filDown))
-            filSave.close()
-            os.remove(filSave.name)
-            import time
-            time.sleep(5)
-            self._downloadFileHTTP(filDown, filHdf, day)
+            try:
+                http = requests.get(url, timeout=self.timeout, verify=False)
+                orig_size = http.headers['Content-Length']
+                filSave.write(http.content)
+            except:
+                logging.error("Cannot download {name}. "
+                              "Retrying...".format(name=filDown))
+                filSave.close()
+                os.remove(filSave.name)
+                import time
+                time.sleep(5)
+                self._downloadFileHTTP(filDown, filHdf, day)
         filSave.close()
         transf_size = os.path.getsize(filSave.name)
         if not orig_size:
