@@ -35,14 +35,16 @@
  * fixed raise exception
 - version 1.0.3
  * new website address
-
 - version 2.0.1
  * pyModis now support Python 3
  * fixed and improved documentation
  * added support for new authentication system
  * added capabilities to set user and password through standard input
-
 - version 2.0.2
  * fixed bug in parsemodis library
  * improved documentation
-
+- version 2.0.3
+ * improved OSX support
+ * added capabilities to return the layers name
+ * added support for HTTPS server
+ * fixed several small errors
