@@ -224,11 +224,14 @@ class downModis:
        :param bool debug: set to True if you want to obtain debug information
        :param int timeout: Timeout value for HTTP server (seconds)
        :param bool checkgdal: variable to set the GDAL check
+       :param str proxy: the string should be something like the following
+                         http://user:passwd:server:port
     """
     def __init__(self, destinationFolder, password=None, user="anonymous",
                  url="http://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.005", today=None, enddate=None, delta=10,
-                 jpg=False, debug=False, timeout=30, checkgdal=True):
+                 jpg=False, debug=False, timeout=30, checkgdal=True, 
+                 proxy=None):
         """Function to initialize the object"""
 
         # prepare the base url and set the url type (ftp/http)
@@ -252,7 +255,10 @@ class downModis:
         userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
         self.http_header = { 'Authorization' : 'Basic %s' %  userAndPass }
         cookieprocessor = urllib.request.HTTPCookieProcessor()
-        opener = urllib.request.build_opener(ModisHTTPRedirectHandler, cookieprocessor)
+        if proxy:
+            self.proxy = urllib.request.ProxyHandler({proxy.split(':')[0] : proxy})
+        opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
+                                             cookieprocessor,  self.proxy)
         urllib.request.install_opener(opener)
         # the product (product_code.004 or product_cod.005)
         self.product = product
