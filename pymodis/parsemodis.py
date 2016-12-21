@@ -61,13 +61,13 @@ class parseModis:
             # hdf name
             self.hdfname = filename
         else:
-            raise Exception('{name} does not exist'.format(name=filename))
+            raise IOError('{name} does not exist'.format(name=filename))
 
         if os.path.exists(self.hdfname + '.xml'):
             # xml hdf name
             self.xmlname = self.hdfname + '.xml'
         else:
-            raise Exception('{name}.xml does not exist'.format(name=self.hdfname))
+            raise IOError('{name}.xml does not exist'.format(name=self.hdfname))
 
         # tif name for the output file for resample MRT software
         self.tifname = self.hdfname.replace('.hdf', '.tif')
