@@ -215,7 +215,6 @@ class downModis:
                            date use the format YYYY-MM-DD. This day must be
                            before the 'today' parameter. Downloading happens
                            in reverse order (currently)
-
        :param int delta: timelag i.e. the number of days starting from
                          today backwards. Will be overwritten if
                          'enddate' is specifed during instantiation
@@ -230,7 +229,7 @@ class downModis:
     def __init__(self, destinationFolder, password=None, user="anonymous",
                  url="http://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.005", today=None, enddate=None, delta=10,
-                 jpg=False, debug=False, timeout=30, checkgdal=True, 
+                 jpg=False, debug=False, timeout=30, checkgdal=True,
                  proxy=None):
         """Function to initialize the object"""
 
@@ -256,9 +255,17 @@ class downModis:
         self.http_header = { 'Authorization' : 'Basic %s' %  userAndPass }
         cookieprocessor = urllib.request.HTTPCookieProcessor()
         if proxy:
-            self.proxy = urllib.request.ProxyHandler({proxy.split(':')[0] : proxy})
-        opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
-                                             cookieprocessor,  self.proxy)
+            proxykey = proxy.split(':')[0]
+            if proxykey not in ['ftp', 'http', 'https']:
+                raise IOError("Please check the proxy because it doesn't start"
+                              " with a reconized protocol (ftp, http, https)")
+            self.proxy = urllib.request.ProxyHandler({proxykey: proxy})
+            opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
+                                                 cookieprocessor, self.proxy)
+        else:
+            self.proxy = None
+            opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
+                                                 cookieprocessor)
         urllib.request.install_opener(opener)
         # the product (product_code.004 or product_cod.005)
         self.product = product
@@ -362,7 +369,8 @@ class downModis:
         try:
             url = urljoin(self.url, self.path)
             try:
-                http = requests.get(url, timeout=self.timeout, verify=False)
+                http = requests.get(url, timeout=self.timeout, verify=False,
+                                    proxies=self.proxy)
                 self.dirData = modisHtmlParser(http.content).get_dates()
             except:
                 http = urlopen(url, timeout=self.timeout)
@@ -516,7 +524,8 @@ class downModis:
             try:
                 http = modisHtmlParser(requests.get(url,
                                        timeout=self.timeout,
-                                       verify=False).content)
+                                       verify=False,
+                                       proxies=self.proxy).content)
             except:
                 http = modisHtmlParser(urlopen(url,
                                        timeout=self.timeout).read())
@@ -655,7 +664,8 @@ class downModis:
         # if local file has an error, try to download the file again
         except:
             try:
-                http = requests.get(url, timeout=self.timeout, verify=False)
+                http = requests.get(url, timeout=self.timeout, verify=False,
+                                    proxies=self.proxy)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
             except:
