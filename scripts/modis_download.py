@@ -79,6 +79,11 @@ def main():
                       metavar="LAST_DAY", help="the day to stop download "
                       "[default=%default]; if you want change"
                       " data you must use this format YYYY-MM-DD")
+    # proxy
+    parser.add_option("-y", "--proxy", dest="proxy", default=None,
+                      metavar="PROXY", help="set the proxy "
+                      "the string should be like "
+                      "http://user:passwd:server:port")
     # debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
                       help="this is useful for debugging the "
@@ -140,7 +145,7 @@ def main():
                                    product=options.prod, today=options.today,
                                    enddate=options.enday, jpg=options.jpg,
                                    delta=int(options.delta),
-                                   debug=options.debug)
+                                   debug=options.debug, proxy=options.proxy)
     # connect to ftp
     modisOgg.connect()
     if modisOgg.nconnection <= 20:

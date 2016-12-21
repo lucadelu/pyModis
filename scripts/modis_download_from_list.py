@@ -69,6 +69,11 @@ def main():
     parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
                       help="product name as on the http/ftp server "
                       "[default=%default]")
+    # proxy
+    parser.add_option("-y", "--proxy", dest="proxy", default=None,
+                      metavar="PROXY", help="set the proxy "
+                      "the string should be like "
+                      "http://user:passwd:server:port")
     # debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
                       help="this is useful for debugging the "
@@ -118,7 +123,7 @@ def main():
                                        tiles=tiles, path=options.path,
                                        product=options.prod, delta=1,
                                        today=fdate, debug=options.debug,
-                                       jpg=options.jpg)
+                                       jpg=options.jpg, proxy=options.proxy)
         modisOgg.connect()
         day = modisOgg.getListDays()[0]
         if modisOgg.urltype == 'http':
