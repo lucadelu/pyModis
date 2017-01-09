@@ -187,7 +187,7 @@ class convertModisGDAL:
         :param str raster: the name of raster, for HDF have to be one subset
         """
         src = gdal.Open(raster)
-        tmp_ds = gdal.AutoCreateWarpedVRT(src, SINU_WKT,
+        tmp_ds = gdal.AutoCreateWarpedVRT(src, src.GetProjection(),
                                           self.dst_wkt, self.resampling,
                                           self.error_threshold)
 
@@ -256,7 +256,7 @@ class convertModisGDAL:
         # value for last parameter of above self._progressCallback
         cbk_user_data = None
         try:
-            gdal.ReprojectImage(l_src_ds, dst_ds, SINU_WKT, self.dst_wkt,
+            gdal.ReprojectImage(l_src_ds, dst_ds, l_src_ds.GetProjection(), self.dst_wkt,
                                 self.resampling, 0, self.error_threshold, cbk,
                                 cbk_user_data)
             print("Layer {name} reprojected".format(name=l))
