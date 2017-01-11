@@ -4,7 +4,7 @@ About pyModis
 Requirements
 ------------
 
-``pyModis`` requires **Python GDAL** and **Numpy** packages.
+``pyModis`` requires **Python GDAL**, **Numpy**, **requests** and **future** packages.
 
 If you want to use the Graphical User Interface you have to
 install also **wxPython** library.
@@ -103,7 +103,7 @@ In this case, if you get the following error
 then you need to define the PYTHONPATH environmental variable ::
 
     export PYTHONPATH=/usr/local/lib/python2.7/site-packages
-    python setup.py install --prefix=/usr/local 
+    python setup.py install --prefix=/usr/local
 
 and now re-run the installation command.
 
