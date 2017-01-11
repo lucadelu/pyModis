@@ -48,3 +48,7 @@
  * added capabilities to return the layers name
  * added support for HTTPS server
  * fixed several small errors
+- version 2.0.4
+ * fixed problem with different projection system
+ * fixed documentation for user and password in download library and scripts
+ * improved documentation
