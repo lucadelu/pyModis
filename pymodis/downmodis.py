@@ -191,15 +191,11 @@ class downModis:
     """A class to download MODIS data from NASA FTP or HTTP repositories
 
        :param str destinationFolder: where the files will be stored
-       :param str password: the password, it should be your email address
-                            to connect to a FTP server. Do not use this
-                            variable if the server is an HTTP server
-       :param str user: the user name, by default 'anonymous', used to
-                        connect to an FTP server. Do not use this variable
-                        if the server is an HTTP server
+       :param str password: the password required by NASA authentication system
+       :param str user: the user namerequired by NASA authentication system
        :param str url: the base url from where to download the MODIS data,
                        it can be FTP or HTTP but it has to start with
-                       'ftp://' or 'http://'
+                       'ftp://' or 'http://' or 'https://'
        :param str path: the directory where the data that you want to
                         download are stored on the FTP server. For HTTP
                         requests, this is the part of the url between the 'url'
@@ -225,7 +221,7 @@ class downModis:
        :param int timeout: Timeout value for HTTP server (seconds)
        :param bool checkgdal: variable to set the GDAL check
     """
-    def __init__(self, destinationFolder, password=None, user="anonymous",
+    def __init__(self, destinationFolder, password, user,
                  url="http://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.005", today=None, enddate=None, delta=10,
                  jpg=False, debug=False, timeout=30, checkgdal=True):

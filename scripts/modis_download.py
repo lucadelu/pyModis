@@ -48,10 +48,10 @@ def main():
     parser.add_option("-I", "--input", dest="input", action="store_true",
                       help="insert user and password from standard input")
     # password
-    parser.add_option("-P", "--password", dest="password",
+    parser.add_option("-P", "--password", dest="password", required=True,
                       help="password to connect to the server")
     # username
-    parser.add_option("-U", "--username", dest="user",
+    parser.add_option("-U", "--username", dest="user", required=True,
                       help="username to connect to the server")
     # tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
