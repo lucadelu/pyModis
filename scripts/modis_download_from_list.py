@@ -55,12 +55,11 @@ def main():
     parser.add_option("-I", "--input", dest="input", action="store_true",
                       help="insert user and password from standard input")
     # password
-    parser.add_option("-P", "--password", dest="password",
-                      help="password to connect only if ftp server")
+    parser.add_option("-P", "--password", dest="password", required=True,
+                      help="password to connect to the server")
     # username
-    parser.add_option("-U", "--username", dest="user", default="anonymous",
-                      help="username to connect only if ftp server "
-                      "[default=%default]")
+    parser.add_option("-U", "--username", dest="user", required=True,
+                      help="username to connect to the server ")
     # path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
                       help="directory on the http/ftp server "
