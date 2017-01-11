@@ -17,6 +17,10 @@ Downloading data
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
+.. warning::
+
+  Remember to register in the NASA portal following the instructions at :ref:`userpw-label` session
+
 ::
 
   mkdir $HOME/tmp
