@@ -48,10 +48,10 @@ def main():
     parser.add_option("-I", "--input", dest="input", action="store_true",
                       help="insert user and password from standard input")
     # password
-    parser.add_option("-P", "--password", dest="password", required=True,
+    parser.add_option("-P", "--password", dest="password",
                       help="password to connect to the server")
     # username
-    parser.add_option("-U", "--username", dest="user", required=True,
+    parser.add_option("-U", "--username", dest="user",
                       help="username to connect to the server")
     # tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
@@ -130,8 +130,7 @@ def main():
     else:
         user = options.user
         password = options.password
-    if not user or not password:
-        parser.error("You have to set user and password")
+
     # set modis object
     modisOgg = downmodis.downModis(url=options.url, user=user,
                                    password=password,

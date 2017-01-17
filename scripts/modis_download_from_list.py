@@ -55,10 +55,10 @@ def main():
     parser.add_option("-I", "--input", dest="input", action="store_true",
                       help="insert user and password from standard input")
     # password
-    parser.add_option("-P", "--password", dest="password", required=True,
+    parser.add_option("-P", "--password", dest="password",
                       help="password to connect to the server")
     # username
-    parser.add_option("-U", "--username", dest="user", required=True,
+    parser.add_option("-U", "--username", dest="user",
                       help="username to connect to the server ")
     # path to add the path in the server
     parser.add_option("-s", "--source", dest="path", default="MOLT",
@@ -95,8 +95,6 @@ def main():
     else:
         user = options.user
         password = options.password
-    if not user or not password:
-        parser.error("You have to set user and password")
 
     f = open(options.file)
 
@@ -111,8 +109,8 @@ def main():
         year = int(d[0:4])
         doy = int(d[4:7])
         fdate = date.fromordinal(date(year, 1, 1).toordinal() + doy - 1).isoformat()
-        modisOgg = downmodis.downModis(url=options.url, user=options.user,
-                                       password=options.password,
+        modisOgg = downmodis.downModis(url=options.url, user=user,
+                                       password=password,
                                        destinationFolder=args[0],
                                        tiles=tiles, path=options.path,
                                        product=options.prod, delta=1,
