@@ -251,11 +251,19 @@ class downModis:
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
         if not user and not password and not URLPARSE:
-            raise Exception("Please use 'user' and 'password' parameters")
+            raise IOError("Please use 'user' and 'password' parameters")
         elif not user and not password and URLPARSE:
             self.domain = urlparse(self.url).hostname
             nt = netrc.netrc()
-            account = nt.hosts[self.domain]
+            try:
+                account = nt.hosts[self.domain]
+            except:
+                try:
+                    account = nt.hosts['urs.earthdata.nasa.gov']
+                except:
+                    raise IOError("Please set 'user' and 'password' parameters"
+                                  ", netrc file does not contain parameter "
+                                  "for NASA url")
             # user for download
             self.user = account[0]
             # password for download
