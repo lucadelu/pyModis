@@ -96,6 +96,9 @@ class convertModis:
         elif sys.platform.count('win32') != -1:
             if os.path.exists(os.path.join(self.mrtpathbin, 'resample.exe')):
                 return os.path.join(self.mrtpathbin, 'resample.exe')
+            elif os.path.exists(os.path.join(self.mrtpathbin, 'resample')):
+                return os.path.join(self.mrtpathbin, 'resample')
+        raise Exception("No possible to find MRT resample executable")
 
     def run(self):
         """Exec the convertion process"""
@@ -160,12 +163,15 @@ class createMosaic:
 
     def executable(self):
         """Return the executable of mrtmosaic MRT software"""
-        if sys.platform.count('linux') or sys.platform.count('darwin'):
+        if sys.platform.count('linux') != -1 or sys.platform.count('darwin') != -1:
             if os.path.exists(os.path.join(self.mrtpathbin, 'mrtmosaic')):
                 return os.path.join(self.mrtpathbin, 'mrtmosaic')
-        elif sys.platform.count('win32'):
+        elif sys.platform.count('win32') != -1:
             if os.path.exists(os.path.join(self.mrtpathbin, 'mrtmosaic.exe')):
                 return os.path.join(self.mrtpathbin, 'mrtmosaic.exe')
+            elif os.path.exists(os.path.join(self.mrtpathbin, 'mrtmosaic')):
+                return os.path.join(self.mrtpathbin, 'mrtmosaic')
+        raise Exception("No possible to find MRT mrtmosaic executable")
 
     def run(self):
         """Exect the mosaic process"""
