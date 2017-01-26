@@ -50,20 +50,31 @@ import socket
 from ftplib import FTP
 import ftplib
 import requests
-
 # urllib in python 2 and 3
 try:
     from future.standard_library import install_aliases
     install_aliases()
 except ImportError:
     raise ImportError("Future library not found, please install it")
+# urlparse in python 2 and 3
+try:
+    from urlparse import urlparse
+    URLPARSE = True
+except ImportError:
+    try:
+        from urllib.parse import urlparse
+        URLPARSE = True
+    except ImportError:
+        URLPARSE = False
+        print('WARNING: urlparse not found, it is not possible to use'
+              ' netrc file')
 from urllib.request import urlopen
 import urllib.request
 import urllib.error
 from base64 import b64encode
 from html.parser import HTMLParser
 import re
-
+import netrc
 global GDAL
 
 try:
@@ -221,7 +232,7 @@ class downModis:
        :param int timeout: Timeout value for HTTP server (seconds)
        :param bool checkgdal: variable to set the GDAL check
     """
-    def __init__(self, destinationFolder, password, user,
+    def __init__(self, destinationFolder, password=None, user=None,
                  url="http://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.005", today=None, enddate=None, delta=10,
                  jpg=False, debug=False, timeout=30, checkgdal=True):
@@ -239,10 +250,29 @@ class downModis:
             self.urltype = 'http'
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
-        # user for download using ftp
-        self.user = user
-        # password for download using ftp
-        self.password = password
+        if not user and not password and not URLPARSE:
+            raise IOError("Please use 'user' and 'password' parameters")
+        elif not user and not password and URLPARSE:
+            self.domain = urlparse(self.url).hostname
+            nt = netrc.netrc()
+            try:
+                account = nt.hosts[self.domain]
+            except:
+                try:
+                    account = nt.hosts['urs.earthdata.nasa.gov']
+                except:
+                    raise IOError("Please set 'user' and 'password' parameters"
+                                  ", netrc file does not contain parameter "
+                                  "for NASA url")
+            # user for download
+            self.user = account[0]
+            # password for download
+            self.password = account[2]
+        else:
+            # user for download
+            self.user = user
+            # password for download
+            self.password = password
         self.userpwd = "{us}:{pw}".format(us=self.user,
                                           pw=self.password)
         userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")

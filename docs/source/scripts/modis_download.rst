@@ -9,6 +9,16 @@ used with cron jobs to receive data with a fixed delay of time.
   Remember to register yourself at https://urs.earthdata.nasa.gov/users/new,
   read more at :ref:`userpw-label` session.
 
+.. note::
+
+  The script is able also to read the
+  `.netrc file <https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html>`_.
+  You have to add something similar to this ::
+
+    machine urs.earthdata.nasa.gov
+    login YOURUSER
+    password YOURPASSWD
+
 Usage
 ^^^^^
 
@@ -32,7 +42,7 @@ Options
     -I   --input      insert user and password from standard input
     -P  --password    password to connect
     -U  --username    username to connect
-    -t  --tiles       string of tiles separated by comma 
+    -t  --tiles       string of tiles separated by comma
                       [default=none] for all tiles
     -s  --source      directory on the http/ftp server
                       [default=MOLT]
