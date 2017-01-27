@@ -254,7 +254,11 @@ class downModis:
             raise IOError("Please use 'user' and 'password' parameters")
         elif not user and not password and URLPARSE:
             self.domain = urlparse(self.url).hostname
-            nt = netrc.netrc()
+            try:
+                nt = netrc.netrc()
+            except:
+                raise IOError("Please set 'user' and 'password' parameters"
+                              ", netrc file does not exist")
             try:
                 account = nt.hosts[self.domain]
             except:
