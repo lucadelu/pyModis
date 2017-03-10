@@ -44,6 +44,7 @@ from builtins import dict
 from datetime import date
 from datetime import timedelta
 import os
+import sys
 import glob
 import logging
 import socket
@@ -678,11 +679,15 @@ class downModis:
             filSave.write(http.read())
         # if local file has an error, try to download the file again
         except:
+            logging.warning("Tried to downlaod with urllib but got this "
+                            "error " + sys.exc_info())
             try:
                 http = requests.get(url, timeout=self.timeout, verify=False)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
             except:
+                logging.warning("Tried to downlaod with requests but got this "
+                                "error " + sys.exc_info())
                 logging.error("Cannot download {name}. "
                               "Retrying...".format(name=filDown))
                 filSave.close()
