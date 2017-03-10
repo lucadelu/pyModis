@@ -698,6 +698,8 @@ class downModis:
         filSave.close()
         transf_size = os.path.getsize(filSave.name)
         if not orig_size:
+            self.filelist.write("{name}\n".format(name=filDown))
+            self.filelist.flush()
             if self.debug:
                 logging.debug("File {name} downloaded but not "
                               "check the size".format(name=filDown))
