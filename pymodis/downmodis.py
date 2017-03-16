@@ -44,6 +44,7 @@ from builtins import dict
 from datetime import date
 from datetime import timedelta
 import os
+import sys
 import glob
 import logging
 import socket
@@ -386,7 +387,7 @@ class downModis:
         try:
             url = urljoin(self.url, self.path)
             try:
-                http = requests.get(url, timeout=self.timeout, verify=False)
+                http = requests.get(url, timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.content).get_dates()
             except:
                 http = urlopen(url, timeout=self.timeout)
@@ -539,8 +540,7 @@ class downModis:
                 logging.debug("The url is: {url}".format(url=url))
             try:
                 http = modisHtmlParser(requests.get(url,
-                                       timeout=self.timeout,
-                                       verify=False).content)
+                                       timeout=self.timeout).content)
             except:
                 http = modisHtmlParser(urlopen(url,
                                        timeout=self.timeout).read())
@@ -678,11 +678,15 @@ class downModis:
             filSave.write(http.read())
         # if local file has an error, try to download the file again
         except:
+            logging.warning("Tried to downlaod with urllib but got this "
+                            "error " + sys.exc_info())
             try:
-                http = requests.get(url, timeout=self.timeout, verify=False)
+                http = requests.get(url, timeout=self.timeout)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
             except:
+                logging.warning("Tried to downlaod with requests but got this "
+                                "error " + sys.exc_info())
                 logging.error("Cannot download {name}. "
                               "Retrying...".format(name=filDown))
                 filSave.close()
@@ -693,6 +697,8 @@ class downModis:
         filSave.close()
         transf_size = os.path.getsize(filSave.name)
         if not orig_size:
+            self.filelist.write("{name}\n".format(name=filDown))
+            self.filelist.flush()
             if self.debug:
                 logging.debug("File {name} downloaded but not "
                               "check the size".format(name=filDown))
