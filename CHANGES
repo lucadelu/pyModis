@@ -52,3 +52,7 @@
  * fixed problem with different projection system
  * fixed documentation for user and password in download library and scripts
  * improved documentation
+- version 2.0.5
+ * added capability to use netrc
+ * fixed bug for windows where mrtmosaic/resample tools are without ending .exe
+ * removed warnings from HTTPS website
