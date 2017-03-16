@@ -387,7 +387,7 @@ class downModis:
         try:
             url = urljoin(self.url, self.path)
             try:
-                http = requests.get(url, timeout=self.timeout, verify=False)
+                http = requests.get(url, timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.content).get_dates()
             except:
                 http = urlopen(url, timeout=self.timeout)
@@ -540,8 +540,7 @@ class downModis:
                 logging.debug("The url is: {url}".format(url=url))
             try:
                 http = modisHtmlParser(requests.get(url,
-                                       timeout=self.timeout,
-                                       verify=False).content)
+                                       timeout=self.timeout).content)
             except:
                 http = modisHtmlParser(urlopen(url,
                                        timeout=self.timeout).read())
@@ -682,7 +681,7 @@ class downModis:
             logging.warning("Tried to downlaod with urllib but got this "
                             "error " + sys.exc_info())
             try:
-                http = requests.get(url, timeout=self.timeout, verify=False)
+                http = requests.get(url, timeout=self.timeout)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
             except:
