@@ -39,7 +39,7 @@ def main():
         option_parser_class = optparse_required.OptionParser
     parser = option_parser_class(usage=usage, description='modis_download')
     # url
-    parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
+    parser.add_option("-u", "--url", default="https://e4ftl01.cr.usgs.gov",
                       help="http/ftp server url [default=%default]",
                       dest="url")
     # password

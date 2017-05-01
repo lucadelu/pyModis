@@ -24,7 +24,7 @@ Options
 
     -h  --help        show the help message and exit
     -f  --file        Input file containing data to donwload
-    -u  --url         http/ftp server url [default=http://e4ftl01.cr.usgs.gov]
+    -u  --url         http/ftp server url [default=https://e4ftl01.cr.usgs.gov]
     -P  --password    password to connect only if ftp server
     -U  --username    username to connect only if ftp server
                       [default=anonymous]
