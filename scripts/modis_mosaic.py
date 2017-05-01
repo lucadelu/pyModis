@@ -20,12 +20,9 @@
 ##################################################################
 """Script to mosaic the input tiles. It is able to use MRT or GDAL as backend
 """
-from __future__ import print_function
 
 import os
 import sys
-import string
-from types import ListType
 try:
     from pymodis import optparse_gui
     WXPYTHON = True
@@ -41,7 +38,7 @@ except ImportError:
     try:
         import gdal
     except ImportError:
-        raise 'Python GDAL library not found, please install python-gdal'
+        raise Exception('Python GDAL library not found, please install python-gdal')
 
 ERROR = "You have to define the name of a text file containing HDF files" \
         " (One HDF file for line)."
@@ -92,14 +89,13 @@ def main():
         sys.exit(1)
     if not args:
         parser.error(ERROR)
-        sys.exit()
     else:
-        if type(args) != ListType:
+        if not isinstance(args, list):
             parser.error(ERROR)
-            sys.exit()
         elif len(args) > 1:
             parser.error(ERROR)
-            sys.exit()
+        if not os.path.isfile(args[0]):
+            parser.error(ERROR + '. ' + args[0] + ' does not exists')
 
     if not os.path.isfile(args[0]):
         parser.error("You have to define the name of a text file containing "
@@ -109,7 +105,7 @@ def main():
     if not options.subset:
         options.subset = False
     else:
-        if string.find(options.subset, '(') != -1 or string.find(options.subset, ')') != -1:
+        if  (options.subset.strip().startswith('(') or options.subset.strip().endswith(')')):
             parser.error('ERROR: The spectral string should be similar to: '
                          '"1 0" without "(" and ")"')
 #    if not options.grain and options.vrt:
@@ -122,24 +118,30 @@ def main():
                                              options.mrt_path, options.subset)
         modisOgg.run()
     else:
-        tiles = []
+        tiles = dict()
         dire = os.path.dirname(args[0])
         with open(args[0]) as f:
             for l in f:
                 name = os.path.splitext(l.strip())[0]
+                day = name.split('.')[1]
+                if day not in tiles.keys():
+                    tiles[day] = list()
                 if '.hdf' not in name:
                     if dire not in l:
                         fname = os.path.join(dire, l.strip())
                     else:
                         fname = l.strip()
-                    tiles.append(fname)
+                    tiles[day].append(fname)
 
-        modisOgg = convertmodis_gdal.createMosaicGDAL(tiles, options.subset,
-                                                      options.output_format)
-        if options.vrt:
-            modisOgg.write_vrt(options.output)
-        else:
-            modisOgg.run(options.output)
+        for day in tiles.keys():
+            modisOgg = convertmodis_gdal.createMosaicGDAL(tiles[day],
+                                                          options.subset,
+                                                          options.output_format)
+            output = "{da}_{fi}".format(da=day,  fi=options.output)
+            if options.vrt:
+                modisOgg.write_vrt(output)
+            else:
+                modisOgg.run(output)
 
 if __name__ == "__main__":
     gdal.AllRegister()

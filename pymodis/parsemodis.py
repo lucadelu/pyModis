@@ -28,8 +28,8 @@ Classes:
 
 """
 
-from __future__ import print_function
-import string
+# python 2 and 3 compatibility
+from builtins import dict
 import os
 
 # lists of parameters accepted by resample MRT software
@@ -61,13 +61,13 @@ class parseModis:
             # hdf name
             self.hdfname = filename
         else:
-            raise Exception('{name} does not exist'.format(name=filename))
+            raise IOError('{name} does not exist'.format(name=filename))
 
         if os.path.exists(self.hdfname + '.xml'):
             # xml hdf name
             self.xmlname = self.hdfname + '.xml'
         else:
-            raise Exception('{name}.xml does not exist'.format(name=self.hdfname))
+            raise IOError('{name}.xml does not exist'.format(name=self.hdfname))
 
         # tif name for the output file for resample MRT software
         self.tifname = self.hdfname.replace('.hdf', '.tif')
@@ -134,7 +134,7 @@ class parseModis:
     def retCollectionMetaData(self):
         """Return the CollectionMetaData element as dictionary"""
         self.getGranule()
-        collect = {}
+        collect = dict()
         for i in self.granule.find('CollectionMetaData').getiterator():
             if i.text.strip() != '':
                 collect[i.tag] = i.text
@@ -143,7 +143,7 @@ class parseModis:
     def retDataFiles(self):
         """Return the DataFiles element as dictionary"""
         self.getGranule()
-        collect = {}
+        collect = dict()
         datafiles = self.granule.find('DataFiles')
         for i in datafiles.find('DataFileContainer').getiterator():
             if i.text.strip() != '':
@@ -153,7 +153,7 @@ class parseModis:
     def retDataGranule(self):
         """Return the ECSDataGranule elements as dictionary"""
         self.getGranule()
-        datagran = {}
+        datagran = dict()
         for i in self.granule.find('ECSDataGranule').getiterator():
             if i.text.strip() != '':
                 datagran[i.tag] = i.text
@@ -167,7 +167,7 @@ class parseModis:
     def retRangeTime(self):
         """Return the RangeDateTime elements as dictionary"""
         self.getGranule()
-        rangeTime = {}
+        rangeTime = dict()
         for i in self.granule.find('RangeDateTime').getiterator():
             if i.text.strip() != '':
                 rangeTime[i.tag] = i.text
@@ -189,34 +189,85 @@ class parseModis:
             lon.append(la)
             lat.append(lo)
             self.boundary.append({'lat': la, 'lon': lo})
-        extent = {'min_lat': min(lat), 'max_lat': max(lat),
-                  'min_lon': min(lon), 'max_lon': max(lon)}
+        extent = dict({'min_lat': min(lat), 'max_lat': max(lat),
+                       'min_lon': min(lon), 'max_lon': max(lon)})
         return extent
 
     def retMeasure(self):
         """Return statistics of QA as dictionary"""
-        value = {}
+        value = dict()
         self.getGranule()
         mes = self.granule.find('MeasuredParameter')
-        mespc = mes.find('MeasuredParameterContainer')
-        value['ParameterName'] = mespc.find('ParameterName').text
-        meStat = mespc.find('QAStats')
-        qastat = {}
-        for i in meStat.getiterator():
-            if i.tag != 'QAStats':
-                qastat[i.tag] = i.text
-        value['QAStats'] = qastat
-        meFlag = mespc.find('QAFlags')
-        flagstat = {}
-        for i in meFlag.getiterator():
-            if i.tag != 'QAFlags':
-                flagstat[i.tag] = i.text
-        value['QAFlags'] = flagstat
+        mespcs = mes.findall('MeasuredParameterContainer')
+        ind = 1
+        for me in mespcs:
+            value[ind] = dict()
+            value[ind]['ParameterName'] = me.find('ParameterName').text
+            meStat = me.find('QAStats')
+            qastat = dict()
+            for i in meStat.getiterator():
+                if i.tag != 'QAStats':
+                    qastat[i.tag] = i.text
+            value[ind]['QAStats'] = qastat
+            meFlag = me.find('QAFlags')
+            flagstat = dict()
+            for i in meFlag.getiterator():
+                if i.tag != 'QAFlags':
+                    flagstat[i.tag] = i.text
+            value[ind]['QAFlags'] = flagstat
+            ind += 1
         return value
+
+    def getMeasureName(self, output=None):
+        """Return the names of measure names
+
+        :param str output: the path of the file where write the output
+        """
+        names = list()
+        measures = self.retMeasure()
+        for k, v in measures.items():
+            names.append("{id}\t{na}".format(id=k,
+                                             na=v['ParameterName']))
+        if output:
+            out = open(output,  'w')
+            out.write("{ns}\n".format(ns='\n'.join(names)))
+            out.close()
+            return 0
+        else:
+            return "{ns}".format(ns='\n'.join(names))
+
+    def getLayersName(self, output=None):
+        """Return the names of layers using GDAL
+
+        :param str output: the path of the file where write the output
+        """
+        try:
+            import osgeo.gdal as gdal
+        except ImportError:
+            try:
+                import gdal as gdal
+            except ImportError:
+                print('WARNING: Python GDAL library not found, please'
+                      ' install it to get layers list')
+        names = list()
+        gd = gdal.Open(self.hdfname)
+        subs = gd.GetSubDatasets()
+        num = 1
+        for sub in subs:
+            names.append("{id}\t{na}".format(id=num,
+                                             na=sub[0].split(':')[-1]))
+            num += 1
+        if output:
+            out = open(output,  'w')
+            out.write("{ns}\n".format(ns='\n'.join(names)))
+            out.close()
+            return 0
+        else:
+            return "{ns}".format(ns='\n'.join(names))
 
     def retPlatform(self):
         """Return the platform values as dictionary."""
-        value = {}
+        value = dict()
         self.getGranule()
         plat = self.granule.find('Platform')
         value['PlatformShortName'] = plat.find('PlatformShortName').text
@@ -230,7 +281,7 @@ class parseModis:
         """Return the PSA values as dictionary, the PSAName is the key and
         and PSAValue is the value
         """
-        value = {}
+        value = dict()
         self.getGranule()
         psas = self.granule.find('PSAs')
         for i in psas.findall('PSA'):
@@ -325,7 +376,7 @@ class parseModis:
                            * min_lon
         """
         # check if spectral it's write with correct construct ( value )
-        if string.find(spectral, '(') == -1 or  string.find(spectral, ')') == -1:
+        if not (spectral.strip().startswith('(') and spectral.strip().endswith(')')):
             raise Exception('ERROR: The spectral string should be similar to:'
                             ' ( 1 0 )')
         # output name
@@ -578,8 +629,8 @@ class parseModisMulti:
 
         :param dict vals: dictionary of values
         """
-        keys = vals[0].keys()
-        outvals = {}
+        keys = list(vals[0].keys())
+        outvals = dict()
         for k in keys:
             valtemp = []
             for v in vals:
@@ -622,7 +673,7 @@ class parseModisMulti:
 
         :param values: dictionary containing keys and values
         """
-        for k, v in values.iteritems():
+        for k, v in values.items():
             elem = self.ElementTree.SubElement(obj, k)
             elem.text = v
 
@@ -647,7 +698,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retDTD())
-        for i in self._checkval(values):
+        for i in set(values):
             dtd = self.ElementTree.SubElement(obj, 'DTDVersion')
             dtd.text = i
 
@@ -659,7 +710,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retDataCenter())
-        for i in self._checkval(values):
+        for i in set(values):
             dci = self.ElementTree.SubElement(obj, 'DataCenterId')
             dci.text = i
 
@@ -671,7 +722,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retGranuleUR())
-        for i in self._checkval(values):
+        for i in set(values):
             gur = self.ElementTree.SubElement(obj, 'GranuleUR')
             gur.text = i
 
@@ -683,7 +734,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retDbID())
-        for i in self._checkval(values):
+        for i in set(values):
             dbid = self.ElementTree.SubElement(obj, 'DbID')
             dbid.text = i
 
@@ -727,7 +778,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retPGEVersion())
-        for i in self._checkval(values):
+        for i in set(values):
             pge = self.ElementTree.SubElement(obj, 'PGEVersion')
             pge.text = i
 
@@ -765,10 +816,11 @@ class parseModisMulti:
         valuesQAFlags = []
         valuesParameter = []
         for i in self.parModis:
-            valuesQAStats.append(i.retMeasure()['QAStats'])
-            valuesQAFlags.append(i.retMeasure()['QAFlags'])
-            valuesParameter.append(i.retMeasure()['ParameterName'])
-        for i in self._checkval(valuesParameter):
+            for val in i.retMeasure().values():
+                valuesQAStats.append(val['QAStats'])
+                valuesQAFlags.append(val['QAFlags'])
+                valuesParameter.append(val['ParameterName'])
+        for i in set(valuesParameter):
             pn = self.ElementTree.SubElement(obj, 'ParameterName')
             pn.text = i
 
@@ -794,10 +846,9 @@ class parseModisMulti:
             valuesSName.append(i.retPlatform()['PlatformShortName'])
             valuesInstr.append(i.retPlatform()['InstrumentShortName'])
             valuesSensor.append(i.retPlatform()['SensorShortName'])
-        for i in self._checkval(valuesSName):
+        for i in set(valuesSName):
             pn = self.ElementTree.SubElement(obj, 'PlatformShortName')
             pn.text = i
-
         valInstr = self._checkval(valuesInstr)
         valSens = self._checkval(valuesSensor)
 
@@ -820,7 +871,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retInsertTime())
-        for i in self._checkval(values):
+        for i in set(values):
             gur = self.ElementTree.SubElement(obj, 'InsertTime')
             gur.text = i
 
@@ -832,7 +883,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retLastUpdate())
-        for i in self._checkval(values):
+        for i in set(values):
             gur = self.ElementTree.SubElement(obj, 'LastUpdate')
             gur.text = i
 
@@ -856,7 +907,7 @@ class parseModisMulti:
         values = []
         for i in self.parModis:
             values.append(i.retBrowseProduct())
-        for i in self._checkval(values):
+        for i in set(values):
             dfc = self.ElementTree.SubElement(obj, 'BrowseGranuleId')
             dfc.text = i
 

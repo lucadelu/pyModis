@@ -7,7 +7,7 @@ software or GDAL library.
 
 Usage
 ^^^^^
-::
+.. code-block:: none
 
     modis_convert.py [options] hdf_file
 
@@ -20,7 +20,7 @@ Options
   :align: left
   :class: gui
 
-::
+.. code-block:: none
 
   -h, --help            show this help message and exit
 
@@ -90,24 +90,32 @@ MODIS Reprojection Tools
     ``Datum Conversion`` of the same manual
 
 Convert layers from MODIS data with the original resolution in
-latitude and longitude reference system ::
+latitude and longitude reference system
+
+.. code-block:: none
 
     modis_convert.py -s "( 1 0 1 0 )" -o OUTPUT_FILE -m "/usr/local/bin/" FILE
 
 Convert layers from MODIS data with output resolution in 500 meters with
-UTM projection in the 32 zone ::
+UTM projection in the 32 zone
+
+.. code-block:: none
 
     modis_convert.py -s "( 1 0 1 0 )" -o OUTPUT_FILE -m "/usr/local/bin/" -g 500 -p UTM -u 32 FILE
 
 GDAL
 """"
 
-Convert the first layer in latitude and longitude with the original resolution ::
+Convert the first layer in latitude and longitude with the original resolution
+
+.. code-block:: none
 
     modis_convert.py -s "( 1 )" -o OUTPUT_FILE -e 4326 FILE
 
 Convert the first three layers from MODIS data with output resolution in 500
-meters with UTM projection in the 32 zone ::
+meters with UTM projection in the 32 zone
+
+.. code-block:: none
 
     modis_convert.py -s "( 1 1 1 )" -o OUTPUT_FILE -g 500 -e 32632 FILE
 

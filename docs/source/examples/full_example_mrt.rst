@@ -15,14 +15,20 @@ Downloading data
 
 For first you need to obtain data, so you need to use :doc:`../scripts/modis_download`
 
+.. warning::
+
+  Remember to register in the NASA portal following the instructions at :ref:`userpw-label` session
+
 ::
 
-  modis_download.py -f 2012-12-05 -O -t h28v05,h29v05,h28v04 /tmp
+  modis_download.py -I -f 2012-12-05 -O -t h28v05,h29v05,h28v04 /tmp
 
 .. warning::
 
   In this example we are working on Japan extension, so please
   change the name of tiles according with your region.
+
+  User and password are passed through standard input.
 
   In this example we download data for only one day (2012-12-05)
   using the option "-O".
@@ -56,7 +62,7 @@ directory ``/tmp``. It's reading the input files contained in *listfileMOD11A1.0
 Convert data
 ------------
 
-The last part of the procedure is to convert the mosaic, from HDF format and sinusoidal 
+The last part of the procedure is to convert the mosaic, from HDF format and sinusoidal
 projection, to GeoTIFF with several projection. You have to use :doc:`../scripts/modis_convert`
 
 .. only:: html

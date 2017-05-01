@@ -35,3 +35,24 @@
  * fixed raise exception
 - version 1.0.3
  * new website address
+- version 2.0.1
+ * pyModis now support Python 3
+ * fixed and improved documentation
+ * added support for new authentication system
+ * added capabilities to set user and password through standard input
+- version 2.0.2
+ * fixed bug in parsemodis library
+ * improved documentation
+- version 2.0.3
+ * improved OSX support
+ * added capabilities to return the layers name
+ * added support for HTTPS server
+ * fixed several small errors
+- version 2.0.4
+ * fixed problem with different projection system
+ * fixed documentation for user and password in download library and scripts
+ * improved documentation
+- version 2.0.5
+ * added capability to use netrc
+ * fixed bug for windows where mrtmosaic/resample tools are without ending .exe
+ * removed warnings from HTTPS website

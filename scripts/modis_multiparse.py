@@ -19,8 +19,12 @@
 #
 ##################################################################
 
+# python 2 and 3 compatibility
+from __future__ import print_function
+
 #import system library
 import sys
+import os
 #import modis library
 try:
     from pymodis import optparse_gui
@@ -34,7 +38,7 @@ from pymodis import optparse_required
 def readDict(dic):
     """Function to decode dictionary"""
     out = ""
-    for k, v in dic.iteritems():
+    for k, v in dic.items():
         out += "%s = %s\n" % (k, v)
     return out
 
@@ -61,15 +65,18 @@ def main():
         parser.print_help()
         sys.exit(1)
     if len(args) < 2:
-        parser.error("You have to define the name of HDF files")
+        parser.error("You have to define the name of multiple HDF files")
+    for arg in args:
+        if not os.path.isfile(arg):
+            parser.error(arg + " does not exist or is not a file")
     modisOgg = parsemodis.parseModisMulti(args)
 
     if options.bound:
         modisOgg.valBound()
-        print readDict(modisOgg.boundary)
+        print(readDict(modisOgg.boundary))
     elif options.output:
         modisOgg.writexml(options.output)
-        print "%s write correctly" % options.output
+        print("%s write correctly" % options.output)
     else:
         parser.error("You have to choose at least one option")
 

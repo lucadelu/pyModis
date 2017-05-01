@@ -19,10 +19,13 @@
 #
 ##################################################################
 """Script to read metadata from a MODIS HDF file"""
+
+# python 2 and 3 compatibility
 from __future__ import print_function
+
 # import system library
 import sys
-from types import ListType
+import os
 # import modis library
 try:
     from pymodis import optparse_gui
@@ -38,7 +41,7 @@ ERROR = "You have to define the name of HDF file"
 def readDict(dic):
     """Function to decode dictionary"""
     out = ""
-    for k, v in dic.iteritems():
+    for k, v in dic.items():
         out += "%s = %s\n" % (k, v)
     return out
 
@@ -88,6 +91,9 @@ def main():
     # time
     parser.add_option("-t", action="store_true", dest="time", default=False,
                       help="print the values related to times")
+    # layers
+    parser.add_option("-l", action="store_true", dest="layers", default=False,
+                      help="print the names of layer in HDF file")
 
     # return options and argument
     (options, args) = parser.parse_args()
@@ -96,11 +102,11 @@ def main():
         sys.exit(1)
     if not args:
         parser.error(ERROR)
-        sys.exit()
     else:
-        if type(args) != ListType:
+        if not isinstance(args, list):
             parser.error(ERROR)
-            sys.exit()
+        if not os.path.isfile(args[0]):
+            parser.error(ERROR + '. ' + args[0] + ' does not exists')
     # create modis object
     modisOgg = parsemodis.parseModis(args[0])
     # the output string
@@ -126,12 +132,16 @@ def main():
         outString += readDict(modisOgg.retPSA())
     if options.all or options.qa:
         out = modisOgg.retMeasure()
-        outString += readDict(out['QAStats'])
-        outString += readDict(out['QAFlags'])
+        for mes in out.values():
+            outString += mes['ParameterName'] + '\n'
+            outString += readDict(mes['QAStats'])
+            outString += readDict(mes['QAFlags'])
     if options.all or options.other:
         outString += readDict(modisOgg.retCollectionMetaData())
         outString += "PGEVersion = %s\n" % modisOgg.retPGEVersion()
         outString += "BrowseProduct = %s\n" % modisOgg.retBrowseProduct()
+    if options.all or options.layers:
+        outString += modisOgg.getLayersName()
     if not outString:
         print("Please select at least one flag")
     # write option it is set write the string into file

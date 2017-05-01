@@ -4,6 +4,21 @@ modis_download.py
 It can download large amounts of data and it can be profitably
 used with cron jobs to receive data with a fixed delay of time.
 
+.. warning::
+
+  Remember to register yourself at https://urs.earthdata.nasa.gov/users/new,
+  read more at :ref:`userpw-label` session.
+
+.. note::
+
+  The script is able also to read the
+  `.netrc file <https://www.gnu.org/software/inetutils/manual/html_node/The-_002enetrc-file.html>`_.
+  You have to add something similar to this ::
+
+    machine urs.earthdata.nasa.gov
+    login YOURUSER
+    password YOURPASSWD
+
 Usage
 ^^^^^
 
@@ -20,14 +35,14 @@ Options
   :align: left
   :class: gui
 
-::
+.. code-block:: none
 
     -h  --help        shows the help message and exit
     -u  --url         http/ftp server url [default=https://e4ftl01.cr.usgs.gov]
-    -P  --password    password to connect (only if ftp server url)
-    -U  --username    username to connect (only if ftp server url)
-                      [default=anonymous]
-    -t  --tiles       string of tiles separated by comma 
+    -I   --input      insert user and password from standard input
+    -P  --password    password to connect
+    -U  --username    username to connect
+    -t  --tiles       string of tiles separated by comma
                       [default=none] for all tiles
     -s  --source      directory on the http/ftp server
                       [default=MOLT]
@@ -51,37 +66,43 @@ Options
                       'destination_folder'  [default=False]
 
 
+
+
+
 Examples
 ^^^^^^^^
 
-.. warning
-  The target directory needs to be created beforehand.
+Download Terra LST data for a month for two tiles from HTTP server
 
-Download Terra LST data for a month for two tiles from HTTP server ::
+.. code-block:: none
 
-    modis_download.py -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 lst_terra/
+    modis_download.py -I -r -t h18v03,h18v04 -f 2008-01-01 -e 2008-01-31 lst_terra/
 
-Download the last 15 days of Aqua LST data ::
+Download the last 15 days of Aqua LST data
 
-    modis_download.py -r -s MOLA -p MYD11A1.005 -t h18v03,h18v04 -D 15 lst_aqua/
+.. code-block:: none
 
-Download all tiles of NDVI for one day (you have pick the right day otherwise it does not download anything) ::
+    modis_download.py -I -r -s MOLA -p MYD11A1.005 -t h18v03,h18v04 -D 15 lst_aqua/
 
-    modis_download.py -r -p MOD13Q1.005 -f 2010-12-31 -O
+Download all tiles of NDVI for one day (you have pick the right day otherwise it does not download anything)
+
+.. code-block:: none
+
+    modis_download.py -U user -P passwd -r -p MOD13Q1.005 -f 2010-12-31 -O
 
 Download Snow product from FTP server
 
 .. only:: html
 
-  ::
+  .. code-block:: none
 
-    modis_download.py -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com -s SAN/MOST -p MOD10A1.005
+    modis_download.py -I -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com -s SAN/MOST -p MOD10A1.005
 
 .. only:: latex
 
-  ::
+  .. code-block:: none
 
-    modis_download.py -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com
+    modis_download.py -I -u ftp://n4ftl01u.ecs.nasa.gov -p mail@pymodis.com
     -s SAN/MOST -p MOD10A1.005
 
   .. raw:: latex

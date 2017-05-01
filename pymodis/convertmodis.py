@@ -32,7 +32,7 @@ Functions:
 * :func:`checkMRTpath`
 
 """
-# to be compliant with python 3
+# python 2 and 3 compatibility
 from __future__ import print_function
 
 import os
@@ -47,9 +47,10 @@ def checkMRTpath(mrtpath):
     """
     if os.path.exists(mrtpath):
         if os.path.exists(os.path.join(mrtpath, 'bin')):
+            if os.environ['PATH'].find(os.path.join(mrtpath,'data')) == -1:
+                os.environ['PATH'] = "{path}:{data}".format(path=os.environ['PATH'],
+                                                            data=os.path.join(mrtpath, 'data'))
             mrtpathbin = os.path.join(mrtpath, 'bin')
-            os.environ['PATH'] = "{path}:{data}".format(path=os.environ['PATH'],
-                                                        data=os.path.join(mrtpath, 'data'))
         else:
             raise Exception('The path {path} does not exist'.format(path=os.path.join(mrtpath, 'bin')))
         if os.path.exists(os.path.join(mrtpath, 'data')):
@@ -89,12 +90,15 @@ class convertModis:
 
     def executable(self):
         """Return the executable of resample MRT software"""
-        if sys.platform.count('linux') != -1:
+        if sys.platform.count('linux') or sys.platform.count('darwin'):
             if os.path.exists(os.path.join(self.mrtpathbin, 'resample')):
                 return os.path.join(self.mrtpathbin, 'resample')
-        elif sys.platform.count('win32') != -1:
+        elif sys.platform.count('win32'):
             if os.path.exists(os.path.join(self.mrtpathbin, 'resample.exe')):
                 return os.path.join(self.mrtpathbin, 'resample.exe')
+            elif os.path.exists(os.path.join(self.mrtpathbin, 'resample')):
+                return os.path.join(self.mrtpathbin, 'resample')
+        raise Exception("No possible to find MRT resample executable")
 
     def run(self):
         """Exec the convertion process"""
@@ -142,7 +146,7 @@ class createMosaic:
 
     def write_mosaic_xml(self):
         """Write the XML metadata file for MODIS mosaic"""
-        from parsemodis import parseModisMulti
+        from .parsemodis import parseModisMulti
         listHDF = []
         for i in self.HDFfiles:
             if i.find(self.basepath) == -1 and i.find('.hdf.xml') == -1:
@@ -159,12 +163,15 @@ class createMosaic:
 
     def executable(self):
         """Return the executable of mrtmosaic MRT software"""
-        if sys.platform.count('linux'):
+        if sys.platform.count('linux') or sys.platform.count('darwin'):
             if os.path.exists(os.path.join(self.mrtpathbin, 'mrtmosaic')):
                 return os.path.join(self.mrtpathbin, 'mrtmosaic')
         elif sys.platform.count('win32'):
             if os.path.exists(os.path.join(self.mrtpathbin, 'mrtmosaic.exe')):
                 return os.path.join(self.mrtpathbin, 'mrtmosaic.exe')
+            elif os.path.exists(os.path.join(self.mrtpathbin, 'mrtmosaic')):
+                return os.path.join(self.mrtpathbin, 'mrtmosaic')
+        raise Exception("No possible to find MRT mrtmosaic executable")
 
     def run(self):
         """Exect the mosaic process"""
@@ -212,7 +219,7 @@ class processModis:
 
     def executable(self):
         """Return the executable of resample MRT software"""
-        if sys.platform.count('linux') != -1:
+        if sys.platform.count('linux') != -1 or sys.platform.count('darwin') != -1:
             if os.path.exists(os.path.join(self.mrtpathbin, 'swath2grid')):
                 return os.path.join(self.mrtpathbin, 'swath2grid')
         elif sys.platform.count('win32') != -1:

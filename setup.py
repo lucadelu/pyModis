@@ -20,24 +20,33 @@
 #
 ##################################################################
 
+import os
+import re
 try:
     from setuptools import setup
 except:
     from distutils.core import setup
-import os
+import sys
 
-
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
-
+HERE = os.path.abspath(os.path.dirname(__file__))
+if sys.version_info.major == 3:
+    with open(os.path.join(HERE, 'README.rst'), encoding='utf-8') as f:
+        README = f.read()
+    with open(os.path.join(HERE, 'pymodis', '__init__.py'), encoding='utf-8') as fp:
+        VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
+else:
+    with open(os.path.join(HERE, 'README.rst')) as f:
+        README = f.read()
+    with open(os.path.join(HERE, 'pymodis', '__init__.py')) as fp:
+        VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
 
 setup(
     name='pyModis',
-    version='1.0.2',
+    version=VERSION,
     py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
                 'pymodis.parsemodis', 'pymodis.optparse_required',
                 'pymodis.optparse_gui', 'pymodis.qualitymodis',
-                'pymodis.convertmodis_gdal'],
+                'pymodis.convertmodis_gdal',  'pymodis.productmodis'], 
     #packages = ['pymodis'],
     scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
              'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
@@ -47,8 +56,8 @@ setup(
     author_email='luca.delucchi@fmach.it',
     url='http://www.pymodis.org',
     description='Python library for MODIS data',
-    long_description=read('README'),
-    install_requires=['GDAL', 'numpy'],
+    long_description=README,
+    install_requires=['GDAL', 'numpy', 'future',  'requests'],
     extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',
     platforms=['Any'],
@@ -61,7 +70,8 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
-        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+	"Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     ],
 )

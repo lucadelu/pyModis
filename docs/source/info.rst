@@ -4,13 +4,26 @@ About pyModis
 Requirements
 ------------
 
-``pyModis`` requires **Python GDAL** and **Numpy** packages.
+``pyModis`` requires **Python GDAL**, **Numpy**, **requests** and **future** packages.
 
 If you want to use the Graphical User Interface you have to
 install also **wxPython** library.
 
 You can use also software is `MODIS Reprojection Tool <https://lpdaac.usgs.gov/tools/modis_reprojection_tool>`_
 to convert or mosaic MODIS HDF files.
+
+.. _userpw-label:
+
+User and password
+^^^^^^^^^^^^^^^^^
+To be able to download data you need user and password provided by NASA.
+Please **register at https://urs.earthdata.nasa.gov/users/new**; now login
+and move to your profile page. Go to "My application" tab and approve the
+following applications "LP DAAC Data Pool" and "Earthdata Search".
+
+If you are an already registered user, login and enable the applications
+at https://urs.earthdata.nasa.gov/home
+
 
 How to install pyModis
 ----------------------
@@ -22,19 +35,19 @@ From version 0.6.3 it is possible to install ``pyModis`` using
 `pip <https://pypi.python.org/pypi/pip>`_. You have to run the following
 command as administrator
 
-::
+.. code-block:: none
 
   pip install pyModis
 
 If you need to update your ``pyModis`` version you have to run
 
-::
+.. code-block:: none
 
   pip install --upgrade pyModis
 
 With ``pip`` it is also really simple to remove the library
 
-::
+.. code-block:: none
 
   pip uninstall pyModis
 
@@ -46,7 +59,9 @@ source code from `github repository <https://github.com/lucadelu/pyModis>`_.
 
 You can use `git <http://git-scm.com/>`_ to download the latest code
 (with the whole history and so it contain all the different stable versions,
-from the last to the first) ::
+from the last to the first)
+
+.. code-block:: none
 
     git clone https://github.com/lucadelu/pyModis.git
 
@@ -54,7 +69,9 @@ or `download the latest stable version <https://github.com/lucadelu/pyModis/tags
 from the repository and decompress it.
 
 Now enter the ``pyModis`` folder and launch as administrator of
-your computer ::
+your computer
+
+.. code-block:: none
 
     python setup.py install
 
@@ -71,18 +88,22 @@ If the console doesn't return any error like this ::
 the ``pyModis`` library has been installed properly and you can use it
 or one of the tools distributed with ``pyModis``.
 
-If you want to install into /usr/local/, run ::
+If you want to install into /usr/local/, run
+
+.. code-block:: none
 
     python setup.py install --prefix=/usr/local
 
-In this case, if you get the following error ::
+In this case, if you get the following error
+
+.. code-block:: none
 
     TEST FAILED: /usr/local/lib/python2.7/site-packages/ does NOT support .pth files
 
 then you need to define the PYTHONPATH environmental variable ::
 
     export PYTHONPATH=/usr/local/lib/python2.7/site-packages
-    python setup.py install --prefix=/usr/local 
+    python setup.py install --prefix=/usr/local
 
 and now re-run the installation command.
 
@@ -111,6 +132,8 @@ At this point select the following packages:
 
 * *gdal-python*
 * *python-numpy*
+* *python-requests*
+* *python-future*
 * *wxpython*
 
 OSGeo4W will install all the required dependencies.
@@ -118,9 +141,8 @@ OSGeo4W will install all the required dependencies.
 At this point, using the OSGeo4W shell, you can follow `Compile from source`_
 section to install pyModis.
 
-
-Install on Windows without osgeo4w
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Install on Windows without osgeo4w (old and not updated)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Another way to install ``pyModis`` on Windows is to install latest Python 2.7
 from http://python.org/download/
@@ -129,13 +151,13 @@ Now you have to modify the "Path" environment variable using *powershell* runnin
 
 .. only:: html
 
-  ::
+  .. code-block:: none
 
     [Environment]::SetEnvironmentVariable("Path", "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
 
 .. only:: latex
 
-  ::
+  .. code-block:: none
 
     [Environment]::SetEnvironmentVariable("Path",
     "$env:Path;C:\Python27\;C:\Python27\Scripts\", "User")
@@ -144,20 +166,28 @@ Download and install the last version of Distribute for Windows from
 http://python-distribute.org/distribute_setup.py
 
 At this point you have to move to standard command line (*cmd*) and install *pip*
-using *easy_install* ::
+using *easy_install*
+
+.. code-block:: none
 
     easy_install pip
 
 Now install `numpy <http://www.numpy.org>`_ library using *easy_install* because
-installation from pip is broken (this is required only for version >= 0.7.1) ::
+installation from pip is broken (this is required only for version >= 0.7.1)
+
+.. code-block:: none
 
     easy_install numpy GDAL
 
-If you want the Graphical User Interface you have to install also **wxPython** ::
+If you want the Graphical User Interface you have to install also **wxPython**
+
+.. code-block:: none
 
     easy_install WxPython WxPython-Common
 
-Finally install ``pyModis`` using *pip* ::
+Finally install ``pyModis`` using *pip*
+
+.. code-block:: none
 
     pip install pyModis
 
@@ -169,9 +199,11 @@ Troubleshooting
 Problem installing dependencies with pip
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Sometimes *pip* return error when it try to install Python GDAL, Numpy or wxPython.
-You can solve this problem installing Python GDAL or Numpy using the
-version of your operating system.
+.. warning::
+
+    Sometimes *pip* return error when it try to install Python GDAL, Numpy or wxPython.
+    You can solve this problem installing Python GDAL or Numpy using the
+    version of your operating system.
 
 
 How to report a bug
