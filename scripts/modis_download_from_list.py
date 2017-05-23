@@ -48,7 +48,7 @@ def main():
     parser.add_option("-f", "--file", dest="file", type='file',
                       help="Input file containing data to download")
     # url
-    parser.add_option("-u", "--url", default="http://e4ftl01.cr.usgs.gov",
+    parser.add_option("-u", "--url", default="https://e4ftl01.cr.usgs.gov",
                       help="http/ftp server url [default=%default]",
                       dest="url")
     # username and password from stdin

@@ -26,7 +26,7 @@ Version:        0.7.4
 Release:        0
 Summary:        PyModis is a FOSS Python library to work with MODIS data
 License:        GPLv2+
-Url:            http://pymodis.fem-environment.eu
+Url:            http://www.pymodis.org/
 Group:          Productivity/Scientific/Other
 Source0:        %{pyname_cap}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
