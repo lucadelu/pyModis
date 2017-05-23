@@ -679,14 +679,14 @@ class downModis:
         # if local file has an error, try to download the file again
         except:
             logging.warning("Tried to downlaod with urllib but got this "
-                            "error " + sys.exc_info())
+                            "error {ex}".format(ex=sys.exc_info()))
             try:
                 http = requests.get(url, timeout=self.timeout)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
             except:
                 logging.warning("Tried to downlaod with requests but got this "
-                                "error " + sys.exc_info())
+                                "error {ex}".format(ex=sys.exc_info()))
                 logging.error("Cannot download {name}. "
                               "Retrying...".format(name=filDown))
                 filSave.close()
