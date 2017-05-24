@@ -336,6 +336,7 @@ class downModis:
         log_format = '%(asctime)s - %(levelname)s - %(message)s'
         logging.basicConfig(filename=log_filename, level=logging.DEBUG,
                             format=log_format)
+        logging.captureWarnings(True)
         # global connection attempt counter
         self.nconnection = 0
         # timeout for HTTP connection before failing (seconds)
