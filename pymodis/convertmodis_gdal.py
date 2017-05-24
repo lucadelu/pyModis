@@ -219,7 +219,7 @@ class convertModisGDAL:
         """For the progress status"""
         return 1  # 1 to continue, 0 to stop
 
-    def _reprojectOne(self, l):
+    def _reprojectOne(self, l, quiet=False):
         """Reproject a single subset of MODIS product
 
         l = complete name of input dataset
@@ -259,7 +259,8 @@ class convertModisGDAL:
             gdal.ReprojectImage(l_src_ds, dst_ds, l_src_ds.GetProjection(), self.dst_wkt,
                                 self.resampling, 0, self.error_threshold, cbk,
                                 cbk_user_data)
-            print("Layer {name} reprojected".format(name=l))
+            if not quiet:
+                print("Layer {name} reprojected".format(name=l))
         except:
             raise Exception('Not possible to reproject dataset '
                             '{name}'.format(name=l))
@@ -276,7 +277,7 @@ class convertModisGDAL:
         self._reprojectOne(self.in_name)
         print("Dataset '{name}' reprojected".format(name=self.in_name))
 
-    def run(self):
+    def run(self, quiet=False):
         """Reproject all the subset of chosen layer"""
         if self.vrt:
             self.run_vrt_separated()
@@ -286,10 +287,11 @@ class convertModisGDAL:
             n = 0
             for i in self.subset:
                 if str(i) == '1':
-                    self._reprojectOne(self.layers[n][0])
+                    self._reprojectOne(self.layers[n][0], quiet=quiet)
                 n = n + 1
-            print("All layer for dataset '{name}' "
-                  "reprojected".format(name=self.in_name))
+            if not quiet:
+                print("All layer for dataset '{name}' "
+                      "reprojected".format(name=self.in_name))
 
 
 # =============================================================================
@@ -582,7 +584,7 @@ class createMosaicGDAL:
         pmm = parseModisMulti(listHDF)
         pmm.writexml("%s.xml" % prefix)
 
-    def run(self, output):
+    def run(self, output, quiet=False):
         """Create the mosaic
 
            :param str output: the name of output file
@@ -609,6 +611,10 @@ class createMosaicGDAL:
             i = i + 1
         self.write_mosaic_xml(output)
         t_fh = None
+        if not quiet:
+            print("The mosaic file {name} has been "
+                  "created".format(name=self.out))
+        return True
 
     def _calculateOffset(self, fileinfo, geotransform):
         """Return the offset between main origin and the origin of current
@@ -621,7 +627,7 @@ class createMosaicGDAL:
         y = abs(int((geotransform[3] - fileinfo.uly) / geotransform[5]))
         return x, y
 
-    def write_vrt(self, output, separate=True):
+    def write_vrt(self, output, separate=True, quiet=False):
         """Write VRT file
 
         :param str output: the prefix of output file
@@ -706,3 +712,7 @@ class createMosaicGDAL:
                 band += 1
             out.write('</VRTDataset>\n')
             out.close()
+        if not quiet:
+            print("The VRT mosaic file {name} has been "
+                  "created".format(name=self.out))
+        return True

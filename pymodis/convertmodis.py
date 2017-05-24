@@ -100,7 +100,7 @@ class convertModis:
                 return os.path.join(self.mrtpathbin, 'resample')
         raise Exception("No possible to find MRT resample executable")
 
-    def run(self):
+    def run(self, quiet=False):
         """Exec the convertion process"""
         import subprocess
         execut = self.executable()
@@ -109,7 +109,10 @@ class convertModis:
                             'erroneus path or software'.format(name=execut))
         else:
             subprocess.call([execut, '-p', self.conf])
-        return "The hdf file {name} was converted successfully".format(name=self.name)
+        if not quiet:
+            print("The hdf file {name} was converted "
+                  "successfully".format(name=self.name))
+        return True
 
 
 class createMosaic:
@@ -173,7 +176,7 @@ class createMosaic:
                 return os.path.join(self.mrtpathbin, 'mrtmosaic')
         raise Exception("No possible to find MRT mrtmosaic executable")
 
-    def run(self):
+    def run(self, quiet=False):
         """Exect the mosaic process"""
         import subprocess
         execut = self.executable()
@@ -189,7 +192,10 @@ class createMosaic:
             else:
                 subprocess.call([execut, '-i', self.tmplistfiles.name, '-o',
                                  self.out], stderr=subprocess.STDOUT)
-        return "The mosaic file {name} has been created".format(name=self.out)
+        if not quiet:
+            print("The mosaic file {name} has been "
+                  "created".format(name=self.out))
+        return True
 
 
 class processModis:
@@ -226,7 +232,7 @@ class processModis:
             if os.path.exists(os.path.join(self.mrtpathbin, 'swath2grid.exe')):
                 return os.path.join(self.mrtpathbin, 'swath2grid.exe')
 
-    def run(self):
+    def run(self, quiet=False):
         """Exec the convertion process"""
         import subprocess
         execut = self.executable()
@@ -235,4 +241,7 @@ class processModis:
                             'erroneus path or software'.format(name=execut))
         else:
             subprocess.call([execut, '-pf={name}'.format(name=self.conf)])
-        return "The hdf file {name} has been converted".format(name=self.name)
+        if not quiet:
+            print("The hdf file {name} has been "
+                  "converted".format(name=self.name))
+        return True
