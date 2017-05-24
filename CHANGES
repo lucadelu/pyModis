@@ -56,3 +56,8 @@
  * added capability to use netrc
  * fixed bug for windows where mrtmosaic/resample tools are without ending .exe
  * removed warnings from HTTPS website
+- version 2.0.6
+ * improved doc
+ * fixed small bugs
+ * added quiet option to the convert functions
+ * warnings redirect to logging
