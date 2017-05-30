@@ -351,6 +351,7 @@ class downModis:
             logging.warning("WARNING: Python GDAL library not found")
         elif GDAL and not checkgdal:
             GDAL = False
+        self.dirData = []
 
     def removeEmptyFiles(self):
         """Function to remove files in the download directory that have
