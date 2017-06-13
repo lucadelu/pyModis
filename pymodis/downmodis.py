@@ -141,7 +141,9 @@ def str2date(datestring):
 
 class ModisHTTPRedirectHandler(urllib.request.HTTPRedirectHandler):
     def http_error_302(self, req, fp, code, msg, headers):
-        return urllib.request.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+        return urllib.request.HTTPRedirectHandler.http_error_302(self, req, fp,
+                                                                 code, msg,
+                                                                 headers)
 
 
 class modisHtmlParser(HTMLParser):
@@ -284,7 +286,8 @@ class downModis:
         userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
         self.http_header = { 'Authorization' : 'Basic %s' %  userAndPass }
         cookieprocessor = urllib.request.HTTPCookieProcessor()
-        opener = urllib.request.build_opener(ModisHTTPRedirectHandler, cookieprocessor)
+        opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
+                                             cookieprocessor)
         urllib.request.install_opener(opener)
         # the product (product_code.004 or product_cod.005)
         self.product = product
@@ -676,7 +679,7 @@ class downModis:
         url = urljoin(self.url, self.path, day, filDown)
         orig_size = None
         try:  # download and write the file
-            req = urllib.request.Request(url, headers = self.http_header)
+            req = urllib.request.Request(url, headers=self.http_header)
             http = urllib.request.urlopen(req)
             orig_size = http.headers['Content-Length']
             filSave.write(http.read())
