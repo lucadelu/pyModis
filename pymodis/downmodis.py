@@ -390,8 +390,9 @@ class downModis:
         try:
             url = urljoin(self.url, self.path)
             try:
-                http = requests.get(url, timeout=self.timeout)
-                self.dirData = modisHtmlParser(http.content).get_dates()
+                req = urllib.request.Request(url, headers=self.http_header)
+                http = urllib.request.urlopen(req)
+                self.dirData = modisHtmlParser(http.read()).get_dates()
             except:
                 http = urlopen(url, timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
