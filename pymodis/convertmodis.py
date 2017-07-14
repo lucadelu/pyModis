@@ -47,7 +47,7 @@ def checkMRTpath(mrtpath):
     """
     if os.path.exists(mrtpath):
         if os.path.exists(os.path.join(mrtpath, 'bin')):
-            if os.environ['PATH'].find(os.path.join(mrtpath,'data')) == -1:
+            if os.environ['PATH'].find(os.path.join(mrtpath, 'data')) == -1:
                 os.environ['PATH'] = "{path}:{data}".format(path=os.environ['PATH'],
                                                             data=os.path.join(mrtpath, 'data'))
             mrtpathbin = os.path.join(mrtpath, 'bin')
@@ -187,8 +187,8 @@ class createMosaic:
             self.write_mosaic_xml()
             if self.subset:
                 subprocess.call([execut, '-i', self.tmplistfiles.name, '-o',
-                                self.out, '-s', self.subset],
-                                stderr=subprocess.STDOUT)
+                                 self.out, '-s', self.subset],
+                                 stderr=subprocess.STDOUT)
             else:
                 subprocess.call([execut, '-i', self.tmplistfiles.name, '-o',
                                  self.out], stderr=subprocess.STDOUT)

@@ -135,7 +135,7 @@ class convertModisGDAL:
         # error threshold the same value as gdalwarp
         self.error_threshold = 0.125
         self.resampling = getResampling(resampl)
-        if isinstance(subset,list):
+        if isinstance(subset, list):
             self.subset = subset
         elif isinstance(subset, str):
             self.subset = subset.replace('(', '').replace(')', '').strip().split()
@@ -256,9 +256,9 @@ class convertModisGDAL:
         # value for last parameter of above self._progressCallback
         cbk_user_data = None
         try:
-            gdal.ReprojectImage(l_src_ds, dst_ds, l_src_ds.GetProjection(), self.dst_wkt,
-                                self.resampling, 0, self.error_threshold, cbk,
-                                cbk_user_data)
+            gdal.ReprojectImage(l_src_ds, dst_ds, l_src_ds.GetProjection(),
+                                self.dst_wkt, self.resampling, 0,
+                                self.error_threshold, cbk, cbk_user_data)
             if not quiet:
                 print("Layer {name} reprojected".format(name=l))
         except:
@@ -593,7 +593,8 @@ class createMosaicGDAL:
         l1 = values[0][0]
         xsize, ysize, geotransform = self._calculateNewSize()
         t_fh = self.driver.Create(output, xsize, ysize,
-                                  len(list(self.file_infos.keys())), l1.band_type)
+                                  len(list(self.file_infos.keys())),
+                                  l1.band_type)
         if t_fh is None:
             raise Exception('Not possible to create dataset %s' % output)
 
