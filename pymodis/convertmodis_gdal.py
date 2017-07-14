@@ -614,7 +614,7 @@ class createMosaicGDAL:
         t_fh = None
         if not quiet:
             print("The mosaic file {name} has been "
-                  "created".format(name=self.out))
+                  "created".format(name=output))
         return True
 
     def _calculateOffset(self, fileinfo, geotransform):
@@ -715,5 +715,5 @@ class createMosaicGDAL:
             out.close()
         if not quiet:
             print("The VRT mosaic file {name} has been "
-                  "created".format(name=self.out))
+                  "created".format(name=output))
         return True
