@@ -50,6 +50,14 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
+from urllib.request import urlopen
+import urllib.request
+import urllib.error
+from base64 import b64encode
+from html.parser import HTMLParser
+import re
+import netrc
+
 import requests
 # urllib in python 2 and 3
 try:
@@ -69,13 +77,6 @@ except ImportError:
         URLPARSE = False
         print('WARNING: urlparse not found, it is not possible to use'
               ' netrc file')
-from urllib.request import urlopen
-import urllib.request
-import urllib.error
-from base64 import b64encode
-from html.parser import HTMLParser
-import re
-import netrc
 global GDAL
 
 try:
@@ -140,6 +141,7 @@ def str2date(datestring):
 
 
 class ModisHTTPRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Class to return 302 error"""
     def http_error_302(self, req, fp, code, msg, headers):
         return urllib.request.HTTPRedirectHandler.http_error_302(self, req, fp,
                                                                  code, msg,
@@ -284,7 +286,7 @@ class downModis:
         self.userpwd = "{us}:{pw}".format(us=self.user,
                                           pw=self.password)
         userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
-        self.http_header = { 'Authorization' : 'Basic %s' %  userAndPass }
+        self.http_header = {'Authorization': 'Basic %s' %  userAndPass}
         cookieprocessor = urllib.request.HTTPCookieProcessor()
         opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
                                              cookieprocessor)
@@ -295,7 +297,7 @@ class downModis:
         # url directory where data are located
         self.path = urljoin(path, self.product)
         # tiles to downloads
-        if type(tiles) == str:
+        if isinstance(tiles, str):
             self.tiles = tiles.split(',')
         else:  # tiles are list, tuple, or None
             self.tiles = tiles
@@ -310,8 +312,8 @@ class downModis:
                 os.mkdir(destinationFolder)
                 self.writeFilePath = destinationFolder
             except:
-                raise Exception("Folder to store downloaded files does not exist"
-                                " or is not writeable")
+                raise Exception("Folder to store downloaded files does not "
+                                "exist or is not writeable")
         # return the name of product
         if len(self.path.split('/')) == 2:
             self.product = self.path.split('/')[1]
@@ -320,7 +322,7 @@ class downModis:
         # write a file with the name of file to be downloaded
         self.filelist = open(os.path.join(self.writeFilePath,
                                           'listfile{pro}.txt'.format(pro=self.product)),
-                                          'w')
+                             'w')
         # set if to download jpgs
         self.jpeg = jpg
         # today, or the last day in the download series chronologically
@@ -470,11 +472,11 @@ class downModis:
         if self.today is None:
             # set today variable from datetime.date method
             self.today = date.today()
-        elif type(self.today) == str:
+        elif isinstance(self.today, str):
             # set today variable from string data passed by user
             self.today = str2date(self.today)
         # set enday variable to data passed by user
-        if type(self.enday) == str:
+        if isinstance(self.enday, str):
             self.enday = str2date(self.enday)
         # set delta
         if self.today and self.enday:
@@ -547,10 +549,10 @@ class downModis:
                 logging.debug("The url is: {url}".format(url=url))
             try:
                 http = modisHtmlParser(requests.get(url,
-                                       timeout=self.timeout).content)
+                                                    timeout=self.timeout).content)
             except:
                 http = modisHtmlParser(urlopen(url,
-                                       timeout=self.timeout).read())
+                                               timeout=self.timeout).read())
             # download JPG files also
             if self.jpeg:
                 # if tiles not specified, download all files
