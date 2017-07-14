@@ -229,7 +229,7 @@ class parseModis:
             names.append("{id}\t{na}".format(id=k,
                                              na=v['ParameterName']))
         if output:
-            out = open(output,  'w')
+            out = open(output, 'w')
             out.write("{ns}\n".format(ns='\n'.join(names)))
             out.close()
             return 0
@@ -258,7 +258,7 @@ class parseModis:
                                              na=sub[0].split(':')[-1]))
             num += 1
         if output:
-            out = open(output,  'w')
+            out = open(output, 'w')
             out.write("{ns}\n".format(ns='\n'.join(names)))
             out.close()
             return 0
@@ -385,7 +385,8 @@ class parseModis:
         else:
             fileout = output
         # the name of the output parameters files for resample MRT software
-        filename = os.path.join(self.path, '{cod}_mrt_resample.conf'.format(cod=self.code))
+        filename = os.path.join(self.path,
+                                '{co}_mrt_resample.conf'.format(co=self.code))
         # if the file already exists it remove it
         if os.path.exists(filename):
             os.remove(filename)
@@ -415,15 +416,16 @@ class parseModis:
         else:
             raise Exception('The resampling type {res} is not supportet.\n'
                             'The resampling type supported are '
-                            '{reslist}'.format(res=resample, reslist=RESAM_LIST))
+                            '{reslist}'.format(res=resample,
+                                               reslist=RESAM_LIST))
         # if projtype is in proj_list set it otherwise return an error
         if projtype in PROJ_LIST:
-            conFile.write("OUTPUT_PROJECTION_TYPE = {typ}\n".format(typ=projtype))
+            conFile.write("OUTPUT_PROJECTION_TYPE = {ty}\n".format(ty=projtype))
         else:
             raise Exception('The projection type {typ} is not supported.\n'
                             'The projections supported are '
                             '{proj}'.format(typ=projtype, proj=PROJ_LIST))
-        conFile.write("OUTPUT_PROJECTION_PARAMETERS = {proj}\n".format(proj=projpar))
+        conFile.write("OUTPUT_PROJECTION_PARAMETERS = {pr}\n".format(pr=projpar))
         # if datum is in datum_list set the parameter otherwise return an error
         if datum in DATUM_LIST:
             conFile.write("DATUM = {dat}\n".format(dat=datum))
@@ -566,20 +568,20 @@ class parseModis:
             raise Exception('The projection type {typ} is not supported.\n'
                             'The projections supported are '
                             '{proj}'.format(typ=projtype, proj=PROJ_LIST))
-        conFile.write("OUTPUT_PROJECTION_PARAMETER = {prj}\n".format(prj=projpar))
+        conFile.write("OUTPUT_PROJECTION_PARAMETER = {pr}\n".format(pr=projpar))
         # if sphere is in sphere_list set it otherwise return an error
         if int(sphere) in SPHERE_LIST:
-            conFile.write("OUTPUT_PROJECTION_SPHERE = {sph}\n".format(sph=sphere))
+            conFile.write("OUTPUT_PROJECTION_SPHERE = {sp}\n".format(sp=sphere))
         else:
-            raise Exception('The sphere {sph} is not supported.\nThe spheres'
-                            'supported are {sphere}'.format(sph=sphere,
-                                                            sphere=SPHERE_LIST))
+            raise Exception('The sphere {sp} is not supported.\nThe spheres'
+                            'supported are {sl}'.format(sp=sphere,
+                                                        sl=SPHERE_LIST))
         # if utm is not None write the UTM_ZONE parameter in the file
         if utm:
             if utm < '-60' or utm > '60':
                 raise Exception('The valid UTM zone are -60 to 60')
             else:
-                conFile.write("OUTPUT_PROJECTION_ZONE = {utm}\n".format(utm=utm))
+                conFile.write("OUTPUT_PROJECTION_ZONE = {ut}\n".format(ut=utm))
         # if res is not None write the OUTPUT_PIXEL_SIZE parameter in the file
         if res:
             conFile.write("OUTPUT_PIXEL_SIZE = {res}\n".format(res=res))
