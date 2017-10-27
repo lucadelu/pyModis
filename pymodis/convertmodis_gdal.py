@@ -636,7 +636,7 @@ class createMosaicGDAL:
                               write an unique file
         """
 
-        def write_complex(outfile, f, geot):
+        def write_complex(f, geot):
             """Write a complex source to VRT file"""
             out.write('\t\t<ComplexSource>\n')
             out.write('\t\t\t<SourceFilename relativeToVRT="0">{name}'
@@ -682,7 +682,7 @@ class createMosaicGDAL:
                               '>\n'.format(val=l1.fill_value))
                 out.write('<ColorInterp>Gray</ColorInterp>\n')
                 for f in self.file_infos[k]:
-                    write_complex(out, f, geot)
+                    write_complex(f, geot)
                 out.write('\t</VRTRasterBand>\n')
                 out.write('</VRTDataset>\n')
                 out.close()
@@ -708,7 +708,7 @@ class createMosaicGDAL:
                               val=l1.fill_value))
                 out.write('\t\t<ColorInterp>Gray</ColorInterp>\n')
                 for f in self.file_infos[k]:
-                    write_complex(out, f, geot)
+                    write_complex(f, geot)
                 out.write('\t</VRTRasterBand>\n')
                 band += 1
             out.write('</VRTDataset>\n')
