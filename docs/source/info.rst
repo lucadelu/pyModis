@@ -19,7 +19,13 @@ User and password
 To be able to download data you need user and password provided by NASA.
 Please **register at https://urs.earthdata.nasa.gov/users/new**; now login
 and move to your profile page. Go to "My application" tab and approve the
-following applications "LP DAAC Data Pool" and "Earthdata Search".
+following applications "LP DAAC Data Pool", "Earthdata Search" and "NSIDC_DATAPOOL_OPS".
+
+.. image:: ../_static/urs_earthdata_nasa_gov.png
+  :scale: 60%
+  :alt: GUI for modis_download.py
+  :align: center
+  :class: gui
 
 If you are an already registered user, login and enable the applications
 at https://urs.earthdata.nasa.gov/home
