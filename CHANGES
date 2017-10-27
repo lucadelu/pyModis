@@ -61,3 +61,7 @@
  * fixed small bugs
  * added quiet option to the convert functions
  * warnings redirect to logging
+- version 2.0.7
+ * fixed authentication for https://n5eil01u.ecs.nsidc.org/
+ * improved doc for previous url
+ * fix small bug https://github.com/lucadelu/pyModis/issues/90
