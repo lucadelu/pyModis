@@ -50,13 +50,6 @@ import logging
 import socket
 from ftplib import FTP
 import ftplib
-from urllib.request import urlopen
-import urllib.request
-import urllib.error
-from base64 import b64encode
-from html.parser import HTMLParser
-import re
-import netrc
 
 import requests
 # urllib in python 2 and 3
@@ -65,6 +58,12 @@ try:
     install_aliases()
 except ImportError:
     raise ImportError("Future library not found, please install it")
+from urllib.request import urlopen
+import urllib.request
+import urllib.error
+from base64 import b64encode
+from html.parser import HTMLParser
+import re
 # urlparse in python 2 and 3
 try:
     from urlparse import urlparse
