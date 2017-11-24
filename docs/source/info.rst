@@ -21,7 +21,7 @@ Please **register at https://urs.earthdata.nasa.gov/users/new**; now login
 and move to your profile page. Go to "My application" tab and approve the
 following applications "LP DAAC Data Pool", "Earthdata Search" and "NSIDC_DATAPOOL_OPS".
 
-.. image:: ../_static/urs_earthdata_nasa_gov.png
+.. image:: _static/urs_earthdata_nasa_gov.png
   :scale: 60%
   :alt: GUI for modis_download.py
   :align: center
