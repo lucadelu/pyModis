@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "You should updated the following: CHANGES, setup.py, pymodis/__init__.py"
+echo "You should updated the following: CHANGES, pymodis/__init__.py"
 echo "Could it \"procede\" (answer yes or no)?"
 read procede
 
