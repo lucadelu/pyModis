@@ -6,10 +6,6 @@ MAINTAINER Luca Delucchi
 
 # system environment
 ENV DEBIAN_FRONTEND noninteractive
-#### ENV CPLUS_INCLUDE_PATH=/usr/include/gdal \
-####    C_INCLUDE_PATH=/usr/include/gdal
-
-# ??     && apt-get install -y --install-recommends \
 
 # fetch dependencies
 RUN apt-get update \
@@ -23,9 +19,7 @@ RUN apt-get update \
     python3-future \
     python3-requests
 
-#    && apt-get autoremove \
-#    && apt-get clean
+RUN apt-get autoremove && apt-get clean
 
 # Install pyModis
-#####? RUN pip install GDAL==$(gdal-config --version | awk -F'[.]' '{print $1"."$2}')
 RUN pip3 install pyModis
