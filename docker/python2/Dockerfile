@@ -25,4 +25,6 @@ RUN apt-get autoremove && apt-get clean
 # Install pyModis
 RUN pip install pyModis
 
-ENTRYPOINT ["python", "/usr/local/bin/modis_download.py"]
+# where to store the MODIS data, run the container using -v /path/on/host:/export to access directory
+VOLUME ["/export"]
+ENTRYPOINT ["python", "/usr/local/bin/modis_download.py", "/export"]
