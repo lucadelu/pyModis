@@ -25,15 +25,4 @@ RUN apt-get autoremove && apt-get clean
 # Install pyModis
 RUN pip install pyModis
 
-# make scripts available as dockerized applications
-ADD /usr/local/bin/modis_download.py /
-ADD /usr/local/bin/modis_download_from_list.py /
-ADD /usr/local/bin/modis_convert.py /
-ADD /usr/local/bin/modis_mosaic.py /
-ADD /usr/local/bin/modis_parse.py /
-ADD /usr/local/bin/modis_multiparse.py /
-ADD /usr/local/bin/modis_quality.py /
-
-WORKDIR /
-RUN chmod +x modis_download.py modis_download_from_list.py modis_convert.py modis_mosaic.py modis_parse.py modis_multiparse.py modis_quality.py
-
+ENTRYPOINT ["python", "/usr/local/bin/modis_download.py"]
