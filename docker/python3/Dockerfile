@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 
-# http://www.pymodis.org/ docker image
+# Dockerfile by M Neteler and L Delucchi
 
+# http://www.pymodis.org/
 MAINTAINER Luca Delucchi
 
 # system environment
@@ -23,3 +24,7 @@ RUN apt-get autoremove && apt-get clean
 
 # Install pyModis
 RUN pip3 install pyModis
+
+# where to store the MODIS data, run the container using -v /path/on/host:/export to access directory
+VOLUME ["/export"]
+ENTRYPOINT ["python3", "/usr/local/bin/modis_download.py", "/export"]
