@@ -64,6 +64,7 @@ import urllib.error
 from base64 import b64encode
 from html.parser import HTMLParser
 import re
+import netrc
 # urlparse in python 2 and 3
 try:
     from urlparse import urlparse
@@ -397,12 +398,15 @@ class downModis:
                 req = urllib.request.Request(url, headers=self.http_header)
                 http = urllib.request.urlopen(req)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
-            except:
+            except Exception as e:
+                logging.error('Error in connection. Code {code}, '
+                              'reason {re}'.format(code=e.code, re=e.reason))
                 http = urlopen(url, timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
-        except:
-            logging.error('Error in connection')
+        except Exception as e:
+            logging.error('Error in connection. Code {code}, '
+                          'reason {re}'.format(code=e.code, re=e.reason))
             if self.nconnection <= ncon or ncon < 0:
                 self._connectHTTP()
 
@@ -692,9 +696,10 @@ class downModis:
                 http = requests.get(url, timeout=self.timeout)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
-            except:
+            except Exception as e:
                 logging.warning("Tried to downlaod with requests but got this "
-                                "error {ex}".format(ex=sys.exc_info()))
+                                "error {co}, reason {re}".format(co=e.code,
+                                                                 re=e.reason))
                 logging.error("Cannot download {name}. "
                               "Retrying...".format(name=filDown))
                 filSave.close()
