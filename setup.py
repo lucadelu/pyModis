@@ -46,7 +46,7 @@ setup(
     py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
                 'pymodis.parsemodis', 'pymodis.optparse_required',
                 'pymodis.optparse_gui', 'pymodis.qualitymodis',
-                'pymodis.convertmodis_gdal',  'pymodis.productmodis'], 
+                'pymodis.convertmodis_gdal',  'pymodis.productmodis'],
     #packages = ['pymodis'],
     scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
              'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
@@ -71,7 +71,7 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
         "Programming Language :: Python :: 2.7",
-	"Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     ],
 )
