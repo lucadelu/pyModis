@@ -689,9 +689,10 @@ class downModis:
             orig_size = http.headers['Content-Length']
             filSave.write(http.read())
         # if local file has an error, try to download the file again
-        except:
+        except Exception as e:
             logging.warning("Tried to downlaod with urllib but got this "
-                            "error {ex}".format(ex=sys.exc_info()))
+                            "error {ex}, reason {re}".format(e.code,
+                                                             re=e.reason))
             try:
                 http = requests.get(url, timeout=self.timeout)
                 orig_size = http.headers['Content-Length']
