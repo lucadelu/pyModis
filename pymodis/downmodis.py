@@ -171,7 +171,8 @@ class modisHtmlParser(HTMLParser):
     def get_dates(self):
         """Return a list of directories with date"""
         regex = re.compile('(\d{4})[/.-](\d{2})[/.-](\d{2})$')
-        return [elem for elem in self.fileids if regex.match(elem)]
+        alldata = set([elem for elem in self.fileids if regex.match(elem)])
+        return sorted(list(alldata))
 
     def get_tiles(self, prod, tiles, jpeg=False):
         """Return a list of files to download
@@ -405,8 +406,11 @@ class downModis:
                 self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
         except Exception as e:
-            logging.error('Error in connection. Code {code}, '
-                          'reason {re}'.format(code=e.code, re=e.reason))
+            try:
+                logging.error('Error in connection. Code {code}, '
+                              'reason {re}'.format(code=e.code, re=e.reason))
+            except:
+                logging.error('Error {er}'.format(er=e))
             if self.nconnection <= ncon or ncon < 0:
                 self._connectHTTP()
 
