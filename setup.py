@@ -51,7 +51,7 @@ setup(
     scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
              'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
              'scripts/modis_convert.py', 'scripts/modis_quality.py',
-             'scripts/modis_download_from_list.py'],
+             'scripts/modis_download_from_list.py', 'scripts/modis_check.py'],
     author='Luca Delucchi',
     author_email='luca.delucchi@fmach.it',
     url='http://www.pymodis.org',
