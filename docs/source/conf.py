@@ -57,7 +57,7 @@ copyright = '2012-2013, Luca Delucchi'
 # built documents.
 #
 # The short X.Y version.
-version = modisversion.rsplit('.',1)
+version = modisversion.rsplit('.',1)[0]
 # The full version, including alpha/beta/rc tags.
 release = modisversion
 
