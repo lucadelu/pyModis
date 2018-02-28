@@ -43,12 +43,13 @@ Options
     -I  --input       insert user and password from standard input
     -P  --password    password to connect
     -U  --username    username to connect
-    -t  --tiles       string of tiles separated from comma
-                      [default=none] for all tiles
     -s  --source      directory on the http/ftp
                       [default=MOLT]
     -p  --product     product name as on the http/ftp server
-                      [default=MOD11A1.005]
+                      [default=MOD11A1.006]
+    -o  --outputs     the output where write the missing files in the server
+                      [default=none]. Use 'stdout' to write to  STDOUT
+    -n                use netrc file to read user and password
     -x                this is useful for debugging the download
                       [default=False]
     -j                download also the jpeg files [default=False]

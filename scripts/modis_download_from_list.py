@@ -34,6 +34,14 @@ import os
 import getpass
 
 
+def write_out(out, ts, options, day):
+    """Write the missing files"""
+    opts = options.prod.split('.')
+    for ti in ts:
+        out.write("{co}\n".format(co=".".join((opts[0], "A{da}".format(da=day),
+                                               ti, opts[1], '*', 'hdf*'))))
+
+
 def main():
     """Main function"""
     # usage
@@ -65,9 +73,17 @@ def main():
                       help="directory on the http/ftp server "
                       "[default=%default]")
     # path to add the url
-    parser.add_option("-p", "--product", dest="prod", default="MOD11A1.005",
+    parser.add_option("-p", "--product", dest="prod", default="MOD11A1.006",
                       help="product name as on the http/ftp server "
                       "[default=%default]")
+    # path to file with server missing tiles
+    parser.add_option("-o", "--outputs", dest="outs", default=None,
+                      help="the output where write the missing files in the"
+                      " server [default=%default]. Use 'stdout' to write to "
+                      " STDOUT")
+    # use netrc file
+    parser.add_option("-n", action="store_true", dest="netrc", default=False,
+                      help="use netrc file to read user and password")
     # debug
     parser.add_option("-x", action="store_true", dest="debug", default=False,
                       help="this is useful for debugging the "
@@ -86,7 +102,10 @@ def main():
     if not os.path.isdir(args[0]):
         parser.error("The destination folder is not a dir or not exists")
 
-    if options.input:
+    if options.netrc:
+        user = None
+        password = None
+    elif options.input:
         if sys.version_info.major == 3:
             user = input("Username: ")
         else:
@@ -100,30 +119,59 @@ def main():
 
     lines = [elem for elem in f.readlines()]
 
-    tiles = [elem.strip().split('.')[2] for elem in lines if elem != '\n']
-    tiles = ','.join(sorted(set(tiles)))
-    dates = [elem.split('.')[1].replace('A', '') for elem in lines if elem != '\n']
-    dates = sorted(set(dates))
+    vals = {}
+    for elem in lines:
+        if elem != '\n':
+            dat = elem.split('.')[1].replace('A', '')
+            fisplit = elem.strip().split('.')
+            if dat not in vals.keys():
+                vals[dat] = [fisplit[2]]
+            else:
+                vals[dat].append(fisplit[2])
 
-    for d in dates:
+    if not options.outs:
+        write = None
+    elif options.outs == "stdout":
+        write = sys.stdout
+    else:
+        write = open(options.outs, 'w')
+
+    for d, tiles in sorted(vals.items(), reverse=True):
         year = int(d[0:4])
         doy = int(d[4:7])
         fdate = date.fromordinal(date(year, 1, 1).toordinal() + doy - 1).isoformat()
         modisOgg = downmodis.downModis(url=options.url, user=user,
                                        password=password,
                                        destinationFolder=args[0],
-                                       tiles=tiles, path=options.path,
-                                       product=options.prod, delta=1,
-                                       today=fdate, debug=options.debug,
-                                       jpg=options.jpg)
+                                       tiles=','.join(sorted(set(tiles))),
+                                       path=options.path, product=options.prod,
+                                       delta=1, today=fdate,
+                                       debug=options.debug, jpg=options.jpg)
+
         modisOgg.connect()
         day = modisOgg.getListDays()[0]
         if modisOgg.urltype == 'http':
             listAllFiles = modisOgg.getFilesList(day)
         else:
             listAllFiles = modisOgg.getFilesList()
+        if not listAllFiles:
+            if write:
+                write_out(write, tiles, options, d)
+            continue
         listFilesDown = modisOgg.checkDataExist(listAllFiles)
-        modisOgg.dayDownload(day, listFilesDown)
+
+        if listFilesDown:
+            if options.debug:
+                print(listFilesDown)
+            modisOgg.dayDownload(day, listFilesDown)
+            for fi in listFilesDown:
+                if 'xml' not in fi:
+                    try:
+                        tiles.remove(fi.split('.')[2])
+                    except ValueError:
+                        pass
+            if write:
+                write_out(write, tiles, options, d)
         if modisOgg.urltype == 'http':
             modisOgg.closeFilelist()
         else:
