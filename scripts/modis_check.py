@@ -86,10 +86,10 @@ def main():
 
     sday = 1
     if options.today:
-        sday = datetime.strptime(options.today, "%Y-%m-%d").strftime("%j")
+        sday = int(datetime.strptime(options.today, "%Y-%m-%d").strftime("%j"))
     eday = 366
     if options.enday:
-        eday = datetime.strptime(options.enday, "%Y-%m-%d").strftime("%j")
+        eday = int(datetime.strptime(options.enday, "%Y-%m-%d").strftime("%j"))
 
     if options.outs == "stdout":
         write = sys.stdout
@@ -101,13 +101,20 @@ def main():
     output = OrderedDict()
     missing_dates = {}
     for fi in files:
+        if fi.startswith('./'):
+            fi = fi.lstrip('./')
+        if fi.count('.') != 5:
+            print("Error with file {fi}, to many dots, skipping it. Please " \
+                  "to be sure run it for the same folder containing the HDF" \
+                  " file".format(fi=fi))
+            continue
         fisplit = fi.split('.')
         dat = fisplit[1]
         year = int(dat[1:5])
         if year not in missing_dates.keys():
-            if calendar.isleap(year):
+            if eday == 366 and calendar.isleap(year):
                 eday = 367
-            missing_dates[year] = range(sday, eday)
+            missing_dates[year] = list(range(sday, eday))
         doy = int(dat[5:8])
         try:
             missing_dates[year].remove(doy)
