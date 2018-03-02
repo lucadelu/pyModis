@@ -73,6 +73,11 @@ def main():
                       "[default=%default]; if you want change"
                       " data you must use this format YYYY-MM-DD")
 
+    # number of days
+    parser.add_option("-d", "--days", dest="days", default=1, metavar="DAYS",
+                      help="The temporal resolution of the dataset, "
+                      "[default=%default]")
+
     # return options and argument
     (options, args) = parser.parse_args()
     # test if args[0] it is set
@@ -90,6 +95,7 @@ def main():
     eday = 366
     if options.enday:
         eday = int(datetime.strptime(options.enday, "%Y-%m-%d").strftime("%j"))
+    tres = int(options.days)
 
     if options.outs == "stdout":
         write = sys.stdout
@@ -114,7 +120,7 @@ def main():
         if year not in missing_dates.keys():
             if eday == 366 and calendar.isleap(year):
                 eday = 367
-            missing_dates[year] = list(range(sday, eday))
+            missing_dates[year] = list(range(sday, eday, tres))
         doy = int(dat[5:8])
         try:
             missing_dates[year].remove(doy)
