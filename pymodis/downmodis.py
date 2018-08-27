@@ -695,7 +695,7 @@ class downModis:
         # if local file has an error, try to download the file again
         except Exception as e:
             logging.warning("Tried to downlaod with urllib but got this "
-                            "error {ex}, reason {re}".format(e.code,
+                            "error {co}, reason {re}".format(co=e.code,
                                                              re=e.reason))
             try:
                 http = requests.get(url, timeout=self.timeout)
