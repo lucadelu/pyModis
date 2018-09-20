@@ -40,6 +40,13 @@ else:
     with open(os.path.join(HERE, 'pymodis', '__init__.py')) as fp:
         VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
 
+install_requires = ['numpy', 'future', 'requests']
+try:
+    # Support GDAL alternatives (eg. pygdal)
+    from osgeo import gdal
+except ImportError:
+    install_requires += ['GDAL']
+    
 setup(
     name='pyModis',
     version=VERSION,
@@ -57,7 +64,7 @@ setup(
     url='http://www.pymodis.org',
     description='Python library for MODIS data',
     long_description=README,
-    install_requires=['GDAL', 'numpy', 'future',  'requests'],
+    install_requires=install_requires,
     extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',
     platforms=['Any'],
