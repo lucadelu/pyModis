@@ -241,7 +241,7 @@ class downModis:
 
     def __init__(self, destinationFolder, password=None, user=None,
                  url="https://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
-                 product="MOD11A1.005", today=None, enddate=None, delta=10,
+                 product="MOD11A1.006", today=None, enddate=None, delta=10,
                  jpg=False, debug=False, timeout=30, checkgdal=True):
         """Function to initialize the object"""
 
