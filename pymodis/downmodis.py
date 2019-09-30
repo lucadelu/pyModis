@@ -64,6 +64,7 @@ import urllib.error
 from base64 import b64encode
 from html.parser import HTMLParser
 import re
+import netrc
 # urlparse in python 2 and 3
 try:
     from urlparse import urlparse
@@ -170,7 +171,8 @@ class modisHtmlParser(HTMLParser):
     def get_dates(self):
         """Return a list of directories with date"""
         regex = re.compile('(\d{4})[/.-](\d{2})[/.-](\d{2})$')
-        return [elem for elem in self.fileids if regex.match(elem)]
+        alldata = set([elem for elem in self.fileids if regex.match(elem)])
+        return sorted(list(alldata))
 
     def get_tiles(self, prod, tiles, jpeg=False):
         """Return a list of files to download
@@ -239,7 +241,7 @@ class downModis:
 
     def __init__(self, destinationFolder, password=None, user=None,
                  url="https://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
-                 product="MOD11A1.005", today=None, enddate=None, delta=10,
+                 product="MOD11A1.006", today=None, enddate=None, delta=10,
                  jpg=False, debug=False, timeout=30, checkgdal=True):
         """Function to initialize the object"""
 
@@ -397,12 +399,18 @@ class downModis:
                 req = urllib.request.Request(url, headers=self.http_header)
                 http = urllib.request.urlopen(req)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
-            except:
+            except Exception as e:
+                logging.error('Error in connection. Code {code}, '
+                              'reason {re}'.format(code=e.code, re=e.reason))
                 http = urlopen(url, timeout=self.timeout)
                 self.dirData = modisHtmlParser(http.read()).get_dates()
             self.dirData.reverse()
-        except:
-            logging.error('Error in connection')
+        except Exception as e:
+            try:
+                logging.error('Error in connection. Code {code}, '
+                              'reason {re}'.format(code=e.code, re=e.reason))
+            except:
+                logging.error('Error {er}'.format(er=e))
             if self.nconnection <= ncon or ncon < 0:
                 self._connectHTTP()
 
@@ -685,16 +693,18 @@ class downModis:
             orig_size = http.headers['Content-Length']
             filSave.write(http.read())
         # if local file has an error, try to download the file again
-        except:
+        except Exception as e:
             logging.warning("Tried to downlaod with urllib but got this "
-                            "error {ex}".format(ex=sys.exc_info()))
+                            "error {co}, reason {re}".format(co=e.code,
+                                                             re=e.reason))
             try:
                 http = requests.get(url, timeout=self.timeout)
                 orig_size = http.headers['Content-Length']
                 filSave.write(http.content)
-            except:
+            except Exception as e:
                 logging.warning("Tried to downlaod with requests but got this "
-                                "error {ex}".format(ex=sys.exc_info()))
+                                "error {co}, reason {re}".format(co=e.code,
+                                                                 re=e.reason))
                 logging.error("Cannot download {name}. "
                               "Retrying...".format(name=filDown))
                 filSave.close()

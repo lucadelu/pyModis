@@ -40,24 +40,31 @@ else:
     with open(os.path.join(HERE, 'pymodis', '__init__.py')) as fp:
         VERSION = re.search("__version__ = '([^']+)'", fp.read()).group(1)
 
+install_requires = ['numpy', 'future', 'requests']
+try:
+    # Support GDAL alternatives (eg. pygdal)
+    from osgeo import gdal
+except ImportError:
+    install_requires += ['GDAL']
+    
 setup(
     name='pyModis',
     version=VERSION,
     py_modules=['pymodis.downmodis', 'pymodis.convertmodis',
                 'pymodis.parsemodis', 'pymodis.optparse_required',
                 'pymodis.optparse_gui', 'pymodis.qualitymodis',
-                'pymodis.convertmodis_gdal',  'pymodis.productmodis'], 
+                'pymodis.convertmodis_gdal',  'pymodis.productmodis'],
     #packages = ['pymodis'],
     scripts=['scripts/modis_download.py', 'scripts/modis_multiparse.py',
              'scripts/modis_parse.py', 'scripts/modis_mosaic.py',
              'scripts/modis_convert.py', 'scripts/modis_quality.py',
-             'scripts/modis_download_from_list.py'],
+             'scripts/modis_download_from_list.py', 'scripts/modis_check.py'],
     author='Luca Delucchi',
     author_email='luca.delucchi@fmach.it',
     url='http://www.pymodis.org',
     description='Python library for MODIS data',
     long_description=README,
-    install_requires=['GDAL', 'numpy', 'future',  'requests'],
+    install_requires=install_requires,
     extras_require={'GUI': ["wxPython", "wxPython-common"]},
     license='GNU GPL 2 or later',
     platforms=['Any'],
@@ -71,7 +78,7 @@ setup(
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX",
         "Programming Language :: Python :: 2.7",
-	"Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     ],
 )
