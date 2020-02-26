@@ -62,6 +62,8 @@ setup(
     author='Luca Delucchi',
     author_email='luca.delucchi@fmach.it',
     url='http://www.pymodis.org',
+    project_urls={'Source': 'https://github.com/lucadelu/pyModis/',
+                  'Tracker': 'https://github.com/lucadelu/pyModis/issues'},
     description='Python library for MODIS data',
     long_description=README,
     install_requires=install_requires,
