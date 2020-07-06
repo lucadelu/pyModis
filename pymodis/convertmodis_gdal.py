@@ -636,12 +636,12 @@ class createMosaicGDAL:
                               write an unique file
         """
 
-        def write_complex(f, geot):
+        def write_complex(f, geot, band=1):
             """Write a complex source to VRT file"""
             out.write('\t\t<ComplexSource>\n')
             out.write('\t\t\t<SourceFilename relativeToVRT="0">{name}'
                       '</SourceFilename>\n'.format(name=f.filename.replace('"', '')))
-            out.write('\t\t\t<SourceBand>1</SourceBand>\n')
+            out.write('\t\t\t<SourceBand>{nb}</SourceBand>\n'.format(nb=band))
             out.write('\t\t\t<SourceProperties RasterXSize="{x}" '
                       'RasterYSize="{y}" DataType="{typ}" '
                       'BlockXSize="{bx}" BlockYSize="{by}" />'
@@ -675,15 +675,21 @@ class createMosaicGDAL:
                                       geo3=geot[3], geo4=geot[4],
                                       geo5=geot[5]))
                 gtype = gdal.GetDataTypeName(l1.band_type)
-                out.write('\t<VRTRasterBand dataType="{typ}" band="1"'
-                          '>\n'.format(typ=gtype))
-                if l1.fill_value:
-                    out.write('\t\t<NoDataValue>{val}</NoDataValue'
-                              '>\n'.format(val=l1.fill_value))
-                out.write('<ColorInterp>Gray</ColorInterp>\n')
+                # count max number of band
+                nbands = 0
                 for f in self.file_infos[k]:
-                    write_complex(f, geot)
-                out.write('\t</VRTRasterBand>\n')
+                    nbands = max(nbands, f.bands)
+                for b in range(nbands):
+                    out.write('\t<VRTRasterBand dataType="{typ}" band="{band}"'
+                              '>\n'.format(typ=gtype, band=b+1))
+                    if l1.fill_value:
+                        out.write('\t\t<NoDataValue>{val}</NoDataValue'
+                                  '>\n'.format(val=l1.fill_value))
+                    out.write('<ColorInterp>Gray</ColorInterp>\n')
+                    for f in self.file_infos[k]:
+                        if b < f.bands:
+                            write_complex(f, geot, band=b+1)
+                    out.write('\t</VRTRasterBand>\n')
                 out.write('</VRTDataset>\n')
                 out.close()
         else:
