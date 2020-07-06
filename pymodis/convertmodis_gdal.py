@@ -244,7 +244,7 @@ class convertModisGDAL:
             out_name = "{pref}.tif".format(pref=self.output_pref)
         try:
             dst_ds = self.driver.Create(out_name, self.dst_xsize,
-                                        self.dst_ysize, 1, datatype)
+                                        self.dst_ysize, l_src_ds.RasterCount, datatype)
         except:
             raise Exception('Not possible to create dataset %s' % out_name)
         dst_ds.SetProjection(self.dst_wkt)
