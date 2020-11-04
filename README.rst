@@ -6,7 +6,7 @@ Welcome in pyModis library
 
 **pyModis is a Python library to download and process MODIS data from NASA server**
 
-Copyright Luca Delucchi - 2010-2014
+Copyright Luca Delucchi - 2010-2020
 
 License
 -------
