@@ -72,7 +72,7 @@ class OptparseDialog(wx.Dialog):
     '''
     def __init__(self, optParser, title, parent=None, ID=0,
                  pos=wx.DefaultPosition, size=wx.DefaultSize,
-                 style=wx.DEFAULT_DIALOG_STYLE|wx.THICK_FRAME):
+                 style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER):
         """Function for initialization"""
 
         # TODO fix icon
