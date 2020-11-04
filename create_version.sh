@@ -1,5 +1,12 @@
 #!/bin/bash
 
+t=`which twine`
+
+if [ $? -ne 0 ]; then
+  echo "twine is required, please install it"
+  exit 1
+fi
+
 echo "You should updated the following: CHANGES, pymodis/__init__.py"
 echo "Could it \"procede\" (answer yes or no)?"
 read procede
@@ -28,14 +35,20 @@ if [ $procede = "yes" ]; then
 
   find . -type f -name "*~" -exec rm -f {} \;
 
-  python setup.py sdist upload
+  twine check dist/*
 
-fi
+  echo "Is twine \"check\" ok? (answer yes or no)"
+  read check
 
-echo "Do you want create \"Debian\" packages (answer yes or no)?"
-read Debian
-if [ $Debian = "yes" ]; then
+  if [ $check = "yes" ]; then
+    twine upload dist/*
+  fi
 
-  su -c "dpkg-buildpackage -us -uc -d"
+  echo "Do you want create \"Debian\" packages (answer yes or no)?"
+  read Debian
+
+  if [ $Debian = "yes" ]; then
+    su -c "dpkg-buildpackage -us -uc -d"
+  fi
 
 fi
