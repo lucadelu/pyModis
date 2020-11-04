@@ -79,14 +79,18 @@ class OptparseDialog(wx.Dialog):
 #        modis_icon = wx.Icon('/home/lucadelu/github/pyModis/pyModis.ico',
 #                             wx.BITMAP_TYPE_ICO)
 #        self.SetIcon(modis_icon)
-        provider = wx.SimpleHelpProvider()
-        wx.HelpProvider_Set(provider)
 
-        pre = wx.PreDialog()
-        pre.SetExtraStyle(wx.DIALOG_EX_CONTEXTHELP)
-        pre.Create(parent, ID, title, pos, size, style)
+        try:
+            pre = wx.PreDialog()
+            pre.SetExtraStyle(wx.DIALOG_EX_CONTEXTHELP)
+            pre.Create(parent, ID, title, pos, size, style)
+            self.PostCreate(pre)
+        except:
+            wx.Dialog.__init__(self)
+            self.SetExtraStyle(wx.DIALOG_EX_CONTEXTHELP)
+            self.Create(parent, ID, title, pos, size, style)
 
-        self.PostCreate(pre)
+
         self.CenterOnScreen()
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.args_ctrl = []
@@ -254,7 +258,7 @@ class OptparseDialog(wx.Dialog):
         label = wx.StaticText(self, -1, ltext)
         label.SetHelpText(self.htext)
 
-        sizer.Add(item=label, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL |
+        sizer.Add(label, flag=wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL |
                   wx.ALL, border=5)
 
         if self.typecont == 'dir':
@@ -275,7 +279,7 @@ class OptparseDialog(wx.Dialog):
                                                         fileMode=wx.OPEN,
                                                         changeCallback=self.onText,
                                                         size=TEXTCTRL_SIZE)
-        sizer.Add(item=self.arg_ctrl, flag=wx.ALIGN_RIGHT | wx.ALL, border=5)
+        sizer.Add(self.arg_ctrl, flag=wx.ALIGN_RIGHT | wx.ALL, border=5)
         return sizer
 
     def onText(self, event):
