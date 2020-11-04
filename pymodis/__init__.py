@@ -1,4 +1,5 @@
 from __future__ import print_function
+import warnings
 
 from . import downmodis
 from . import parsemodis
@@ -8,12 +9,12 @@ try:
     from . import qualitymodis
     from . import convertmodis_gdal
 except ImportError:
-    print("qualitymodis and convertmodis_gdal modules not enabled, "
-          "maybe Python GDAL is missing")
+    warnings.warn("qualitymodis and convertmodis_gdal modules not enabled, "
+                  "maybe Python GDAL is missing", ImportWarning)
     pass
 from . import productmodis
 try:
     from . import optparse_gui
 except:
-    print("WxPython missing, no GUI enabled")
+    warnings.warn("WxPython missing, no GUI enabled", ImportWarning)
 __version__ = '2.1.0'

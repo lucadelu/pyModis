@@ -65,6 +65,7 @@ from base64 import b64encode
 from html.parser import HTMLParser
 import re
 import netrc
+import warnings
 # urlparse in python 2 and 3
 try:
     from urlparse import urlparse
@@ -75,8 +76,8 @@ except ImportError:
         URLPARSE = True
     except ImportError:
         URLPARSE = False
-        print('WARNING: urlparse not found, it is not possible to use'
-              ' netrc file')
+        warnings.warn('urlparse not found, it is not possible to use'
+                      ' netrc file', ImportError)
 global GDAL
 
 try:
@@ -88,15 +89,16 @@ except ImportError:
         GDAL = True
     except ImportError:
         GDAL = False
-        print('WARNING: Python GDAL library not found, please install it to'
-              ' check data downloaded with pyModis')
+        warnings.warn('Python GDAL library not found, please install'
+                      ' it to check data downloaded with pyModis', ImportError)
 # setup gdal
 if GDAL:
     gdal.UseExceptions()
     gdalDriver = gdal.GetDriverByName('HDF4')
     if not gdalDriver:
         GDAL = False
-        print("GDAL installation has no support for HDF4, please update GDAL")
+        warnings.warn("GDAL installation has no support for HDF4, "
+                      "please update GDAL", ImportError)
 
 
 def urljoin(*args):
