@@ -73,3 +73,8 @@
  * fixed bug calculating extracting dates
 - version 2.1.0
  * bug fixes
+ * add pygdal support
+- version 2.2.0
+ * replaced print with warnings in import warning
+ * add support for newer wxPython version
+ * add support for multiband product like MCD19A2) 
