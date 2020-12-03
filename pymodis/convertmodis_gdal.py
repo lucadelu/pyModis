@@ -44,7 +44,13 @@ Functions:
 from __future__ import print_function
 from __future__ import division
 from collections import OrderedDict
-import re
+
+try:
+    from slugify import slugify
+except ImportError:
+    raise ImportError('Python slugify library not found, please install '
+                      'unicode-slugify for Python > 3 or slugify for Python < 3')
+
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -72,18 +78,6 @@ SINU_WKT = 'PROJCS["Sinusoidal_Sanson_Flamsteed",GEOGCS["GCS_Unknown",' \
            ',PROJECTION["Sinusoidal"],PARAMETER["central_meridian",0],' \
            'PARAMETER["false_easting",0],PARAMETER["false_northing",0]' \
            ',UNIT["Meter",1]]'
-
-def slugify(value):
-    """
-    Normalizes string, converts to lowercase, removes non-alpha characters,
-    and converts spaces to hyphens.
-    """
-    import unicodedata
-    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
-    value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
-    value = unicode(re.sub('[-\s]+', '-', value))
-    # ...
-    return value
 
 def getResampling(res):
     """Return the GDAL resampling method
