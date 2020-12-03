@@ -44,6 +44,7 @@ Functions:
 from __future__ import print_function
 from __future__ import division
 from collections import OrderedDict
+import re
 try:
     import osgeo.gdal as gdal
 except ImportError:
@@ -72,6 +73,17 @@ SINU_WKT = 'PROJCS["Sinusoidal_Sanson_Flamsteed",GEOGCS["GCS_Unknown",' \
            'PARAMETER["false_easting",0],PARAMETER["false_northing",0]' \
            ',UNIT["Meter",1]]'
 
+def slugify(value):
+    """
+    Normalizes string, converts to lowercase, removes non-alpha characters,
+    and converts spaces to hyphens.
+    """
+    import unicodedata
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
+    value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
+    value = unicode(re.sub('[-\s]+', '-', value))
+    # ...
+    return value
 
 def getResampling(res):
     """Return the GDAL resampling method
@@ -235,7 +247,7 @@ class convertModisGDAL:
             fill_value = None
         datatype = band.DataType
         try:
-            l_name = l.split(':')[-1]
+            l_name = slugify(l.split(':')[-1])
             out_name = "{pref}_{lay}.tif".format(pref=self.output_pref,
                                                  lay=l_name)
         except:
@@ -243,8 +255,8 @@ class convertModisGDAL:
         if self.vrt:
             out_name = "{pref}.tif".format(pref=self.output_pref)
         try:
-            dst_ds = self.driver.Create(out_name, self.dst_xsize,
-                                        self.dst_ysize, l_src_ds.RasterCount, datatype)
+            dst_ds = self.driver.Create(out_name, self.dst_xsize, self.dst_ysize,
+                                        l_src_ds.RasterCount, datatype)
         except:
             raise Exception('Not possible to create dataset %s' % out_name)
         dst_ds.SetProjection(self.dst_wkt)
