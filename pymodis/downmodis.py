@@ -360,12 +360,14 @@ class downModis:
         elif GDAL and not checkgdal:
             GDAL = False
         self.dirData = []
+        # set today and enday dates
+        self._getToday()
 
     def removeEmptyFiles(self):
         """Function to remove files in the download directory that have
            filesize equal to 0
         """
-        year = str(date.today().year)
+        year = str(self.today.year)
         prefix = self.product.split('.')[0]
         files = glob.glob1(self.writeFilePath, '%s.A%s*' % (prefix, year))
         for f in files:
@@ -496,8 +498,6 @@ class downModis:
 
     def getListDays(self):
         """Return a list of all selected days"""
-        self._getToday()
-
         today_s = self.today.strftime("%Y.%m.%d")
         # dirData is reverse sorted
         for i, d in enumerate(self.dirData):
