@@ -86,7 +86,7 @@ class parseModis:
                     retString = "{tag} = {val}\n".format(tag=node.tag,
                                                          val=node.text)
         except:
-            for node in self.tree.getiterator():
+            for node in self.tree.iter():
                 if node.text.strip() != '':
                     retString = "{tag} = {val}\n".format(tag=node.tag,
                                                          val=node.text)
@@ -135,7 +135,7 @@ class parseModis:
         """Return the CollectionMetaData element as dictionary"""
         self.getGranule()
         collect = dict()
-        for i in self.granule.find('CollectionMetaData').getiterator():
+        for i in self.granule.find('CollectionMetaData').iter():
             if i.text.strip() != '':
                 collect[i.tag] = i.text
         return collect
@@ -145,7 +145,7 @@ class parseModis:
         self.getGranule()
         collect = dict()
         datafiles = self.granule.find('DataFiles')
-        for i in datafiles.find('DataFileContainer').getiterator():
+        for i in datafiles.find('DataFileContainer').iter():
             if i.text.strip() != '':
                 collect[i.tag] = i.text
         return collect
@@ -154,7 +154,7 @@ class parseModis:
         """Return the ECSDataGranule elements as dictionary"""
         self.getGranule()
         datagran = dict()
-        for i in self.granule.find('ECSDataGranule').getiterator():
+        for i in self.granule.find('ECSDataGranule').iter():
             if i.text.strip() != '':
                 datagran[i.tag] = i.text
         return datagran
@@ -168,7 +168,7 @@ class parseModis:
         """Return the RangeDateTime elements as dictionary"""
         self.getGranule()
         rangeTime = dict()
-        for i in self.granule.find('RangeDateTime').getiterator():
+        for i in self.granule.find('RangeDateTime').iter():
             if i.text.strip() != '':
                 rangeTime[i.tag] = i.text
         return rangeTime
@@ -205,13 +205,13 @@ class parseModis:
             value[ind]['ParameterName'] = me.find('ParameterName').text
             meStat = me.find('QAStats')
             qastat = dict()
-            for i in meStat.getiterator():
+            for i in meStat.iter():
                 if i.tag != 'QAStats':
                     qastat[i.tag] = i.text
             value[ind]['QAStats'] = qastat
             meFlag = me.find('QAFlags')
             flagstat = dict()
-            for i in meFlag.getiterator():
+            for i in meFlag.iter():
                 if i.tag != 'QAFlags':
                     flagstat[i.tag] = i.text
             value[ind]['QAFlags'] = flagstat
@@ -293,7 +293,7 @@ class parseModis:
         file"""
         value = []
         self.getGranule()
-        for i in self.granule.find('InputGranule').getiterator():
+        for i in self.granule.find('InputGranule').iter():
             if i.tag != 'InputGranule':
                 value.append(i.text)
         return value
