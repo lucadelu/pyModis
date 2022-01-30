@@ -17,4 +17,4 @@ try:
     from . import optparse_gui
 except:
     warnings.warn("WxPython missing, no GUI enabled", ImportWarning)
-__version__ = '2.2.0'
+__version__ = '2.3.0'

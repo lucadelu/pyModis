@@ -77,4 +77,8 @@
 - version 2.2.0
  * replaced print with warnings in import warning
  * add support for newer wxPython version
- * add support for multiband product like MCD19A2) 
+ * add support for multiband product like MCD19A2
+- version 2.3.0
+ * changed getiterator with items
+ * slugify layer name
+ * removeEmptyFiles improvement
