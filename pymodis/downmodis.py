@@ -241,7 +241,7 @@ class downModis:
        :param bool checkgdal: variable to set the GDAL check
     """
 
-    def __init__(self, destinationFolder, password=None, user=None,
+    def __init__(self, destinationFolder, password=None, user=None, token=None,
                  url="https://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.006", today=None, enddate=None, delta=10,
                  jpg=False, debug=False, timeout=30, checkgdal=True):
@@ -259,8 +259,8 @@ class downModis:
             self.urltype = 'http'
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
-        if not user and not password and not URLPARSE:
-            raise IOError("Please use 'user' and 'password' parameters")
+        if (not user and not password and not URLPARSE) and not token:
+            raise IOError("Please use 'user' and 'password' or 'token' parameters")
         elif not user and not password and URLPARSE:
             self.domain = urlparse(self.url).hostname
             try:
@@ -286,10 +286,16 @@ class downModis:
             self.user = user
             # password for download
             self.password = password
+            # token for download
+            self.token = token
         self.userpwd = "{us}:{pw}".format(us=self.user,
                                           pw=self.password)
-        userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
-        self.http_header = {'Authorization': 'Basic %s' %  userAndPass}
+        if not token is None: 
+            self.http_header = {'Authorization': f"Bearer {token}"}
+        else:
+            userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
+            self.http_header = {'Authorization': 'Basic %s' %  userAndPass}
+
         cookieprocessor = urllib.request.HTTPCookieProcessor()
         opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
                                              cookieprocessor)
