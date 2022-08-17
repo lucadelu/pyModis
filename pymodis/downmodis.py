@@ -260,7 +260,7 @@ class downModis:
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
 
-        if (not user and not password and not token) or (user and password):
+        if not user and not password and not token:
             raise IOError("You must provide either a token or a user and password")
 
         if token: 
