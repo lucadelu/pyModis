@@ -48,11 +48,15 @@ def main():
     parser.add_option("-I", "--input", dest="input", action="store_true",
                       help="insert user and password from standard input")
     # password
-    parser.add_option("-P", "--password", dest="password",
+    parser.add_option("-P", "--password", dest="password", default=None,
                       help="password to connect to the server")
     # username
-    parser.add_option("-U", "--username", dest="user",
+    parser.add_option("-U", "--username", dest="user", default=None,
                       help="username to connect to the server")
+
+    # token
+    parser.add_option("-token", "--token", dest="token", default=None,
+                      help="user token to connect to the server")
     # tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
                       help="string of tiles separated with comma "
@@ -106,6 +110,10 @@ def main():
     parser.set_defaults(oneday=False)
     parser.set_defaults(debug=False)
     parser.set_defaults(jpg=False)
+    
+    user = None
+    password = None
+    token = None
 
     # return options and argument
     (options, args) = parser.parse_args()
@@ -123,17 +131,23 @@ def main():
         options.delta = 1
     if options.input:
         if sys.version_info.major == 3:
-            user = input("Username: ")
+            user = input("Username [type 'token' if you need to use token instead of user/login]: ")
         else:
             user = raw_input("Username: ")
-        password = getpass.getpass()
+        if user == "token":
+            token = getpass.getpass("Token: ")
+        else:
+            password = getpass.getpass("Password: ")
     else:
         user = options.user
         password = options.password
+        token = options.token
 
     # set modis object
-    modisOgg = downmodis.downModis(url=options.url, user=user,
+    modisOgg = downmodis.downModis(url=options.url, 
+                                   user=user,
                                    password=password,
+                                   token=token,
                                    destinationFolder=args[0],
                                    tiles=options.tiles, path=options.path,
                                    product=options.prod, today=options.today,
