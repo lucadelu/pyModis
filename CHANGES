@@ -82,3 +82,5 @@
  * changed getiterator with items
  * slugify layer name
  * removeEmptyFiles improvement
+- version 2.4.0
+ * added support for token authorization
