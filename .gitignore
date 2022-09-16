@@ -13,3 +13,6 @@
 
 # Sphinx's builds
 /docs/build
+
+# Visual Studio Code
+.vscode/

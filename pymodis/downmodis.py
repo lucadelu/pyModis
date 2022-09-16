@@ -241,7 +241,7 @@ class downModis:
        :param bool checkgdal: variable to set the GDAL check
     """
 
-    def __init__(self, destinationFolder, password=None, user=None,
+    def __init__(self, destinationFolder, password=None, user=None, token=None,
                  url="https://e4ftl01.cr.usgs.gov", tiles=None, path="MOLT",
                  product="MOD11A1.006", today=None, enddate=None, delta=10,
                  jpg=False, debug=False, timeout=30, checkgdal=True):
@@ -259,37 +259,47 @@ class downModis:
             self.urltype = 'http'
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
-        if not user and not password and not URLPARSE:
-            raise IOError("Please use 'user' and 'password' parameters")
-        elif not user and not password and URLPARSE:
-            self.domain = urlparse(self.url).hostname
-            try:
-                nt = netrc.netrc()
-            except:
-                raise IOError("Please set 'user' and 'password' parameters"
-                              ", netrc file does not exist")
-            try:
-                account = nt.hosts[self.domain]
-            except:
+
+        if not user and not password and not token:
+            raise IOError("You must provide either a token or a user and password")
+
+        if token: 
+            # token for download
+            self.token = token
+            self.http_header = {'Authorization': f"Bearer {self.token}"}
+        else:
+            if (not user and not password and not URLPARSE):
+                raise IOError("Please use 'user' and 'password' parameters")
+            elif not user and not password and URLPARSE:
+                self.domain = urlparse(self.url).hostname
                 try:
-                    account = nt.hosts['urs.earthdata.nasa.gov']
+                    nt = netrc.netrc()
                 except:
                     raise IOError("Please set 'user' and 'password' parameters"
-                                  ", netrc file does not contain parameter "
-                                  "for NASA url")
-            # user for download
-            self.user = account[0]
-            # password for download
-            self.password = account[2]
-        else:
-            # user for download
-            self.user = user
-            # password for download
-            self.password = password
-        self.userpwd = "{us}:{pw}".format(us=self.user,
-                                          pw=self.password)
-        userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
-        self.http_header = {'Authorization': 'Basic %s' %  userAndPass}
+                                ", netrc file does not exist")
+                try:
+                    account = nt.hosts[self.domain]
+                except:
+                    try:
+                        account = nt.hosts['urs.earthdata.nasa.gov']
+                    except:
+                        raise IOError("Please set 'user' and 'password' parameters"
+                                    ", netrc file does not contain parameter "
+                                    "for NASA url")
+                # user for download
+                self.user = account[0]
+                # password for download
+                self.password = account[2]
+            else:
+                # user for download
+                self.user = user
+                # password for download
+                self.password = password
+            
+            self.userpwd = "{us}:{pw}".format(us=self.user, pw=self.password)
+            userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
+            self.http_header = {'Authorization': 'Basic %s' %  userAndPass}
+
         cookieprocessor = urllib.request.HTTPCookieProcessor()
         opener = urllib.request.build_opener(ModisHTTPRedirectHandler,
                                              cookieprocessor)
