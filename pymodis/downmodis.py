@@ -247,6 +247,10 @@ class downModis:
                  jpg=False, debug=False, timeout=30, checkgdal=True):
         """Function to initialize the object"""
 
+        self.token = None
+        self.user = None
+        self.password = None
+        
         # prepare the base url and set the url type (ftp/http)
         if 'ftp://' in url:
             self.url = url.replace('ftp://', '').rstrip('/')
@@ -263,39 +267,43 @@ class downModis:
         if not user and not password and not token:
             raise IOError("You must provide either a token or a user and password")
 
+        # token case
         if token: 
             # token for download
             self.token = token
+        # user and password case
+        elif user and password:
+            # user for download
+            self.user = user
+            # password for download
+            self.password = password
+        # netrc case
+        else:
+            if not URLPARSE:
+                raise IOError("Please use 'user' and 'password' parameters")
+            self.domain = urlparse(self.url).hostname
+            try:
+                nt = netrc.netrc()
+            except:
+                raise IOError("Please set 'user' and 'password' parameters netrc file does not exist")
+            try:
+                account = nt.hosts[self.domain]
+            except:
+                try:
+                    account = nt.hosts['urs.earthdata.nasa.gov']
+                except:
+                    raise IOError("Please set 'user' and 'password' parameters netrc file does not contain parameter for NASA url")
+            # user for download
+            self.user = account[0]
+            # password for download
+            self.password = account[2]
+            # token for download from password
+            self.token = self.password if self.user == "token" else None
+            
+        # set the http header
+        if self.token:
             self.http_header = {'Authorization': f"Bearer {self.token}"}
         else:
-            if (not user and not password and not URLPARSE):
-                raise IOError("Please use 'user' and 'password' parameters")
-            elif not user and not password and URLPARSE:
-                self.domain = urlparse(self.url).hostname
-                try:
-                    nt = netrc.netrc()
-                except:
-                    raise IOError("Please set 'user' and 'password' parameters"
-                                ", netrc file does not exist")
-                try:
-                    account = nt.hosts[self.domain]
-                except:
-                    try:
-                        account = nt.hosts['urs.earthdata.nasa.gov']
-                    except:
-                        raise IOError("Please set 'user' and 'password' parameters"
-                                    ", netrc file does not contain parameter "
-                                    "for NASA url")
-                # user for download
-                self.user = account[0]
-                # password for download
-                self.password = account[2]
-            else:
-                # user for download
-                self.user = user
-                # password for download
-                self.password = password
-            
             self.userpwd = "{us}:{pw}".format(us=self.user, pw=self.password)
             userAndPass = b64encode(str.encode(self.userpwd)).decode("ascii")
             self.http_header = {'Authorization': 'Basic %s' %  userAndPass}
@@ -436,6 +444,8 @@ class downModis:
                             server before failing.
 
         """
+        if not self.user and not self.password:
+            raise IOError("You must provide a user and password to connect.")
         self.nconnection += 1
         try:
             # connect to ftp server

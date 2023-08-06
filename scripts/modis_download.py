@@ -55,7 +55,7 @@ def main():
                       help="username to connect to the server")
 
     # token
-    parser.add_option("-token", "--token", dest="token", default=None,
+    parser.add_option("-T", "--token", dest="token", default=None,
                       help="user token to connect to the server")
     # tiles
     parser.add_option("-t", "--tiles", dest="tiles", default=None,
