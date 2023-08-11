@@ -264,9 +264,6 @@ class downModis:
         else:
             raise IOError("The url should contain 'ftp://' or 'http://'")
 
-        if not user and not password and not token:
-            raise IOError("You must provide either a token or a user and password")
-
         # token case
         if token: 
             # token for download
@@ -299,6 +296,9 @@ class downModis:
             self.password = account[2]
             # token for download from password
             self.token = self.password if self.user == "token" else None
+            
+        if not self.user and not self.password and not self.token:
+            raise IOError("You must provide either a token or a user and password")
             
         # set the http header
         if self.token:
