@@ -7,7 +7,11 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-echo "You should updated the following: CHANGES, pymodis/__init__.py"
+echo "STEP to be done before:
+* update CHANGES and pymodis/__init__.py files
+* add new tag
+* run this script
+";
 echo "Could it \"procede\" (answer yes or no)?"
 read procede
 
@@ -15,6 +19,12 @@ if [ $procede = "yes" ]; then
 
   pymodis_version=`python setup.py -V`
   curdir=`pwd`
+
+  rm -rf build/*
+  python setup.py build
+
+  rm -rf dist/*
+  python setup.py bdist
 
   cd docs/
 
