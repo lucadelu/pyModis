@@ -21,10 +21,9 @@ if [ $procede = "yes" ]; then
   curdir=`pwd`
 
   rm -rf build/*
-  python setup.py build
-
   rm -rf dist/*
-  python setup.py bdist
+
+  python3 -m build
 
   cd docs/
 
