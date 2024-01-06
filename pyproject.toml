@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+modis_check = "scripts.modis_check:main"
+modis_convert = "scripts.modis_convert"
+modis_download_from_list = "scripts.modis_download_from_list:main"
+modis_download = "scripts.modis_download:main"
+modis_mosaic = "scripts.modis_mosaic:main"
+modis_multiparse = "scripts.modis_multiparse:main"
+modis_parse = "scripts.modis_parse:main"
+modis_quality = "scripts.modis_quality:main"
+
+[project]
+name = "pyModis"
+license = { text = "GNU General Public License v2 or later" }
+version = "2.4.1"
+authors = [
+    { name="Luca Delucchi", email="luca.delucchi@fmach.it" },
+    { name="Ingmar Nitze" },
+    { name="Xavier Corredor Llano" },
+    { name="Martin Landa" },
+    { name="Anton Petrov" },
+]
+maintainers = [
+    { name="Luca Delucchi", email="luca.delucchi@fmach.it" }
+]
+description = "Python library for MODIS data"
+readme = "README.rst"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+]
+dependencies = [
+    "numpy",
+    "future",
+    "requests",
+    "GDAL",
+]
+
+[project.optional-dependencies]
+gui = [
+    "wxPython",
+    "wxPython-common"
+]
+
+[project.urls]
+"Homepage" = "http://www.pymodis.org"
+"Issues" = "https://github.com/lucadelu/pyModis/issues"
+"Source" = "https://github.com/lucadelu/pyModis/"
