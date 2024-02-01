@@ -1,15 +1,12 @@
 FROM ubuntu:16.04
 
-# http://www.pymodis.org/ docker image
+# Dockerfile by M Neteler and L Delucchi
 
+# http://www.pymodis.org/
 MAINTAINER Luca Delucchi
 
 # system environment
 ENV DEBIAN_FRONTEND noninteractive
-#### ENV CPLUS_INCLUDE_PATH=/usr/include/gdal \
-####    C_INCLUDE_PATH=/usr/include/gdal
-
-# ??     && apt-get install -y --install-recommends \
 
 # fetch dependencies
 RUN apt-get update \
@@ -23,9 +20,11 @@ RUN apt-get update \
     python-future \
     python-requests
 
-#    && apt-get autoremove \
-#    && apt-get clean
+RUN apt-get autoremove && apt-get clean
 
 # Install pyModis
-#####? RUN pip install GDAL==$(gdal-config --version | awk -F'[.]' '{print $1"."$2}')
 RUN pip install pyModis
+
+# where to store the MODIS data, run the container using -v /path/on/host:/export to access directory
+VOLUME ["/export"]
+ENTRYPOINT ["python", "/usr/local/bin/modis_download.py", "/export"]
